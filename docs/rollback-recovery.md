@@ -35,7 +35,7 @@ FEATURE="$2"
 git stash push -u -m "pre-${STAGE}-${FEATURE}" 2>/dev/null || true
 
 # Run agent stage
-if ! agy -p "[$STAGE] $3" --dangerously-skip-permissions; then
+if ! agy -p "[$STAGE] $3"; then
     echo "❌ Agent $STAGE failed. Rolling back..."
     git reset --hard HEAD && git clean -fd
     exit 1

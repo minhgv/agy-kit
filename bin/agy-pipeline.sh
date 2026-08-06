@@ -10,7 +10,11 @@ set -euo pipefail
 
 FEATURE="${FEATURE:-unnamed}"
 STAGES="${STAGES:-spec,build,gate,qa,review}"
-AUTO_APPROVE="${AUTO_APPROVE:---dangerously-skip-permissions}"
+AUTO_APPROVE="${AUTO_APPROVE:-}"
+
+if [[ "$AUTO_APPROVE" == *"--dangerously-skip-permissions"* ]]; then
+    echo "⚠️ WARNING: Running with --dangerously-skip-permissions (UNSAFE EXECUTION PROFILE)"
+fi
 
 echo "🚀 agy-kit Pipeline: feature=$FEATURE stages=$STAGES"
 
