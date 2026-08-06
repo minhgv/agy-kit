@@ -15,7 +15,7 @@
 
 FEATURE ?= unnamed
 
-.PHONY: pipeline spec build gate qa review doctor validate check-boundaries eval-cost test-recovery clean
+.PHONY: pipeline spec build gate qa review doctor validate check-boundaries eval-cost test-recovery scan-deps synthesize-skill export-telemetry clean
 
 # Full 5-step pipeline
 pipeline: spec build gate qa review
@@ -60,6 +60,18 @@ eval-cost:
 # Test Recovery & Flaky Test Runner Test Target
 test-recovery:
 	@bash ./bin/safe-agent-run.sh coder test-feature "Testing recovery"
+
+# Multi-Language Supply Chain Scanner
+scan-deps:
+	@bash ./bin/scan-dependencies.sh
+
+# Skill Auto-Synthesis CLI
+synthesize-skill:
+	@bash ./bin/synthesize-skill.sh --name "example-skill" --category "devops" --description "Example synthesized skill"
+
+# Export Telemetry Summary & Benchmark Metrics
+export-telemetry:
+	@python3 tests/evals/export_telemetry_summary.py
 
 # Clean QA evidence
 clean:

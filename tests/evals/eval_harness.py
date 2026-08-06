@@ -10,6 +10,9 @@ Measures:
 5. Quality Gate Audit Compliance (0 lint errors, 0 secrets)
 6. Subagent Specification & AGENTS.md Validation
 7. agy-doctor System Health Diagnostics
+8. Supply Chain & OWASP-AI-01 Dependency Security Scan
+9. Telemetry & Tracing Benchmark Metric Exporter
+10. Skill Auto-Synthesis Protocol & Artifact Validator
 """
 
 import os
@@ -113,6 +116,43 @@ def eval_token_cost_tracking():
             "score": 0
         }
 
+def eval_dependency_scan():
+    """Runs bin/scan-dependencies.sh to scan for supply chain & slopsquatting vulnerabilities."""
+    code, out, err = run_command("./bin/scan-dependencies.sh")
+    passed = (code == 0)
+    return {
+        "passed": passed,
+        "score": 100 if passed else 0
+    }
+
+def eval_telemetry_export():
+    """Runs tests/evals/export_telemetry_summary.py and verifies telemetry_summary.md creation."""
+    code, out, err = run_command("python3 tests/evals/export_telemetry_summary.py")
+    md_file = os.path.join(EVAL_DIR, "telemetry_summary.md")
+    passed = (code == 0 and os.path.exists(md_file))
+    return {
+        "passed": passed,
+        "markdown_created": os.path.exists(md_file),
+        "score": 100 if passed else 0
+    }
+
+def eval_skill_synthesis():
+    """Runs bin/synthesize-skill.sh and checks generated skill artifact validity."""
+    code, out, err = run_command("./bin/synthesize-skill.sh --name test-skill --category testing --description 'Test skill auto-synthesis'")
+    skill_file = os.path.join(PROJECT_ROOT, ".hermes/skills/test-skill/SKILL.md")
+    valid = False
+    if os.path.exists(skill_file):
+        with open(skill_file, "r") as f:
+            content = f.read()
+        valid = content.startswith("---") and ("name: test-skill" in content) and ("## Overview & Trigger Conditions" in content)
+    passed = (code == 0 and valid)
+    return {
+        "passed": passed,
+        "skill_created": os.path.exists(skill_file),
+        "valid_yaml": valid,
+        "score": 100 if passed else 0
+    }
+
 def main():
     print("==================================================")
     print("   agy-kit Local Subagent Benchmark Harness      ")
@@ -148,6 +188,23 @@ def main():
     print(f"  - Total Tokens: {cost_results.get('total_tokens', 0)}")
     print(f"  - Total Cost USD: ${cost_results.get('total_cost_usd', 0.0):.6f}")
 
+    # Run Dependency Security Scan Eval
+    dep_scan_results = eval_dependency_scan()
+    print(f"\n[Supply Chain & OWASP Security Scan] Score: {dep_scan_results['score']}/100")
+    print(f"  - Passed: {dep_scan_results['passed']}")
+
+    # Run Telemetry Export Eval
+    telemetry_results = eval_telemetry_export()
+    print(f"\n[Telemetry Metric Exporter] Score: {telemetry_results['score']}/100")
+    print(f"  - Passed: {telemetry_results['passed']}")
+    print(f"  - Markdown summary generated: {telemetry_results['markdown_created']}")
+
+    # Run Skill Synthesis Eval
+    skill_synth_results = eval_skill_synthesis()
+    print(f"\n[Skill Auto-Synthesis Validator] Score: {skill_synth_results['score']}/100")
+    print(f"  - Passed: {skill_synth_results['passed']}")
+    print(f"  - Skill artifact created: {skill_synth_results['skill_created']}")
+
     # Report Summary
     report = {
         "timestamp": datetime.now().isoformat(),
@@ -159,6 +216,9 @@ def main():
             "doctor_diagnostics": doctor_results,
             "path_boundaries": boundary_results,
             "token_cost_tracking": cost_results,
+            "dependency_scan": dep_scan_results,
+            "telemetry_export": telemetry_results,
+            "skill_synthesis": skill_synth_results,
             "pass_at_1_tdd_target": "≥ 85%",
             "spec_compliance_target": "100%"
         }
@@ -174,7 +234,8 @@ def main():
     # Exit 0 if all benchmarks passed
     if (qg_results['score'] == 100 and agent_val_results['passed'] and 
         doctor_results['score'] == 100 and boundary_results['passed'] and 
-        cost_results['passed']):
+        cost_results['passed'] and dep_scan_results['passed'] and
+        telemetry_results['passed'] and skill_synth_results['passed']):
         sys.exit(0)
     else:
         sys.exit(1)
