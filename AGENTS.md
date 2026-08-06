@@ -52,3 +52,10 @@
 - Auto-detect language via root indicator file (`pyproject.toml`, `go.mod`, `Cargo.toml`, `composer.json`, `package.json`).
 - Each language has its own toolchain adapter (linter, formatter, typechecker, test runner).
 - Details: `docs/multi-language-adapters.md`
+
+## 9. Problem Solving, Ideation & Stress Testing
+
+- **Brainstorming (`/brainstorm`, `brainstorming` skill):** Before writing code or implementation plans for novel/vague features, classify unknowns into 4 categories (Known knowns, Known unknowns, Unknown knowns, Unknown unknowns) and present 2–4 concrete option variants with explicit trade-offs. Respect hard gate: no code or implementation plans until design is approved by user.
+- **Stress Testing (`/grill`, `grill-me` skill):** Before implementing technical specs or ADRs, subject plans to 11-question scrutiny (assumptions, failure modes, 10x scale extremes, cost of being wrong, simplest test, hardest part, rollback plan, potential mistakes, disagreements, non-goals, unaddressed topics). Force concrete answers — no hand-waving "figure out later".
+- **Systematic Problem Solving (`/solve`, `problem-solving` skill):** When stuck on complexity spirals, innovation blocks, recurring patterns, assumption constraints, or scale uncertainty, dispatch one of the 5 core techniques (Simplification Cascades, Collision-Zone Thinking, Meta-Pattern Recognition, Inversion Exercise, Scale Game) and load detailed reference guides from `references/`.
+

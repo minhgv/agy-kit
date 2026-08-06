@@ -162,3 +162,47 @@ Every subagent claim during code review MUST be classified into one of three emp
 - **Max Files Per Turn:** Capped at 20 modified files per turn.
 - **Session State Persistence:** Persist state across turns to `.agy/session.json` and `.agy/events.jsonl`.
 - **Validation Execution:** Run `bin/validate-phase10-ba-qa.sh` and `bin/validate-traceability.sh` before commit.
+
+---
+
+## 7. Stage 6: Ideation, Stress Testing & Problem Solving Protocols (Phase 12 Integration)
+
+Phase 12 integrates three core problem-solving & ideation methodologies into the agy-kit engineering pipeline:
+
+### 7.1 Brainstorming & Unknown Classification (`/brainstorm` & `brainstorming` skill)
+
+Before drafting code or implementation specs for novel or design-heavy features, subagents MUST classify problem unknowns:
+- **Known knowns:** Requirements explicitly present in prompt/spec.
+- **Known unknowns:** Unclear constraints to ask the user.
+- **Unknown knowns:** Trade-offs where presenting 2–4 cheap variants surfaces the right choice.
+- **Unknown unknowns:** Fundamental domain criteria to discover and establish.
+
+**Hard Gate:** Do not write code or draft an implementation plan until design option variants are presented and approved by the user.
+
+### 7.2 Stress Testing & Plan Scrutiny (`/grill` & `grill-me` skill)
+
+Before committing to implementation, specs and architectural proposals are subjected to 11-question scrutiny:
+1. What assumptions are you making that could be wrong?
+2. What's the most likely thing to fail?
+3. What if X is 10x larger / smaller / slower?
+4. What's the cost of being wrong?
+5. What's the simplest way to test this?
+6. What's the hardest part? Why?
+7. What's the rollback plan?
+8. What would make this a mistake?
+9. Who disagrees with this? Why?
+10. What's the non-goal everyone forgets?
+11. What are we not talking about?
+
+Subagents MUST surface hidden risks and provide concrete, specific answers — hand-waving "I'll figure it out later" is strictly prohibited.
+
+### 7.3 Systematic Problem-Solving Dispatch (`/solve` & `problem-solving` skill)
+
+When subagents encounter complexity spirals, innovation blocks, or execution bottlenecks, they dispatch dedicated problem-solving techniques:
+- **Simplification Cascades:** Single insights eliminating multiple redundant components (`references/simplification-cascades.md`).
+- **Collision-Zone Thinking:** Deliberate cross-domain metaphor mixing for breakthroughs (`references/collision-zone-thinking.md`).
+- **Meta-Pattern Recognition:** Abstracting reusable patterns across 3+ domains (`references/meta-pattern-recognition.md`).
+- **Inversion Exercise:** Flipping core assumptions to break forced constraints (`references/inversion-exercise.md`).
+- **Scale Game:** Testing designs at 1000x scale extremes (`references/scale-game.md`).
+- **When Stuck Dispatch:** Guided symptom-to-technique dispatch flowchart (`references/when-stuck.md`).
+
