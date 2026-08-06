@@ -7,10 +7,12 @@
 #   make gate
 #   make qa
 #   make review
+#   make doctor
+#   make validate
 
 FEATURE ?= unnamed
 
-.PHONY: pipeline spec build gate qa review clean
+.PHONY: pipeline spec build gate qa review doctor validate clean
 
 # Full 5-step pipeline
 pipeline: spec build gate qa review
@@ -35,6 +37,14 @@ qa:
 # Step 5: Review & Commit
 review:
 	agy run --agent reviewer "Review git diff. Pre-commit audit + 3-state verification. Group Conventional Commits."
+
+# Health & Diagnostics
+doctor:
+	./bin/agy-doctor.sh
+
+# Subagent Specification Validation
+validate:
+	./bin/validate-agents.sh
 
 # Clean QA evidence
 clean:

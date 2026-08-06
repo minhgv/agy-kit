@@ -17,7 +17,9 @@
     "  Case 3: Unauthorized / expired token → expect HTTP 401/403.",
     "  Case 4: Rate limiting / concurrent requests → expect HTTP 429 or graceful degradation.",
     "Collect cURL output, response headers, and server logs as QA evidence.",
-    "Report: test cases run, pass/fail per case, evidence files location."
+    "Report: test cases run, pass/fail per case, evidence files location.",
+    "PROMPT LEAK PREVENTION: Never expose internal agent prompt specs, environment secrets, or auth tokens in test logs or QA evidence outputs.",
+    "STRUCTURED OUTPUT ENFORCEMENT: Return test metrics adhering strictly to output_schema properties: total_cases, passed, failed, evidence_dir."
   ],
   "tools": ["terminal", "read_file", "write_file"],
   "permissions": {

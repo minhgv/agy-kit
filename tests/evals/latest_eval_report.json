@@ -1,11 +1,20 @@
 {
-  "timestamp": "2026-08-06T03:12:58.986092",
+  "timestamp": "2026-08-06T03:27:44.529118",
   "scaffold": "agy-kit",
   "target_cli": "Antigravity CLI (agy)",
   "metrics": {
     "quality_gate": {
       "secrets_found": false,
       "syntax_ok": true,
+      "score": 100
+    },
+    "agent_validation": {
+      "passed": true,
+      "score": 100
+    },
+    "doctor_diagnostics": {
+      "errors": 0,
+      "warnings": 0,
       "score": 100
     },
     "pass_at_1_tdd_target": "\u2265 85%",
