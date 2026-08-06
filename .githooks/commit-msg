@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# commit-msg: enforce Conventional Commits format
+# Pattern: type(scope): description
+set -euo pipefail
+
+commit_regex='^(feat|fix|test|docs|refactor|chore|ci|build|perf|style|revert)(\(.+\))?: .{1,100}'
+commit_file="$1"
+first_line=$(head -1 "$commit_file")
+
+if ! echo "$first_line" | grep -qE "$commit_regex"; then
+    echo "❌ Invalid commit message format."
+    echo "   Expected: type(scope): description"
+    echo "   Types: feat, fix, test, docs, refactor, chore, ci, build, perf, style, revert"
+    echo "   Got: $first_line"
+    exit 1
+fi
+
+echo "✅ Conventional Commit format OK."

@@ -1,0 +1,26 @@
+# Git Hooks for agy-kit — Deterministic Rule Enforcement
+#
+# Installation: cp .githooks/* .git/hooks/ && chmod +x .git/hooks/*
+# Or: git config core.hooksPath .githooks
+
+#!/usr/bin/env bash
+# pre-commit: gitleaks + conventional commit format check
+set -euo pipefail
+
+# 1. Gitleaks secret scan on staged files
+if command -v gitleaks &>/dev/null; then
+    gitleaks protect --staged --verbose --redact || {
+        echo "❌ Gitleaks detected secrets in staged files. Commit blocked."
+        exit 1
+    }
+fi
+
+# 2. Lint staged files (if linter available)
+if [ -f ".pre-commit-config.yaml" ] && command -v pre-commit &>/dev/null; then
+    pre-commit run --files $(git diff --cached --name-only) || {
+        echo "❌ Pre-commit checks failed. Fix issues and re-stage."
+        exit 1
+    }
+fi
+
+echo "✅ Pre-commit checks passed."

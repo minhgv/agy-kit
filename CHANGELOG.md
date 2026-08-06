@@ -1,32 +1,39 @@
 # agy-kit — Changelog
 
+## [0.3.0] — 2026-08-06 (Phase 2 Research Applied)
+
+### Added
+- `plans/SPEC_TEMPLATE.md` — 7-section SPEC template (Exec Summary, Architecture, Schema, File Manifest, Test Plan, Migration, Definition of Done)
+- `.antigravity/workflows/` — 5 slash command workflows: `/pipeline`, `/plan`, `/gate`, `/review`, `/qa`
+- `Makefile` — chain agy commands: `make pipeline FEATURE=xxx`
+- `bin/agy-pipeline.sh` — headless CI runner with `--auto-approve` flag
+- `MEMORY.md` — persistent project memory (tech stack, decisions, conventions)
+- `.githooks/pre-commit` — gitleaks + pre-commit framework enforcement
+- `.githooks/commit-msg` — Conventional Commits format validation
+- `docs/prompt-engineering.md` — 6 prompt patterns: Architect/Editor split, error recovery, self-reflection (3-state verification), anti-hallucination, few-shot XML format, reasoning model guidance
+- `docs/memory-guide.md` — 4-layer memory architecture (core rules, SPEC archive, decisions, bug patterns)
+
+### Research Sources (Phase 2)
+- Anthropic Claude Code system prompts (Architect/Editor split, 3-state verification)
+- Aider AI prompt patterns (file content grounding, edit block format, anti-lazy/overeager)
+- SWE-agent error recovery and loop-breaking patterns
+- GitHub spec-kit SDD workflow (spec→plan→tasks→code)
+- Antigravity CLI workflow definitions (turbo mode, slash commands)
+
 ## [0.2.0] — 2026-08-06 (Phase 1 Research Applied)
 
 ### Added
 - `.antigravity/mcp.json` — MCP server config (filesystem, github, playwright, sqlite)
 - `.pre-commit-config.yaml` — Git pre-commit hooks (ruff, eslint, gitleaks)
-- `.gitleaks.toml` — Custom secret scanning rules (API key, JWT secret, private key)
+- `.gitleaks.toml` — Custom secret scanning rules
 - `.github/workflows/ci.yml` — CI pipeline (lint + test + Gitleaks + TruffleHog)
-- `docs/orchestration-patterns.md` — Sequential, Parallel, Hub-Spoke, Nexus patterns
-- `docs/model-routing.md` — Model routing matrix + cost optimization + OpenTelemetry
-- `docs/owasp-ai-checklist.md` — 5-item OWASP security checklist for AI code
+- `docs/orchestration-patterns.md`, `docs/model-routing.md`, `docs/owasp-ai-checklist.md`
 
 ### Changed
-- Subagent JSON schema upgraded to v1.1 — added model routing (primary/fallback/temperature), permissions (output_files, read_only_paths, allowed_commands), context_window isolation, input/output schemas
-- QA agent switched to gemini-3.6-flash-low for cost optimization (~75-80% token savings)
-- Reviewer agent enhanced with OWASP-AI 5-item security checklist
-- README.md updated with MCP integration, safety hooks table, model routing summary
-
-### Research Sources
-- 7 community scaffolds analyzed: ECC (238K stars), spec-kit (125K), claude-mem (89K), agent-skills (82K), oh-my-codex (32K), claude-code-templates (30K), agentrules-architect
-- Declarative subagent schema patterns (dual-constraint tool filtering, CVE-2026-22708 lesson)
-- Multi-agent orchestration patterns (Anthropic "Building Effective Agents")
-- OpenTelemetry GenAI semantic conventions (5 core agent spans)
+- Subagent JSON schema upgraded to v1.1 (model routing, permissions, context_window, input/output schemas)
+- QA agent: flash-low for cost optimization; Reviewer: OWASP-AI 5-item checklist
 
 ## [0.1.0] — 2026-08-06
 
 ### Added
-- Initial scaffold: AGENTS.md, GEMINI.md
-- 4 declarative subagents: planner, coder, reviewer, qa (v1.0 schema)
-- 2 reusable skills: tdd-workflow, quality-gate
-- README.md with 5-step workflow guide
+- Initial scaffold: AGENTS.md, GEMINI.md, 4 subagents (v1.0), 2 skills (tdd-workflow, quality-gate), README
