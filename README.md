@@ -44,17 +44,22 @@
 
 ### 3. Complete 9 Slash Workflows
 
-Native slash commands configured in `.antigravity/workflows/`:
+Native slash commands configured in `.antigravity/workflows/`, chronologically grouped by Phase / Lifecycle Stage:
 
-- **`/pipeline`**: Full 5-stage sequential lifecycle (Plan → TDD → Gate → QA → Review).
-- **`/plan`**: Architecture SPEC authoring, RTM generation, and 12-D edge matrix.
-- **`/gate`**: Security scan, OWASP audit, and quality gate verification.
-- **`/review`**: Git diff audit, plan-review stamp verification, and conventional commits.
-- **`/qa`**: E2E server testing, Playwright/cURL dogfooding, and evidence collection.
-- **`/safe-pipeline`**: Pipeline execution backed by automated transactional rollback safety net.
-- **`/brainstorm`**: Pre-planning design exploration and 4-category unknown classification.
-- **`/grill`**: Pre-implementation 11-question plan stress-testing and scrutiny.
-- **`/solve`**: Systematic problem-solving techniques for execution blocks and complexity spirals.
+- **Phase 1: Ideation & Pre-Planning**
+  - **`/brainstorm`**: Option variants & 4-category unknown classification.
+- **Phase 2: Architecture & Specification**
+  - **`/plan`**: Architecture SPEC, RTM generation, and 12-D edge matrix.
+  - **`/grill`**: Pre-implementation 11-question plan stress-testing & scrutiny.
+- **Phase 3: Full Engineering Lifecycle & Execution**
+  - **`/pipeline`**: Full 5-stage sequential lifecycle (Plan → TDD → Gate → QA → Review).
+  - **`/safe-pipeline`**: Auto-rollback safety net pipeline.
+- **Phase 4: Quality Gate, Security Audit & Troubleshooting**
+  - **`/gate`**: OWASP-AI 5-point audit & path boundaries.
+  - **`/solve`**: Systematic 5-technique problem solving when stuck.
+- **Phase 5: Verification, QA & Review Handoff**
+  - **`/qa`**: E2E Playwright/cURL dogfooding & MRE bug reproduction.
+  - **`/review`**: 3-State Verification Audit, traceability audit & conventional commits.
 
 ### 4. Tooling & Executable Scripts (`bin/`)
 
