@@ -30,23 +30,23 @@ pipeline: spec build gate qa review
 
 # Step 1: Create SPEC
 spec:
-	agy run --agent plan "Survey and create SPEC for feature $(FEATURE) at plans/SPEC_$(FEATURE).md following SPEC_TEMPLATE.md"
+	agy -p "Survey and create SPEC for feature $(FEATURE) at plans/SPEC_$(FEATURE).md following SPEC_TEMPLATE.md" --dangerously-skip-permissions
 
 # Step 2: TDD Implementation
 build:
-	agy run --agent coder "Read plans/SPEC_$(FEATURE).md. Execute TDD: RED → GREEN → REFACTOR. Only modify files in the File Mutation Manifest."
+	agy -p "Read plans/SPEC_$(FEATURE).md. Execute TDD: RED → GREEN → REFACTOR. Only modify files in the File Mutation Manifest." --dangerously-skip-permissions
 
 # Step 3: Quality Gate (lint + security)
 gate:
-	agy run --agent reviewer "Run lint, typecheck, gitleaks, OWASP-AI checklist. Fix all issues."
+	agy -p "Run lint, typecheck, gitleaks, OWASP-AI checklist. Fix all issues." --dangerously-skip-permissions
 
 # Step 4: E2E QA
 qa:
-	agy run --agent qa "Start local server. Run cURL/Playwright tests per Test Plan. Collect evidence."
+	agy -p "Start local server. Run cURL/Playwright tests per Test Plan. Collect evidence." --dangerously-skip-permissions
 
 # Step 5: Review & Commit
 review:
-	agy run --agent reviewer "Review git diff. Pre-commit audit + 3-state verification. Group Conventional Commits."
+	agy -p "Review git diff. Pre-commit audit + 3-state verification. Group Conventional Commits." --dangerously-skip-permissions
 
 # Health & Diagnostics
 doctor:

@@ -55,15 +55,29 @@ run_tests_with_retry() {
     done
 }
 
-# Pre-checkpoint
+# Pre-checkpoint using git stash push -u (including untracked files)
 CHECKPOINT_MSG="checkpoint: pre-${STAGE}-${FEATURE}-$(date +%s)"
-git stash push -m "$CHECKPOINT_MSG" 2>/dev/null || git commit -am "$CHECKPOINT_MSG" --allow-empty 2>/dev/null || true
+HAS_STASH=false
+if [ -n "$(git status --porcelain)" ]; then
+    git stash push -u -m "$CHECKPOINT_MSG" 2>/dev/null || true
+    HAS_STASH=true
+    # Re-apply index so workspace stays intact for current run while maintaining stash checkpoint
+    git stash apply --index 2>/dev/null || git stash apply 2>/dev/null || true
+fi
 echo "📌 Checkpoint created: $CHECKPOINT_MSG"
 
-# Run agent stage
-if ! agy run --agent "$STAGE" "$PROMPT"; then
-    echo "❌ Agent $STAGE failed. Rolling back to checkpoint..."
-    git stash pop 2>/dev/null || git reset --hard HEAD~1 2>/dev/null || true
+rollback_worktree() {
+    echo "❌ Execution/verification failed. Safely rolling back worktree..."
+    git reset --hard HEAD 2>/dev/null || true
+    git clean -fd 2>/dev/null || true
+    if [ "$HAS_STASH" = true ]; then
+        git stash pop 2>/dev/null || true
+    fi
+}
+
+# Run agent stage using official agy CLI syntax
+if ! agy -p "[$STAGE] $PROMPT" --dangerously-skip-permissions; then
+    rollback_worktree
     exit 1
 fi
 
@@ -74,10 +88,14 @@ fi
 
 # Verify tests pass with exponential backoff & failure memory check
 if ! run_tests_with_retry; then
-    echo "❌ Tests failed after $STAGE. Rolling back to checkpoint..."
-    git stash pop 2>/dev/null || git reset --hard HEAD~1 2>/dev/null || true
+    rollback_worktree
     echo "💡 Codebase restored. Review errors and retry."
     exit 1
+fi
+
+# If succeeded and we created a checkpoint stash, drop the temporary stash
+if [ "$HAS_STASH" = true ]; then
+    git stash drop 2>/dev/null || true
 fi
 
 echo "✅ $STAGE completed successfully for feature: $FEATURE"

@@ -42,17 +42,53 @@ def run_command(cmd, cwd=PROJECT_ROOT):
         return 1, "", str(e)
 
 def eval_quality_gate():
-    """Runs Quality Gate check (gitleaks + syntax check)."""
+    """Runs Quality Gate check (gitleaks secret scan + dynamic AST py_compile on all Python files + bash -n syntax checks on all scripts)."""
     code, out, err = run_command("git diff --cached | grep -iE '(api_key|password|secret)' || echo 'CLEAN'")
     has_secret = "CLEAN" not in out
     
-    # Check syntax for python/json files
-    code_py, _, _ = run_command("python3 -m py_compile tests/evals/*.py 2>/dev/null")
-    
+    # 1. Dynamic AST py_compile on all Python files across repo
+    py_files = []
+    for root, dirs, files in os.walk(PROJECT_ROOT):
+        dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ('__pycache__', 'venv', 'node_modules')]
+        for f in files:
+            if f.endswith('.py'):
+                py_files.append(os.path.join(root, f))
+                
+    py_syntax_ok = True
+    py_errors = []
+    for py_file in py_files:
+        code_py, _, err_py = run_command(f"python3 -m py_compile {py_file}")
+        if code_py != 0:
+            py_syntax_ok = False
+            py_errors.append(os.path.relpath(py_file, PROJECT_ROOT))
+
+    # 2. Dynamic bash -n syntax checks on all scripts in bin/ and .githooks/
+    sh_files = []
+    for search_dir in [os.path.join(PROJECT_ROOT, "bin"), os.path.join(PROJECT_ROOT, ".githooks")]:
+        if os.path.exists(search_dir):
+            for f in os.listdir(search_dir):
+                full_p = os.path.join(search_dir, f)
+                if os.path.isfile(full_p):
+                    sh_files.append(full_p)
+                    
+    sh_syntax_ok = True
+    sh_errors = []
+    for sh_file in sh_files:
+        code_sh, _, err_sh = run_command(f"bash -n '{sh_file}'")
+        if code_sh != 0:
+            sh_syntax_ok = False
+            sh_errors.append(os.path.relpath(sh_file, PROJECT_ROOT))
+
+    passed = (not has_secret and py_syntax_ok and sh_syntax_ok)
     return {
         "secrets_found": has_secret,
-        "syntax_ok": code_py == 0,
-        "score": 100 if (not has_secret and code_py == 0) else 0
+        "py_syntax_ok": py_syntax_ok,
+        "py_files_checked": len(py_files),
+        "py_errors": py_errors,
+        "sh_syntax_ok": sh_syntax_ok,
+        "sh_files_checked": len(sh_files),
+        "sh_errors": sh_errors,
+        "score": 100 if passed else 0
     }
 
 def eval_agent_validation():
@@ -268,7 +304,8 @@ def main():
     qg_results = eval_quality_gate()
     print(f"[Quality Gate Audit] Score: {qg_results['score']}/100")
     print(f"  - Secrets found: {qg_results['secrets_found']}")
-    print(f"  - Syntax OK: {qg_results['syntax_ok']}")
+    print(f"  - Python AST py_compile ({qg_results.get('py_files_checked', 0)} files): {qg_results.get('py_syntax_ok', True)}")
+    print(f"  - Bash syntax check ({qg_results.get('sh_files_checked', 0)} scripts): {qg_results.get('sh_syntax_ok', True)}")
 
     # Run Agent Validation Eval
     agent_val_results = eval_agent_validation()

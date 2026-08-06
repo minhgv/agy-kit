@@ -1,9 +1,9 @@
+#!/usr/bin/env bash
 # Git Hooks for agy-kit — Deterministic Rule Enforcement
 #
 # Installation: cp .githooks/* .git/hooks/ && chmod +x .git/hooks/*
 # Or: git config core.hooksPath .githooks
-
-#!/usr/bin/env bash
+#
 # pre-commit: gitleaks + conventional commit format check
 set -euo pipefail
 

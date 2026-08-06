@@ -32,19 +32,19 @@ STAGE="$1"
 FEATURE="$2"
 
 # Pre-checkpoint
-git stash push -m "pre-${STAGE}-${FEATURE}" 2>/dev/null || true
+git stash push -u -m "pre-${STAGE}-${FEATURE}" 2>/dev/null || true
 
 # Run agent stage
-if ! agy run --agent "$STAGE" "$3"; then
+if ! agy -p "[$STAGE] $3" --dangerously-skip-permissions; then
     echo "❌ Agent $STAGE failed. Rolling back..."
-    git stash pop 2>/dev/null || git reset --hard HEAD~1
+    git reset --hard HEAD && git clean -fd
     exit 1
 fi
 
 # Verify (test must pass)
 if ! npm test 2>/dev/null || ! pytest 2>/dev/null; then
     echo "❌ Tests failed after $STAGE. Rolling back..."
-    git stash pop 2>/dev/null || git reset --hard HEAD~1
+    git reset --hard HEAD && git clean -fd
     exit 1
 fi
 

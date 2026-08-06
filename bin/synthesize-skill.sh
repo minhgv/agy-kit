@@ -22,6 +22,11 @@ if [ -z "$SKILL_NAME" ]; then
   exit 1
 fi
 
+if [[ ! "$SKILL_NAME" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+  echo "Error: Invalid skill name '$SKILL_NAME'. Must match ^[a-zA-Z0-9_-]+$"
+  exit 1
+fi
+
 TARGET_DIR=".hermes/skills/${SKILL_NAME}"
 mkdir -p "$TARGET_DIR"
 SKILL_FILE="${TARGET_DIR}/SKILL.md"
@@ -71,10 +76,14 @@ if [ -d "${TARGET_DIR}/scripts" ]; then
   chmod +x "${TARGET_DIR}/scripts"/* 2>/dev/null || true
 fi
 
-# Dual compatibility mirroring
+# Dual/Triple compatibility mirroring (.hermes, .antigravity, .agents)
 mkdir -p .antigravity/skills/
 rm -rf ".antigravity/skills/${SKILL_NAME}"
 cp -r "$TARGET_DIR" .antigravity/skills/
+
+mkdir -p .agents/skills/
+rm -rf ".agents/skills/${SKILL_NAME}"
+cp -r "$TARGET_DIR" .agents/skills/
 
 # Validation check
 if [ ! -f "$SKILL_FILE" ] || ! grep -q "^---" "$SKILL_FILE" || ! grep -q "^## Overview & Trigger Conditions" "$SKILL_FILE"; then

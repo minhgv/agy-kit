@@ -23,6 +23,7 @@ WORKFLOWS_DIR=".antigravity/workflows"
 AGENTS_DIR=".antigravity/agents"
 HERMES_SKILLS_DIR=".hermes/skills"
 AGY_SKILLS_DIR=".antigravity/skills"
+AGENTS_MIRROR_DIR=".agents"
 
 # 1. Audit Workflow Files Existence
 echo ""
@@ -148,22 +149,48 @@ else
     log_fail "qa.json missing qa-reproducer skill reference!"
 fi
 
-# 4. Audit Skill Mirroring & Integrity (.hermes/skills <-> .antigravity/skills)
+# 4. Audit Skill Mirroring & Integrity (.hermes/skills <-> .antigravity/skills <-> .agents/skills)
 echo ""
 echo "Auditing Skill Mirroring and Integrity..."
 
 for skill in "${SKILLS[@]}"; do
     HERMES_SKILL="$HERMES_SKILLS_DIR/$skill/SKILL.md"
     AGY_SKILL="$AGY_SKILLS_DIR/$skill/SKILL.md"
+    AGENTS_SKILL="$AGENTS_MIRROR_DIR/skills/$skill/SKILL.md"
 
-    if [ -f "$HERMES_SKILL" ] && [ -f "$AGY_SKILL" ]; then
-        if cmp -s "$HERMES_SKILL" "$AGY_SKILL"; then
-            log_ok "Skill $skill is 100% synchronized between .hermes/ and .antigravity/"
+    if [ -f "$HERMES_SKILL" ] && [ -f "$AGY_SKILL" ] && [ -f "$AGENTS_SKILL" ]; then
+        if cmp -s "$HERMES_SKILL" "$AGY_SKILL" && cmp -s "$AGY_SKILL" "$AGENTS_SKILL"; then
+            log_ok "Skill $skill is 100% synchronized across .hermes/, .antigravity/, and .agents/"
         else
-            log_fail "Skill $skill content mismatch between .hermes/ and .antigravity/!"
+            log_fail "Skill $skill content mismatch across .hermes/, .antigravity/, or .agents/!"
         fi
     else
-        log_fail "Skill $skill missing from .hermes/skills/ or .antigravity/skills/!"
+        log_fail "Skill $skill missing from .hermes/skills/, .antigravity/skills/, or .agents/skills/!"
+    fi
+done
+
+# 5. Audit .agents/ Directory Mirror Structure
+echo ""
+echo "Auditing .agents/ Directory Mirror Structure..."
+if [ -f "$AGENTS_MIRROR_DIR/mcp_config.json" ]; then
+    log_ok ".agents/mcp_config.json exists."
+else
+    log_fail ".agents/mcp_config.json missing!"
+fi
+
+for agent in "${REQUIRED_AGENTS[@]}"; do
+    if [ -f "$AGENTS_MIRROR_DIR/agents/$agent" ]; then
+        log_ok ".agents/agents/$agent exists."
+    else
+        log_fail ".agents/agents/$agent missing!"
+    fi
+done
+
+for wf in "${REQUIRED_WORKFLOWS[@]}"; do
+    if [ -f "$AGENTS_MIRROR_DIR/workflows/$wf" ]; then
+        log_ok ".agents/workflows/$wf exists."
+    else
+        log_fail ".agents/workflows/$wf missing!"
     fi
 done
 

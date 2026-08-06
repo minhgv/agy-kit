@@ -2,7 +2,7 @@
 # agy-pipeline.sh — Headless CI runner for agy-kit
 #
 # Usage: FEATURE=auth-oauth2 ./bin/agy-pipeline.sh
-# CI Usage: agy run -p --auto-approve --agent plan "..." (non-interactive)
+# CI Usage: agy -p "<prompt>" --dangerously-skip-permissions (non-interactive)
 #
 # Requires: agy CLI installed and authenticated
 
@@ -10,7 +10,7 @@ set -euo pipefail
 
 FEATURE="${FEATURE:-unnamed}"
 STAGES="${STAGES:-spec,build,gate,qa,review}"
-AUTO_APPROVE="${AUTO_APPROVE:---auto-approve}"
+AUTO_APPROVE="${AUTO_APPROVE:---dangerously-skip-permissions}"
 
 echo "🚀 agy-kit Pipeline: feature=$FEATURE stages=$STAGES"
 
@@ -20,24 +20,19 @@ run_stage() {
     echo "━━━ Stage: $stage ━━━"
     case "$stage" in
         spec)
-            agy run $AUTO_APPROVE --agent plan \
-                "Survey and create SPEC for feature $FEATURE at plans/SPEC_${FEATURE}.md following SPEC_TEMPLATE.md"
+            agy -p "Survey and create SPEC for feature $FEATURE at plans/SPEC_${FEATURE}.md following SPEC_TEMPLATE.md" $AUTO_APPROVE
             ;;
         build)
-            agy run $AUTO_APPROVE --agent coder \
-                "Read plans/SPEC_${FEATURE}.md. Execute TDD: RED → GREEN → REFACTOR."
+            agy -p "Read plans/SPEC_${FEATURE}.md. Execute TDD: RED → GREEN → REFACTOR." $AUTO_APPROVE
             ;;
         gate)
-            agy run $AUTO_APPROVE --agent reviewer \
-                "Run lint, typecheck, gitleaks, OWASP-AI checklist. Fix all issues."
+            agy -p "Run lint, typecheck, gitleaks, OWASP-AI checklist. Fix all issues." $AUTO_APPROVE
             ;;
         qa)
-            agy run $AUTO_APPROVE --agent qa \
-                "Start local server. Run E2E test. Collect evidence."
+            agy -p "Start local server. Run E2E test. Collect evidence." $AUTO_APPROVE
             ;;
         review)
-            agy run $AUTO_APPROVE --agent reviewer \
-                "Review git diff. Pre-commit audit + Conventional Commits."
+            agy -p "Review git diff. Pre-commit audit + Conventional Commits." $AUTO_APPROVE
             ;;
         *)
             echo "❌ Unknown stage: $stage"

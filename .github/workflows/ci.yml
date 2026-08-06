@@ -26,17 +26,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install ruff mypy pre-commit gitleaks
-          npm ci || true
+          pip install ruff mypy pre-commit
 
       - name: Lint & Format Check
         run: |
-          ruff check . || true
-          npx eslint . || true
+          ruff check .
 
-      - name: Run Tests
+      - name: Run Benchmark Evaluation Suite
         run: |
-          npm test || pytest || echo "No tests found yet"
+          python3 tests/evals/eval_harness.py
 
       - name: Gitleaks Secret Scan
         uses: gitleaks/gitleaks-action@v2
