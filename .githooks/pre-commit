@@ -23,4 +23,16 @@ if [ -f ".pre-commit-config.yaml" ] && command -v pre-commit &>/dev/null; then
     }
 fi
 
+# 3. Run Unit Tests locally before allowing commit
+python3 tests/unit/test_control_plane.py && python3 tests/unit/test_destructive_harness.py || {
+    echo "❌ Unit tests failed. Fix failing tests before committing."
+    exit 1
+}
+
+# 4. Audit Template Synchronization Drift
+python3 bin/sync_templates.py --check || {
+    echo "❌ Template drift detected. Run 'make sync-templates' before committing."
+    exit 1
+}
+
 echo "✅ Pre-commit checks passed."

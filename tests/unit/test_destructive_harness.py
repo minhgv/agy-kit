@@ -83,7 +83,7 @@ class TestDestructiveHarness(unittest.TestCase):
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             futures = [executor.submit(attempt_transition, StageState.PREFLIGHT) for _ in range(20)]
-            results = [f.result() for f in concurrent.futures.as_completed(futures)]
+            _ = [f.result() for f in concurrent.futures.as_completed(futures)]
             
         self.evidence_log["defenses_passed"] += 1
         self.assertIn(orch.state.value, [s.value for s in StageState])

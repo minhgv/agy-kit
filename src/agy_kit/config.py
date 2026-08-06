@@ -2,6 +2,7 @@
 config.py — TOML configuration resolver for agy-kit
 """
 
+import os
 from typing import Any
 
 tomllib: Any = None

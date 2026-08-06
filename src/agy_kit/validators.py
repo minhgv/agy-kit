@@ -4,6 +4,8 @@ validators.py — Path safety, traversal, and boundary security validators
 
 import os
 
+SENSITIVE_PATTERNS = {".env", ".ssh", ".aws", ".gnupg", "id_rsa", "credentials"}
+
 def validate_path_safety(file_path: str, allowlisted_root: str) -> bool:
     """
     Validates that file_path is within allowlisted_root and free of path traversal attempts.
@@ -16,6 +18,10 @@ def validate_path_safety(file_path: str, allowlisted_root: str) -> bool:
 
     if ".." in file_path or file_path.startswith("-") or "\n" in file_path:
         return False
+
+    for pattern in SENSITIVE_PATTERNS:
+        if pattern in file_path:
+            return False
         
     try:
         abs_root = os.path.realpath(allowlisted_root)
