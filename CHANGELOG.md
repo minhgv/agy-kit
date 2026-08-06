@@ -1,5 +1,28 @@
 # agy-kit — Changelog
 
+## [0.5.0] — 2026-08-06 (Phase 4 — Cross-Tool Compatibility)
+
+### Added
+- `.claude/agents/*.md` — Claude Code adapter (4 agents: planner, coder, reviewer, qa)
+- `.opencode/agents.json` — OpenCode adapter (4 agents in single JSON)
+- `.cursorrules` — Cursor IDE project rules adapter
+- `.windsurfrules` — Windsurf IDE project rules adapter
+- `.github/copilot-instructions.md` — GitHub Copilot adapter
+- `docs/cross-tool-compat.md` — Full compatibility matrix (7 tools) + customization patterns
+- `CONTRIBUTING.md` — Contribution guide + semver rules
+- `LICENSE` — MIT
+
+### Tool Compatibility
+| Tool | Status |
+|------|--------|
+| Antigravity CLI (agy) | ✅ Native |
+| Claude Code | ✅ Adapter |
+| OpenCode | ✅ Adapter |
+| Cursor | ✅ Adapter |
+| Windsurf | ✅ Adapter |
+| Codex CLI | ✅ Uses AGENTS.md |
+| GitHub Copilot | ✅ Adapter |
+
 ## [0.4.0] — 2026-08-06 (Phase 3 Research Applied)
 
 ### Added
