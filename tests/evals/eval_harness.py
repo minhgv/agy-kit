@@ -161,7 +161,7 @@ def eval_token_cost_tracking():
 
 def eval_dependency_scan():
     """Runs bin/scan-dependencies.sh to scan for supply chain & slopsquatting vulnerabilities."""
-    code, out, err = run_command("./bin/scan-dependencies.sh")
+    code, _out, _err = run_command("./bin/scan-dependencies.sh")
     passed = (code == 0)
     return {
         "passed": passed,
@@ -170,7 +170,7 @@ def eval_dependency_scan():
 
 def eval_telemetry_export():
     """Runs tests/evals/export_telemetry_summary.py and verifies telemetry_summary.md creation."""
-    code, out, err = run_command("python3 tests/evals/export_telemetry_summary.py")
+    code, _out, _err = run_command("python3 tests/evals/export_telemetry_summary.py")
     md_file = os.path.join(EVAL_DIR, "telemetry_summary.md")
     passed = (code == 0 and os.path.exists(md_file))
     return {
@@ -181,7 +181,7 @@ def eval_telemetry_export():
 
 def eval_skill_synthesis():
     """Runs bin/synthesize-skill.sh and checks generated skill artifact validity."""
-    code, out, err = run_command("./bin/synthesize-skill.sh --name test-skill --category testing --description 'Test skill auto-synthesis'")
+    code, _out, _err = run_command("./bin/synthesize-skill.sh --name test-skill --category testing --description 'Test skill auto-synthesis'")
     skill_file = os.path.join(PROJECT_ROOT, ".hermes/skills/test-skill/SKILL.md")
     valid = False
     if os.path.exists(skill_file):
@@ -198,7 +198,7 @@ def eval_skill_synthesis():
 
 def eval_traceability_audit():
     """Executes bin/validate-traceability.sh to verify requirement traceability & SPEC compliance."""
-    code, out, err = run_command("./bin/validate-traceability.sh")
+    code, _out, _err = run_command("./bin/validate-traceability.sh")
     passed = (code == 0)
     return {
         "passed": passed,
