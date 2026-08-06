@@ -76,6 +76,32 @@ def main():
                     f.write(active_content)
                 print(f"  -> Synced {base_name} to src/templates/workflows/")
 
+    # 2.5 Sync / Check Skills
+    skill_dirs = [d for d in glob.glob(os.path.join(SKILLS_DIR, "*")) if os.path.isdir(d)]
+    for s_dir in skill_dirs:
+        s_name = os.path.basename(s_dir)
+        dest_s_dir = os.path.join(TEMPLATES_DIR, "skills", s_name)
+        
+        for root, _, files in os.walk(s_dir):
+            rel_path = os.path.relpath(root, s_dir)
+            target_root = os.path.join(dest_s_dir, rel_path) if rel_path != "." else dest_s_dir
+            
+            for file in files:
+                active_file = os.path.join(root, file)
+                dest_file = os.path.join(target_root, file)
+                
+                active_content = get_file_content(active_file)
+                tpl_content = get_file_content(dest_file)
+                
+                if active_content != tpl_content:
+                    drift_found = True
+                    print(f"[DRIFT] Skill file mismatch: {s_name}/{os.path.join(rel_path, file) if rel_path != '.' else file}")
+                    if args.sync:
+                        os.makedirs(target_root, exist_ok=True)
+                        with open(dest_file, "w", encoding="utf-8") as f:
+                            f.write(active_content)
+                        print(f"  -> Synced {s_name}/{file} to src/templates/skills/")
+
     # 3. Sync / Check MCP Config
     if os.path.exists(MCP_CONFIG):
         dest_mcp = os.path.join(TEMPLATES_DIR, "mcp_config.json.tpl")
