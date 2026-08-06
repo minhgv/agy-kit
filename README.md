@@ -49,19 +49,55 @@ Native slash commands configured in `.agents/workflows/` and `.antigravity/workf
 | **Scheduling** | `/schedule` | Cấu hình timer / background audit task định kỳ |
 | **Migration** | `/migrate` | Chuyển đổi cấu hình cũ v0.7.x sang AGY 2.0 chuẩn |
 
-### 3. Hybrid `src/` Directory Architecture
+### 3. Control Plane CLI & Python Package (`agy-kit`)
+
+`agy-kit` includes a Python package and CLI entrypoint (`pip install -e .`):
+
+```bash
+agy-kit doctor          # Run environment capability probe & health diagnostics
+agy-kit run <feature>   # Launch pipeline for feature
+agy-kit apply <run_id>  # Pre-check git patch and safely apply to primary repo
+agy-kit sync --check    # Check template drift between .agents/ and src/templates/
+agy-kit verify          # Execute contract verification suite
+```
+
+### 4. Configuration Resolver (`.agy-kit.toml`)
+
+Projects can configure pipeline policies using `.agy-kit.toml`:
+
+```toml
+schema_version = "1.0"
+
+[agy]
+executable = "agy"
+require_agent_discovery = true
+
+[pipeline]
+stages = ["plan", "build", "gate", "qa", "review"]
+stage_timeout_seconds = 1800
+
+[execution]
+permission_mode = "sandbox"
+apply_policy = "never"
+
+[security]
+secret_scan = "required"
+redact_logs = true
+```
+
+### 5. Hybrid `src/` Directory Architecture
 
 `src/` separates installer template assets from internal Python package logic:
-- `src/templates/`: Stores canonical template assets (`AGENTS.md.tpl`, `mcp_config.json.tpl`, `version.json.tpl`, `agents/*.md`, `workflows/*.md`) unrolled by `./bin/init-agy-kit.sh`.
-- `src/agy_kit/`: Core Python package containing `orchestrator.py` (state machine), `worktree.py` (Git worktree manager), `validators.py` (path safety), and `cli.py`.
+- `src/templates/`: Stores canonical template assets (`AGENTS.md.tpl`, `mcp_config.json.tpl`, `version.json.tpl`, `agents/*.md`, `workflows/*.md`, `skills/*`) unrolled by `./bin/init-agy-kit.sh`.
+- `src/agy_kit/`: Core Python package containing `orchestrator.py` (guarded state machine), `worktree.py` (secure tempfile worktree manager), `safety/locks.py` (OS file locks), `adapters/` (runtime probe & JSONL event logger), `validators.py` (path safety), and `cli.py`.
 
-### 4. Template Drift Verification & Sync
+### 6. Template Drift Verification & Sync
 
 Keep working assets and scaffolding templates 100% in sync:
-- `make sync-templates`: Automatically updates `src/templates/` from `.agents/`.
+- `make sync-templates`: Automatically updates `src/templates/` from `.agents/` (including all 12 skills and references).
 - `bin/sync-templates.sh --check`: Fails Quality Gate CI if templates and live assets diverge.
 
-### 5. Multi-Language Toolchain Adapters
+### 7. Multi-Language Toolchain Adapters
 
 Integrated test and linter adapters in `agy-kit/adapters/`:
 - **Python**: pytest + ruff + mypy + pip-audit (`python.sh`)
