@@ -9,10 +9,13 @@
 #   make review
 #   make doctor
 #   make validate
+#   make check-boundaries
+#   make eval-cost
+#   make test-recovery
 
 FEATURE ?= unnamed
 
-.PHONY: pipeline spec build gate qa review doctor validate clean
+.PHONY: pipeline spec build gate qa review doctor validate check-boundaries eval-cost test-recovery clean
 
 # Full 5-step pipeline
 pipeline: spec build gate qa review
@@ -45,6 +48,18 @@ doctor:
 # Subagent Specification Validation
 validate:
 	./bin/validate-agents.sh
+
+# Multi-Agent Workspace Boundary Check
+check-boundaries:
+	@bash ./bin/check-path-boundaries.sh
+
+# Automated Token Cost Calculation
+eval-cost:
+	@python3 tests/evals/token_calculator.py
+
+# Test Recovery & Flaky Test Runner Test Target
+test-recovery:
+	@bash ./bin/safe-agent-run.sh coder test-feature "Testing recovery"
 
 # Clean QA evidence
 clean:

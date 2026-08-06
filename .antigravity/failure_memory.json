@@ -1,0 +1,26 @@
+{
+  "version": "1.0.0",
+  "transient_patterns": [
+    {
+      "id": "FLK-001",
+      "pattern": "ECONNREFUSED",
+      "category": "network_timeout",
+      "retry_action": "exponential_backoff",
+      "max_retries": 3
+    },
+    {
+      "id": "FLK-002",
+      "pattern": "address already in use",
+      "category": "port_collision",
+      "retry_action": "wait_and_retry",
+      "max_retries": 3
+    },
+    {
+      "id": "FLK-003",
+      "pattern": "ResourceTemporarilyUnavailable",
+      "category": "system_busy",
+      "retry_action": "exponential_backoff",
+      "max_retries": 3
+    }
+  ]
+}
