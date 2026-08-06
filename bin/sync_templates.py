@@ -133,6 +133,22 @@ def main():
                     f.write(tpl_agents_md)
                 print("  -> Synced AGENTS.md to src/templates/AGENTS.md.tpl")
 
+    # 5. Dynamic Mirror Sync for .antigravity/ and .hermes/
+    if args.sync:
+        for mirror_name in [".antigravity", ".hermes"]:
+            mirror_dir = os.path.join(PROJECT_ROOT, mirror_name)
+            os.makedirs(mirror_dir, exist_ok=True)
+            for sub in ["agents", "workflows"]:
+                src_sub = os.path.join(PROJECT_ROOT, ".agents", sub)
+                dst_sub = os.path.join(mirror_dir, sub)
+                if os.path.exists(src_sub):
+                    os.makedirs(dst_sub, exist_ok=True)
+                    for f_name in os.listdir(src_sub):
+                        src_f = os.path.join(src_sub, f_name)
+                        dst_f = os.path.join(dst_sub, f_name)
+                        if os.path.isfile(src_f):
+                            shutil.copy2(src_f, dst_f)
+
     print("==================================================")
     if args.check:
         if drift_found:

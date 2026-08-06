@@ -4,6 +4,7 @@ worktree.py — Git worktree isolation manager & safe apply checker
 
 import subprocess
 import os
+import tempfile
 
 class WorktreeManager:
 
@@ -14,7 +15,7 @@ class WorktreeManager:
 
     def create_isolated_worktree(self, feature: str) -> str:
         branch_name = f"agy-wt-{feature}-{self.run_id}"
-        temp_dir = f"/tmp/agy-wt-{self.run_id}"
+        temp_dir = tempfile.mkdtemp(prefix=f"agy-wt-{self.run_id}-")
         cmd = ["git", "-C", self.project_root, "worktree", "add", "-b", branch_name, temp_dir, "HEAD"]
         subprocess.run(cmd, check=True, capture_output=True)
         self.worktree_dir = temp_dir
