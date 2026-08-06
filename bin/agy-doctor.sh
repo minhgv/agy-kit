@@ -75,17 +75,17 @@ else
     log_warn "GEMINI.md is missing from repository root"
 fi
 
-# Check 4: Subagent JSON Specs Validity
+# Check 4: Subagent Markdown Specs Validity
 echo ""
-echo "4. Checking Subagent Declarative Specs (.antigravity/agents/*.json):"
-AGENT_FILES=(planner.json coder.json reviewer.json qa.json)
+echo "4. Checking Subagent Declarative Specs (.agents/agents/*.md):"
+AGENT_FILES=(planner.md coder.md reviewer.md qa.md)
 for agent_file in "${AGENT_FILES[@]}"; do
-    FILE_PATH=".antigravity/agents/$agent_file"
+    FILE_PATH=".agents/agents/$agent_file"
     if [ -f "$FILE_PATH" ]; then
-        if python3 -c "import json; json.load(open('$FILE_PATH'))" &>/dev/null; then
-            log_ok "Subagent spec $agent_file is valid JSON"
+        if grep -q "---" "$FILE_PATH" && grep -q "name:" "$FILE_PATH"; then
+            log_ok "Subagent spec $agent_file is valid Antigravity Markdown"
         else
-            log_fail "Subagent spec $agent_file has invalid JSON syntax"
+            log_fail "Subagent spec $agent_file has invalid YAML frontmatter"
         fi
     else
         log_fail "Subagent spec $agent_file missing at $FILE_PATH"

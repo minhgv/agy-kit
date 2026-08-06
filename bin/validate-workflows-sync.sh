@@ -19,6 +19,7 @@ echo "=================================================="
 echo -e "   ${BLUE}agy-kit Workflows, Agents & Skills Sync Audit${NC}"
 echo "=================================================="
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKFLOWS_DIR=".agents/workflows"
 AGENTS_DIR=".agents/agents"
 ACTIVE_SKILLS_DIR=".agents/skills"

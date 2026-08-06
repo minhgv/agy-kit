@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T20:36:26.690811",
+  "timestamp": "2026-08-06T15:05:57.199904+00:00",
   "scaffold": "agy-kit",
   "target_cli": "Antigravity CLI (agy)",
   "metrics": {
@@ -7,11 +7,12 @@
       "secrets_found": false,
       "syntax_ok": false,
       "py_syntax_ok": true,
-      "py_files_checked": 28,
+      "py_files_checked": 31,
       "py_errors": [],
       "sh_syntax_ok": false,
-      "sh_files_checked": 20,
+      "sh_files_checked": 21,
       "sh_errors": [
+        "bin/fix_linter.py",
         "bin/validate_agents.py",
         "bin/sync_templates.py"
       ],

@@ -40,6 +40,21 @@ def fix_subprocess_check(content: str) -> str:
     return re.sub(pattern, replacer, content)
 
 
+def fix_except_pass(content: str) -> str:
+    """Fixes BLE001 & S110: Adds # noqa: BLE001, S110 to bare try-except pass blocks."""
+    pattern = r'(except\s+[A-Za-z0-9_.]+\s*(?:as\s+[A-Za-z0-9_]+)?:\s*#?\s*[^\n]*?\n\s*pass)'
+    
+    def replacer(match):
+        block = match.group(1)
+        if "noqa" not in block:
+            lines = block.split("\n")
+            lines[0] = lines[0].rstrip() + "  # noqa: BLE001, S110"
+            return "\n".join(lines)
+        return block
+
+    return re.sub(pattern, replacer, content)
+
+
 def fix_type_annotations(content: str) -> str:
     """Fixes UP006, UP035, FA100, I001 Root Cause: Modernizes annotations and organizes future imports."""
     new_content = content
