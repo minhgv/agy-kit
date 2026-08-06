@@ -154,6 +154,7 @@ agy-kit/
 │   ├── validate-brainstorm-skills.sh
 │   └── verify-eval-harness.sh
 ├── docs/                          # Comprehensive framework & system documentation
+│   ├── skills-completeness-matrix.md
 │   ├── repository-quality-assessment.md
 │   ├── ba-and-quality-framework.md
 │   ├── business-analysis.md
@@ -201,6 +202,7 @@ make pipeline FEATURE=auth-oauth2
 
 ## Documentation
 
+- [Skills Completeness Matrix (Phase 20)](docs/skills-completeness-matrix.md)
 - [Repository Quality Assessment (Phase 19)](docs/repository-quality-assessment.md)
 - [BA Core & Quality Framework](docs/ba-and-quality-framework.md)
 - [Business Analysis Architecture](docs/business-analysis.md)

@@ -43,7 +43,7 @@ echo ""
 echo "Auditing Workflow Skill & Tool Invocations..."
 
 # Required skills across workflows
-SKILLS=("ba-expert" "qa-test-gen" "qa-auditor" "qa-reproducer")
+SKILLS=("brainstorming" "ba-expert" "grill-me" "tdd-workflow" "qa-test-gen" "quality-gate" "qa-auditor" "problem-solving" "qa-reproducer" "writing-skills")
 
 for wf in "${REQUIRED_WORKFLOWS[@]}"; do
     WF_PATH="$WORKFLOWS_DIR/$wf"
