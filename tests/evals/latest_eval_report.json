@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T04:24:57.962790",
+  "timestamp": "2026-08-06T04:35:09.779228",
   "scaffold": "agy-kit",
   "target_cli": "Antigravity CLI (agy)",
   "metrics": {
@@ -87,6 +87,10 @@
     "ba_framework_docs": {
       "passed": true,
       "missing_sections": [],
+      "score": 100
+    },
+    "phase10_ba_qa_skills": {
+      "passed": true,
       "score": 100
     },
     "pass_at_1_tdd_target": "\u2265 85%",

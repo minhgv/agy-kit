@@ -2,7 +2,8 @@
 
 > **Status:** Draft | In Review | Approved  
 > **Author:** [Planner Agent]  
-> **Date:** YYYY-MM-DD
+> **Date:** YYYY-MM-DD  
+> **Associated Artefacts:** `plans/RTM_[FEATURE].md`, `plans/ACM_[FEATURE].md`, `plans/NFR_[FEATURE].md`, `plans/DFD_[FEATURE].md`
 
 ---
 
@@ -12,34 +13,40 @@
 - **Goals:** [Primary objective of the feature]
 - **Non-Goals:** [Scope boundary — what is explicitly excluded]
 
-### 1.2 Requirement Traceability Matrix (RTM)
+### 1.2 Requirement Traceability Matrix (RTM) (`plans/RTM_[FEATURE].md`)
 
-| Req ID | Business Requirement Description | Type | Target Component / File | Unit Test Reference | E2E QA Verification | Status |
-|--------|----------------------------------|------|-------------------------|---------------------|---------------------|--------|
-| REQ-001 | User registration with valid email & password | Explicit | `src/auth/register.ts` | `tests/auth_test.py::test_req_001_register_success` | `tests/qa-evidence/auth/curl_register.log` | Pending |
-| REQ-002 | Enforce rate limit (max 5 requests/min per IP) | Implicit | `src/middleware/rate_limit.ts` | `tests/rate_limit_test.py::test_req_002_rate_limit_exceeded` | `tests/qa-evidence/auth/curl_rate_limit.log` | Pending |
+| Req ID | Business Requirement Description | Source | Priority | Target Component / File | Unit Test Reference | E2E QA Verification | Status |
+|--------|----------------------------------|--------|----------|-------------------------|---------------------|---------------------|--------|
+| R-001 | User registration with valid email & password | UX-Interview | P0 | `src/auth/register.ts` | `tests/test_auth.py::test_r001_register_success` | `tests/qa-evidence/auth/curl_register.log` | Pending |
+| R-002 | Enforce rate limit (max 100 req/min per IP) | Arch-NFR | P1 | `src/middleware/rate_limit.ts` | `tests/test_rate_limit.py::test_r002_rate_limit_exceeded` | `tests/qa-evidence/auth/curl_rate_limit.log` | Pending |
 
-### 1.3 Domain Modeling & User Journeys
+### 1.3 Domain Modeling & Ubiquitous Language Glossary
 - **Domain Entities:** User (`id`, `email`, `password_hash`, `status`), Session (`token`, `expires_at`).
+- **Ubiquitous Language:** `CustomerAggregate` (verified customer), `SessionToken` (access credential).
 - **User Journey:** Actor `[Unauthenticated User]` -> Submit Form -> System Validates Payload -> Hashes Password -> Creates User -> Returns JWT.
 
 ---
 
-## 2. Architecture & Data Flow
+## 2. Architecture & Data Flow Diagram (DFD) (`plans/DFD_[FEATURE].md`)
 
 ```mermaid
 graph LR
-    A[Client Request] --> B[Rate Limit Middleware]
-    B --> C[Auth Controller]
-    C --> D[Database]
+    subgraph Untrusted Boundary
+        A[Client Request]
+    end
+    subgraph Trust Boundary
+        B[Rate Limit Middleware] --> C[Auth Controller]
+        C --> D[Database Repository]
+    end
+    A --> B
 ```
 
-- **Main Data Flow:** Request enters middleware, passes validation, executes business logic in controller, mutates DB state, returns structured response.
-- **Component Dependencies:** Route handler -> Middleware adapter -> Service controller -> DB repository.
+- **Main Data Flow:** Request enters untrusted boundary, crosses middleware validation, executes controller logic in trust boundary, mutates DB state, returns structured response.
+- **Trust Boundaries:** External API endpoints must pass prompt/payload sanitization before crossing into core logic.
 
 ---
 
-## 3. Interface & Schema Specification
+## 3. Interface & Schema Specification (Zod & Pydantic)
 
 ### API Endpoints
 
@@ -47,53 +54,69 @@ graph LR
 |--------|------|-------------|-----------------|--------------|
 | POST | `/api/v1/auth/register` | `{email: string, pass: string}` | `{user_id: string, token: string}` | 201, 400, 429 |
 
-### Types / Structs
+### Zod / Pydantic Data Validation Schemas
 ```typescript
-interface RegistrationPayload {
-  email: string;
-  pass: string;
-}
+import { z } from "zod";
 
-interface RegistrationResponse {
-  user_id: string;
-  token: string;
-}
+export const RegisterInputSchema = z.object({
+  email: z.string().email(),
+  pass: z.string().min(12),
+});
+export type RegisterInput = z.infer<typeof RegisterInputSchema>;
 ```
 
 ---
 
-## 4. File Mutation Manifest
+## 4. Non-Functional Requirements (NFR) (`plans/NFR_[FEATURE].md`)
+
+| Category | Target Metric / Floor Threshold | Verification Method |
+|----------|--------------------------------|---------------------|
+| Latency (p95) | < 300 ms local | QA cURL benchmark |
+| Throughput | ≥ 100 ops/s sustained | Load test script |
+| Error Rate | < 0.1% per session | System log audit |
+| MTTR | < 60 s via auto-rollback | Rollback hook test |
+| Coverage Floor | ≥ 85% lines, ≥ 70% branches | `pytest-cov` / `jest` |
+
+---
+
+## 5. File Mutation Manifest
 
 | Action | File Path | Rationale & Responsibility |
 |--------|-----------|----------------------------|
-| Create | `src/auth/register.ts` | Endpoint handler implementing REQ-001 |
+| Create | `src/auth/register.ts` | Endpoint handler implementing R-001 |
 | Modify | `src/routes/index.ts` | Register auth route |
-| Create | `tests/auth_test.py` | Unit + integration tests for auth module |
+| Create | `tests/test_auth.py` | Unit + integration tests for auth module |
 
 > **Constraint:** Subagents MUST NOT create or modify files outside this manifest.
 
 ---
 
-## 5. Test Plan & Edge Case Matrix
+## 6. Test Plan & 12-Dimensional Edge Case Matrix (ACM) (`plans/ACM_[FEATURE].md`)
 
-### 5.1 Unit / Integration Tests (Given-When-Then)
+### 6.1 Unit / Integration Tests (Given-When-Then)
 - **Given** valid registration payload **When** `POST /api/v1/auth/register` **Then** returns HTTP 201 with JWT token.
 - **Given** missing email field **When** `POST /api/v1/auth/register` **Then** returns HTTP 400 validation error.
 
-### 5.2 6-Category Edge Case Matrix
+### 6.2 12-Dimensional Business Edge Case Matrix (ACM)
 
-| Category | Test Scenario | Input / State Condition | Expected Result & Status Code | Test Case Function |
-|----------|---------------|-------------------------|--------------------------------|-------------------|
-| Null / Empty | Empty body or missing password | `{email: "user@test.com"}` | HTTP 400 Validation Error | `test_missing_password` |
-| Boundary / Limits | Password length 10,000 chars | `{pass: "a"*10000}` | HTTP 400 Payload Too Large | `test_password_too_long` |
-| State Mutation | Duplicate email registration | Email already exists in DB | HTTP 409 Conflict | `test_duplicate_email` |
-| Auth / Scope Bypass | Invalid / Expired bearer token | Token: `Bearer invalid` | HTTP 401 Unauthorized | `test_invalid_token` |
-| Concurrent / Race | Simultaneous register requests | 5 parallel calls with same email | 1 succeeds (201), 4 fail (409) | `test_concurrent_register` |
-| Malicious / Injection | SQLi payload in email field | `{email: "' OR 1=1 --"}` | HTTP 400 Sanitized | `test_sqli_sanitization` |
+| Edge ID | Risk Dimension | Test Scenario | Expected Result & Code | Test ID |
+|---------|----------------|---------------|------------------------|---------|
+| E-001 | 1. Null / Missing | Missing password key in payload | HTTP 400 Validation Error | T-EDGE-001 |
+| E-002 | 2. Precision Loss | Currency fractional cents input | Rounded to integer cents | T-EDGE-002 |
+| E-003 | 3. Concurrency | Parallel user registration attempt | 1 succeeds (201), 1 fails (409) | T-EDGE-003 |
+| E-004 | 4. Rate Limit | Burst 150 req/min from single IP | HTTP 429 Rate Limit Exceeded | T-EDGE-004 |
+| E-005 | 5. Schema Drift | Legacy API v1 payload submitted | Schema adapter converts v1 to v2 | T-EDGE-005 |
+| E-006 | 6. Idempotency | Duplicate submission with same X-Idempotency-Key | Cached HTTP 201 response returned | T-EDGE-006 |
+| E-007 | 7. Partial Failure | DB user saved, email notify fails | Transactional outbox retries notify | T-EDGE-007 |
+| E-008 | 8. Security Fallback| Auth provider unreachable | Fail-closed HTTP 503 Service Unavailable | T-EDGE-008 |
+| E-009 | 9. Context Overflow| Input string exceeding 100KB tokens | HTTP 400 Payload Too Large | T-EDGE-009 |
+| E-010 | 10. Resource Leak | DB connection pool exhaustion | Connection closed in try-finally | T-EDGE-010 |
+| E-011 | 11. Tenant Leak | Access tenant B data with tenant A credentials | HTTP 403 Forbidden (RLS enforced) | E-011 |
+| E-012 | 12. Task Interrupt | Process killed mid-execution | Checkpoint state restored on restart | T-EDGE-012 |
 
 ---
 
-## 6. Backward Compatibility & Security Audit
+## 7. Backward Compatibility & Security Audit
 
 - [ ] OWASP-AI-01 Slopsquatting scanned (no hallucinated packages)
 - [ ] OWASP-AI-02 IDOR authorization checks verified
@@ -103,10 +126,13 @@ interface RegistrationResponse {
 
 ---
 
-## 7. Definition of Done & 3-State Verification
+## 8. Definition of Done & 3-State Verification
 
-- [ ] All RTM requirements mapped 1:1 to passing unit/integration tests
-- [ ] 6-Category Edge Case Matrix 100% covered in test suite
+- [ ] All RTM (`R-001` format) requirements mapped 1:1 to passing unit/integration tests
+- [ ] 12-Dimensional Edge Case Matrix (ACM) 100% covered in test suite
+- [ ] Non-Functional Requirements (NFR) validated against quality floors
+- [ ] Data Flow Diagram (DFD) trust boundaries verified
 - [ ] 3-State Verification audit completed (`Confirmed` state on all claims)
-- [ ] `bin/validate-traceability.sh` passed cleanly
+- [ ] Stamped `plan-review` approval recorded
+- [ ] `bin/validate-traceability.sh` and `bin/validate-phase10-ba-qa.sh` passed cleanly
 - [ ] Conventional Commits recorded

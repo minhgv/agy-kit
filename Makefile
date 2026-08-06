@@ -14,10 +14,11 @@
 #   make test-recovery
 #   make check-traceability
 #   make validate-ba
+#   make validate-phase10
 
 FEATURE ?= unnamed
 
-.PHONY: pipeline spec build gate qa review doctor validate check-boundaries eval-cost test-recovery scan-deps synthesize-skill export-telemetry check-traceability validate-ba clean
+.PHONY: pipeline spec build gate qa review doctor validate check-boundaries eval-cost test-recovery scan-deps synthesize-skill export-telemetry check-traceability validate-ba validate-phase10 clean
 
 # Full 5-step pipeline
 pipeline: spec build gate qa review
@@ -58,6 +59,12 @@ check-traceability:
 
 # Business Analysis & QA Framework Benchmark Validation
 validate-ba: check-traceability
+	@python3 tests/evals/eval_harness.py
+
+# Phase 10 Business Analysis, QA Skills & System Reliability Target
+validate-phase10: check-traceability
+	@chmod +x bin/validate-phase10-ba-qa.sh
+	@./bin/validate-phase10-ba-qa.sh
 	@python3 tests/evals/eval_harness.py
 
 # Multi-Agent Workspace Boundary Check

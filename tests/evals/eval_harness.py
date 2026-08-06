@@ -2,7 +2,7 @@
 """
 agy-kit Local Subagent Evaluation Harness (Benchmark Suite)
 
-Measures 10 core benchmarks:
+Measures 11 core benchmarks:
 1. Quality Gate Audit Compliance (0 lint errors, 0 secrets)
 2. Subagent Specification & AGENTS.md Validation
 3. agy-doctor System Health Diagnostics
@@ -13,6 +13,7 @@ Measures 10 core benchmarks:
 8. Skill Auto-Synthesis Protocol & Artifact Validator
 9. End-to-End Requirement Traceability Audit
 10. BA & Quality Assurance Framework Documentation Verification
+11. Phase 10 BA-expert & QA Skills Suite Integration Benchmark
 """
 
 import os
@@ -181,6 +182,15 @@ def eval_ba_framework_docs():
         "score": 100 if passed else 0
     }
 
+def eval_phase10_ba_qa_skills():
+    """Executes bin/validate-phase10-ba-qa.sh to verify Phase 10 BA-expert & QA skills suite."""
+    code, out, err = run_command("./bin/validate-phase10-ba-qa.sh")
+    passed = (code == 0)
+    return {
+        "passed": passed,
+        "score": 100 if passed else 0
+    }
+
 def main():
     print("==================================================")
     print("   agy-kit Local Subagent Benchmark Harness      ")
@@ -244,6 +254,11 @@ def main():
     print(f"  - Passed: {ba_docs_results['passed']}")
     print(f"  - Missing sections: {ba_docs_results.get('missing_sections', [])}")
 
+    # Run Phase 10 BA-QA Skills Benchmark Eval
+    phase10_results = eval_phase10_ba_qa_skills()
+    print(f"\n[Phase 10 BA & QA Skills Suite Benchmark] Score: {phase10_results['score']}/100")
+    print(f"  - Passed: {phase10_results['passed']}")
+
     # Report Summary
     report = {
         "timestamp": datetime.now().isoformat(),
@@ -260,6 +275,7 @@ def main():
             "skill_synthesis": skill_synth_results,
             "traceability_audit": traceability_results,
             "ba_framework_docs": ba_docs_results,
+            "phase10_ba_qa_skills": phase10_results,
             "pass_at_1_tdd_target": "≥ 85%",
             "spec_compliance_target": "100%"
         }
@@ -272,7 +288,7 @@ def main():
     print(f"\nSaved eval report to {report_file}")
     print("==================================================")
     
-    # Exit 0 if all 10 benchmarks passed with 100/100
+    # Exit 0 if all 11 benchmarks passed with 100/100
     all_passed = (
         qg_results['score'] == 100 and
         agent_val_results['passed'] and 
@@ -283,11 +299,12 @@ def main():
         telemetry_results['passed'] and
         skill_synth_results['passed'] and
         traceability_results['passed'] and
-        ba_docs_results['passed']
+        ba_docs_results['passed'] and
+        phase10_results['passed']
     )
     
     if all_passed:
-        print("ALL 10 BENCHMARKS PASSED (100/100)")
+        print("ALL 11 BENCHMARKS PASSED (100/100)")
         sys.exit(0)
     else:
         print("BENCHMARK HARNESS FAILED ON ONE OR MORE TESTS")
