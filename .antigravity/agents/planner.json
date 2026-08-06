@@ -1,7 +1,13 @@
 {
   "name": "planner",
-  "description": "Lead System Architect — surveys codebase and writes technical specifications before any code is written.",
-  "model": "gemini-3.6-flash-high",
+  "description": "Lead System Architect — surveys codebase and writes technical specifications before any code is written. Triggered by --agent plan.",
+  "version": "1.1.0",
+  "model": {
+    "primary": "gemini-3.6-flash-high",
+    "fallback": "gemini-3.6-flash-low",
+    "temperature": 0.4,
+    "max_tokens": 8192
+  },
   "instructions": [
     "You are a Lead System Architect specializing in agentic engineering workflows.",
     "NEVER create or modify code files. Your only output is documentation.",
@@ -15,6 +21,31 @@
     "  7. Test strategy outline (unit, integration, E2E)",
     "Survey the existing codebase first — read related modules, identify patterns, note conventions."
   ],
-  "tools": ["read_file", "search_files", "web_search", "write_file"],
-  "output_files": ["plans/SPEC_*.md"]
+  "tools": ["read_file", "search_files", "web_search"],
+  "permissions": {
+    "output_files": ["plans/SPEC_*.md"],
+    "read_only_paths": ["src/**", "tests/**", "docs/**"],
+    "allowed_commands": [],
+    "network_access": true
+  },
+  "context_window": {
+    "max_input_tokens": 100000,
+    "truncation_strategy": "keep_latest",
+    "inherit_parent_summary": true
+  },
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "feature": { "type": "string", "description": "Name of the feature to plan" },
+      "module": { "type": "string", "description": "Target module path" }
+    },
+    "required": ["feature"]
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "spec_file": { "type": "string", "description": "Path to generated SPEC file" },
+      "summary": { "type": "string" }
+    }
+  }
 }

@@ -1,0 +1,31 @@
+# Gitleaks custom config for agy-kit
+# Extends default gitleaks rules with agent-specific patterns
+
+title = "agy-kit Secret Rules"
+
+[[rules]]
+id = "generic-api-key"
+description = "Generic API key leak detection"
+regex = '''(?i)(api[_-]?key|secret[_-]?key|auth[_-]?token)\s*[:=]\s*["'][A-Za-z0-9_\-]{16,}["']'''
+keywords = ["api_key", "secret_key", "auth_token"]
+
+[[rules]]
+id = "jwt-secret"
+description = "Hardcoded JWT secret"
+regex = '''(?i)jwt[_-]?secret\s*[:=]\s*["'][A-Za-z0-9_\-]{8,}["']'''
+keywords = ["jwt_secret", "jwt-secret"]
+
+[[rules]]
+id = "private-key-block"
+description = "Private key block"
+regex = '''-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----'''
+keywords = ["private key", "PRIVATE KEY"]
+
+[allowlist]
+description = "Ignore test fixtures and docs"
+paths = [
+  '''tests/.*fixture.*''',
+  '''docs/.*''',
+  '''\.example$''',
+  '''example/.*''',
+]

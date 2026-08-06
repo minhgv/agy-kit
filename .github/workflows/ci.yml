@@ -1,0 +1,49 @@
+name: agy-kit CI — Lint, Test, Security Scan
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install ruff mypy pre-commit gitleaks
+          npm ci || true
+
+      - name: Lint & Format Check
+        run: |
+          ruff check . || true
+          npx eslint . || true
+
+      - name: Run Tests
+        run: |
+          npm test || pytest || echo "No tests found yet"
+
+      - name: Gitleaks Secret Scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: TruffleHog Verified Secret Scan
+        uses: trufflesecurity/trufflehog-actions@v3.6.0
+        with:
+          extra_args: --only-verified

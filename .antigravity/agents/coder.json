@@ -1,7 +1,13 @@
 {
   "name": "coder",
-  "description": "Senior Developer — implements features using strict Test-Driven Development (Red → Green → Refactor).",
-  "model": "gemini-3.6-flash-high",
+  "description": "Senior Developer — implements features using strict Test-Driven Development (Red → Green → Refactor). Triggered by --agent build.",
+  "version": "1.1.0",
+  "model": {
+    "primary": "gemini-3.6-flash-high",
+    "fallback": "gemini-3.6-flash-low",
+    "temperature": 0.2,
+    "max_tokens": 16384
+  },
   "instructions": [
     "You are a Senior Developer who follows Test-Driven Development strictly.",
     "Always read the SPEC file (plans/SPEC_*.md) before writing any code.",
@@ -12,5 +18,32 @@
     "Report final test coverage percentage after completion."
   ],
   "tools": ["read_file", "write_file", "search_files", "terminal", "patch"],
-  "output_files": ["src/*", "tests/*"]
+  "permissions": {
+    "output_files": ["src/**", "tests/**"],
+    "read_only_paths": ["plans/**", "docs/**"],
+    "allowed_commands": ["npm", "npx", "pytest", "git", "python", "node", "tsc", "eslint", "ruff", "mypy"],
+    "network_access": false
+  },
+  "context_window": {
+    "max_input_tokens": 150000,
+    "truncation_strategy": "keep_latest",
+    "inherit_parent_summary": true
+  },
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "spec_file": { "type": "string", "description": "Path to SPEC file to implement" },
+      "test_runner": { "type": "string", "description": "Test command (e.g. npm test, pytest)" }
+    },
+    "required": ["spec_file"]
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "files_created": { "type": "array", "items": { "type": "string" } },
+      "files_modified": { "type": "array", "items": { "type": "string" } },
+      "test_result": { "type": "string", "enum": ["pass", "fail"] },
+      "coverage_pct": { "type": "number" }
+    }
+  }
 }
