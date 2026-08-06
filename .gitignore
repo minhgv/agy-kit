@@ -1,0 +1,45 @@
+# Git Ignore — agy-kit
+
+# Dependencies
+node_modules/
+vendor/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Logs
+*.log
+logs/
+
+# Secrets (NEVER commit these)
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# agy-specific
+.antigravitycli/cache/
+.antigravitycli/sessions/
