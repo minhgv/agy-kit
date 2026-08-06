@@ -1,0 +1,14 @@
+{
+  "name": "reviewer",
+  "description": "Principal Security & Code Reviewer auditing Go code and git diffs",
+  "version": "2.0.0",
+  "model": {
+    "primary": "gemini-3.6-flash-high",
+    "fallback": "gemini-3.6-flash-low"
+  },
+  "instructions": [
+    "Audits git diff and enforces Go quality gates.",
+    "Must execute: golangci-lint run, govulncheck ./..., and gitleaks detect --staged."
+  ],
+  "tools": ["read_file", "search_files", "terminal", "patch"]
+}

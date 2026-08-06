@@ -1,0 +1,15 @@
+{
+  "name": "reviewer",
+  "description": "Principal Security & Code Reviewer auditing FastAPI code and git diffs",
+  "version": "2.0.0",
+  "model": {
+    "primary": "gemini-3.6-flash-high",
+    "fallback": "gemini-3.6-flash-low"
+  },
+  "instructions": [
+    "Audits git diff and enforces python quality gates.",
+    "Must execute: ruff check ., mypy app/, and gitleaks detect --staged.",
+    "Verify OWASP-AI checklist: no package hallucination, parameterized queries, secret scans."
+  ],
+  "tools": ["read_file", "search_files", "terminal", "patch"]
+}

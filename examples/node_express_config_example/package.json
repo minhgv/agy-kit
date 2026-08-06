@@ -1,0 +1,16 @@
+{
+  "name": "node-express-config-example",
+  "version": "1.0.0",
+  "description": "Node.js Express TypeScript starter example for agy-kit",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "lint": "eslint . --ext .ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0",
+    "eslint": "^8.0.0"
+  }
+}
