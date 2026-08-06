@@ -15,10 +15,12 @@
 #   make check-traceability
 #   make validate-ba
 #   make validate-phase10
+#   make validate-workflows-sync
+#   make validate-phase11
 
 FEATURE ?= unnamed
 
-.PHONY: pipeline spec build gate qa review doctor validate check-boundaries eval-cost test-recovery scan-deps synthesize-skill export-telemetry check-traceability validate-ba validate-phase10 clean
+.PHONY: pipeline spec build gate qa review doctor validate check-boundaries eval-cost test-recovery scan-deps synthesize-skill export-telemetry check-traceability validate-ba validate-phase10 validate-workflows-sync validate-phase11 clean
 
 # Full 5-step pipeline
 pipeline: spec build gate qa review
@@ -49,8 +51,13 @@ doctor:
 	./bin/agy-doctor.sh
 
 # Subagent Specification & Requirement Traceability Validation
-validate: check-traceability
+validate: check-traceability validate-workflows-sync
 	./bin/validate-agents.sh
+
+# Workflow & Skill Synchronization Audit Target
+validate-workflows-sync:
+	@chmod +x bin/validate-workflows-sync.sh
+	@./bin/validate-workflows-sync.sh
 
 # Requirement Traceability Audit Target
 check-traceability:
@@ -65,6 +72,14 @@ validate-ba: check-traceability
 validate-phase10: check-traceability
 	@chmod +x bin/validate-phase10-ba-qa.sh
 	@./bin/validate-phase10-ba-qa.sh
+	@python3 tests/evals/eval_harness.py
+
+# Phase 11 Business Analysis, QA Skills Suite & System Reliability Target
+validate-phase11: check-traceability validate-workflows-sync
+	@chmod +x bin/validate-phase10-ba-qa.sh
+	@./bin/validate-phase10-ba-qa.sh
+	@chmod +x bin/validate-workflows-sync.sh
+	@./bin/validate-workflows-sync.sh
 	@python3 tests/evals/eval_harness.py
 
 # Multi-Agent Workspace Boundary Check
