@@ -1,16 +1,16 @@
 # Parallel Multi-Agent Code Review Workflow (Scatter-Gather Pattern)
 
-Tài liệu này hướng dẫn cách tổ chức quy trình Code Review song song (Parallel Review Workflow) bằng công cụ `delegate_task` trong `agy-kit`. Quy trình sử dụng 3 chuyên gia review song song: **Security Reviewer**, **Performance Reviewer**, và **Style/Clean Code Reviewer**.
+This document guides how to organize a parallel Code Review workflow (Parallel Review Workflow) using the `delegate_task` tool in `agy-kit`. The process uses 3 parallel review specialists: **Security Reviewer**, **Performance Reviewer**, and **Style/Clean Code Reviewer**.
 
 ---
 
-## 1. Mô Hình Tương Tác (Scatter-Gather Pattern)
+## 1. Interaction Model (Scatter-Gather Pattern)
 
 ```mermaid
 graph TD
-    Parent[Lead Reviewer / Orchestrator] -->|1. delegate_task song song| SecAgent[Security Reviewer Agent]
-    Parent -->|1. delegate_task song song| PerfAgent[Performance Reviewer Agent]
-    Parent -->|1. delegate_task song song| StyleAgent[Style & Clean Code Agent]
+    Parent[Lead Reviewer / Orchestrator] -->|1. Parallel delegate_task| SecAgent[Security Reviewer Agent]
+    Parent -->|1. Parallel delegate_task| PerfAgent[Performance Reviewer Agent]
+    Parent -->|1. Parallel delegate_task| StyleAgent[Style & Clean Code Agent]
     
     SecAgent -->|2. Audit OWASP / Secrets / Injection| SecReport[Security Audit Findings]
     PerfAgent -->|2. Audit N+1 / Async / DB Index| PerfReport[Performance Audit Findings]
@@ -23,14 +23,14 @@ graph TD
     Parent -->|4. Final Verdict| PullRequest[Pull Request Approval / Changes Requested]
 ```
 
-- **Giảm thời gian xử lý (Wall-Clock Time):** Chạy song song 3 subagent giúp giảm 65% thời gian review so với chạy nối tiếp.
-- **Phân lập trách nhiệm (Separation of Concerns):** Mỗi subagent tập trung 100% vào chuyên môn riêng, tránh bị xao nhãng hoặc bỏ sót lỗi.
+- **Reduced processing time (Wall-Clock Time):** Running 3 subagents in parallel reduces review time by 65% compared to sequential execution.
+- **Separation of Concerns:** Each subagent focuses 100% on its own domain, avoiding distraction or missed errors.
 
 ---
 
-## 2. Cấu Hình Lệnh `delegate_task` Song Song
+## 2. Parallel `delegate_task` Command Configuration
 
-Lead Reviewer kích hoạt 3 subagent cùng lúc bằng câu lệnh JSON payload:
+The Lead Reviewer triggers 3 subagents simultaneously using a JSON payload command:
 
 ```json
 {
@@ -39,21 +39,21 @@ Lead Reviewer kích hoạt 3 subagent cùng lúc bằng câu lệnh JSON payload
       "id": "review-security",
       "agent": "reviewer-security",
       "model": "gemini-3.6-flash-high",
-      "prompt": "Audit git diff cho các rủi ro bảo mật: OWASP Top 10, SQL Injection, Argon2/Bcrypt hash strength, Hardcoded Secrets, Rate Limiting. Trả về format JSON report.",
+      "prompt": "Audit git diff for security risks: OWASP Top 10, SQL Injection, Argon2/Bcrypt hash strength, Hardcoded Secrets, Rate Limiting. Return JSON report format.",
       "context_files": ["src/auth/auth_service.py", "src/auth/repository.py"]
     },
     {
       "id": "review-performance",
       "agent": "reviewer-performance",
       "model": "gemini-3.6-flash-high",
-      "prompt": "Audit git diff cho hiệu năng: N+1 DB Queries, Missing DB Indexes trên email column, Async I/O blocking call (e.g. sync SMTP in async route), Memory Leaks.",
+      "prompt": "Audit git diff for performance: N+1 DB Queries, Missing DB Indexes on email column, Async I/O blocking call (e.g. sync SMTP in async route), Memory Leaks.",
       "context_files": ["src/auth/repository.py", "src/services/email_service.py"]
     },
     {
       "id": "review-style",
       "agent": "reviewer-style",
       "model": "gemini-3.6-flash-high",
-      "prompt": "Audit git diff cho chất lượng code: PEP 8 compliance, Type Annotations strictness, SOLID/DRY principles, Clear exception handling, Docstrings.",
+      "prompt": "Audit git diff for code quality: PEP 8 compliance, Type Annotations strictness, SOLID/DRY principles, Clear exception handling, Docstrings.",
       "context_files": ["src/auth/auth_controller.py", "src/auth/schemas.py"]
     }
   ]
@@ -62,34 +62,34 @@ Lead Reviewer kích hoạt 3 subagent cùng lúc bằng câu lệnh JSON payload
 
 ---
 
-## 3. Chi Tiết Nhiệm Vụ Của 3 Reviewers
+## 3. Detailed Tasks of the 3 Reviewers
 
 ### Reviewer 1: Security Audit (`reviewer-security`)
 - **Checklist Audit:**
-  - [x] Mật khẩu được mã hóa an toàn? (Bcrypt / Argon2id with salt).
-  - [x] Verification token được sinh an toàn bằng `secrets.token_hex(32)`?
-  - [x] Truy vấn CSDL sử dụng ORM parameterized format (Ngăn chặn SQL Injection)?
-  - [x] Không lộ secrets / API Keys / Mailer Password trong code hay test?
-  - [x] Áp dụng Rate Limiting trên API endpoint `/register`?
+  - [x] Passwords securely hashed? (Bcrypt / Argon2id with salt).
+  - [x] Verification token securely generated using `secrets.token_hex(32)`?
+  - [x] Database queries using ORM parameterized format (Preventing SQL Injection)?
+  - [x] Secrets / API Keys / Mailer Password not exposed in code or tests?
+  - [x] Rate Limiting applied on `/register` API endpoint?
 
 ### Reviewer 2: Performance Audit (`reviewer-performance`)
 - **Checklist Audit:**
-  - [x] Đã đánh chỉ mục (Index) trên trường `users.email` và `verification_token` chưa?
-  - [x] Thao tác gửi email có gây nghẽn route chính không? (Phải dùng async task / BackgroundTasks / Celery).
-  - [x] Truy vấn kiểm tra email tồn tại dùng `exists()` thay vì fetch toàn bộ object user vào memory?
+  - [x] Indexed fields `users.email` and `verification_token`?
+  - [x] Does email dispatch block the main route? (Must use async task / BackgroundTasks / Celery).
+  - [x] Query checking email existence uses `exists()` instead of fetching entire user object into memory?
 
 ### Reviewer 3: Style & Clean Code (`reviewer-style`)
 - **Checklist Audit:**
-  - [x] Tuân thủ PEP 8 formatting (Ruff formatted)?
-  - [x] Type hints đầy đủ 100% trên hàm và tham số (Mypy strict passed)?
-  - [x] Phân tách rõ ràng giữa Controller (HTTP layer) và Service (Business logic)?
-  - [x] Tên biến và hàm rõ nghĩa, không đặt tên viết tắt mơ hồ (`usr`, `chk_tok`)?
+  - [x] Compliant with PEP 8 formatting (Ruff formatted)?
+  - [x] 100% full type hints on functions and parameters (Mypy strict passed)?
+  - [x] Clear separation between Controller (HTTP layer) and Service (Business logic)?
+  - [x] Meaningful variable and function names, no ambiguous abbreviations (`usr`, `chk_tok`)?
 
 ---
 
-## 4. Mẫu Báo Cáo Tổng Hợp (Synthesized Review Output)
+## 4. Synthesized Review Output Template
 
-Sau khi nhận dữ liệu từ 3 subagents, Lead Reviewer tổng hợp báo cáo final:
+After receiving data from the 3 subagents, the Lead Reviewer synthesizes the final report:
 
 ```markdown
 # 🛡️ Consolidated Code Review Report
@@ -100,24 +100,24 @@ Sau khi nhận dữ liệu từ 3 subagents, Lead Reviewer tổng hợp báo cá
 ---
 
 ## 🟢 1. Security Audit Findings (`reviewer-security`)
-- ❌ **CRITICAL [SEC-01]:** `src/services/email_service.py:18` đang hardcode SMTP password mẫu `password123`.
-  - *Fix:* Chuyển sang đọc biến môi trường `os.getenv("SMTP_PASSWORD")`.
-- ✅ **PASS:** Mật khẩu mã hóa Bcrypt cost factor 12 chuẩn.
-- ✅ **PASS:** Parameterized queries qua SQLAlchemy 2.0.
+- ❌ **CRITICAL [SEC-01]:** `src/services/email_service.py:18` hardcodes sample SMTP password `password123`.
+  - *Fix:* Switch to reading environment variable `os.getenv("SMTP_PASSWORD")`.
+- ✅ **PASS:** Password hashed with standard Bcrypt cost factor 12.
+- ✅ **PASS:** Parameterized queries via SQLAlchemy 2.0.
 
 ## 🟡 2. Performance Audit Findings (`reviewer-performance`)
-- ⚠️ **WARNING [PERF-01]:** Hàm `send_verification_email` đang gọi Synchronous SMTP trong async FastAPI route.
-  - *Fix:* Đóng gói hàm gửi email vào `FastAPI.BackgroundTasks` hoặc `aio-smtp`.
-- ✅ **PASS:** Đã bổ sung `idx_users_email` trong DB migration script.
+- ⚠️ **WARNING [PERF-01]:** `send_verification_email` function calls Synchronous SMTP in async FastAPI route.
+  - *Fix:* Wrap email sending function in `FastAPI.BackgroundTasks` or `aio-smtp`.
+- ✅ **PASS:** Added `idx_users_email` in DB migration script.
 
 ## 🔵 3. Style & Architecture Findings (`reviewer-style`)
 - ✅ **PASS:** Ruff check 0 errors, Mypy strict passed 100%.
-- ✅ **PASS:** Phân tách mô hình Layered Architecture chuẩn.
+- ✅ **PASS:** Standard Layered Architecture separation.
 
 ---
 
 ### 🚀 Action Items For Coder Agent:
-1. Sửa lỗi hardcode secret tại `src/services/email_service.py:18`.
-2. Wrap email sending thành `BackgroundTasks`.
-3. Re-run `agy run --agent reviewer` để cấp quyền merge.
+1. Fix hardcoded secret error at `src/services/email_service.py:18`.
+2. Wrap email sending into `BackgroundTasks`.
+3. Re-run `agy run --agent reviewer` to grant merge approval.
 ```

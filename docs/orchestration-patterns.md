@@ -1,6 +1,6 @@
 # agy-kit Orchestration Patterns
 
-> Multi-agent orchestration patterns cho Antigravity CLI, dựa trên research từ Anthropic "Building Effective Agents" và community scaffolds.
+> Multi-agent orchestration patterns for Antigravity CLI, based on research from Anthropic "Building Effective Agents" and community scaffolds.
 
 ## 1. Sequential Pipeline (Default — agy-kit)
 
@@ -8,9 +8,9 @@
 [Planner] → [Coder] → [Quality Gate] → [QA] → [Reviewer]
 ```
 
-- **Khi nào dùng:** SDLC chuẩn, feature development workflow.
-- **Ưu điểm:** Đơn giản, deterministic, dễ debug, output phase trước = input phase sau.
-- **Nhược điểm:** Wall-clock time dài (chạy tuần tự).
+- **When to use:** Standard SDLC, feature development workflow.
+- **Pros:** Simple, deterministic, easy to debug, output of previous phase = input of next phase.
+- **Cons:** Long wall-clock time (runs sequentially).
 
 ## 2. Parallel Scatter-Gather
 
@@ -20,9 +20,9 @@
                     └→ [Style Reviewer]
 ```
 
-- **Khi nào dùng:** Phase review/QA cần nhiều góc nhìn độc lập.
-- **Ưu điểm:** Giảm 60-70% wall-clock time cho phase review/survey.
-- **Cách dùng:** `delegate_task` với batch 3 subagents song song.
+- **When to use:** Review/QA phase requiring multiple independent perspectives.
+- **Pros:** Reduces 60-70% wall-clock time for the review/survey phase.
+- **How to use:** `delegate_task` with a batch of 3 parallel subagents.
 
 ## 3. Hub-and-Spoke (Supervisor-Worker)
 
@@ -34,8 +34,8 @@
    └── re-plans if needed (Re-planning loop)
 ```
 
-- **Khi nào dùng:** Task phức tạp, cần dynamic task decomposition.
-- **Ưu điểm:** Thích ứng với kết quả trung gian, có thể re-plan.
+- **When to use:** Complex tasks requiring dynamic task decomposition.
+- **Pros:** Adapts to intermediate results, capable of re-planning.
 
 ## 4. Nexus Event-Driven
 
@@ -46,13 +46,13 @@
   if Review fail → trigger Coder (with patch suggestions)
 ```
 
-- **Khi nào dùng:** CI/CD integration, automated hotfix loops.
-- **Cần:** LangGraph, CrewAI, hoặc AutoGen state machine.
+- **When to use:** CI/CD integration, automated hotfix loops.
+- **Requires:** LangGraph, CrewAI, or AutoGen state machine.
 
-## Khuyến nghị từ Anthropic
+## Recommendations from Anthropic
 
-> "Orchestration đơn giản mang lại độ tin cậy cao hơn các framework quá phức tạp."
+> "Simple orchestration provides higher reliability than overly complex frameworks."
 > — Building Effective Agents, Anthropic
 
-**Best practice:** Workflows deterministic (Sequential/Parallel) + Evaluator-Optimizer loop.
-agy-kit mặc định dùng Sequential Pipeline + optional Parallel Scatter-Gather cho review phase.
+**Best practice:** Deterministic workflows (Sequential/Parallel) + Evaluator-Optimizer loop.
+agy-kit defaults to Sequential Pipeline + optional Parallel Scatter-Gather for the review phase.

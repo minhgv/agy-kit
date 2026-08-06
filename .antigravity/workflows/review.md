@@ -4,28 +4,28 @@ description: "Review git diff, check DRY/SOLID/security, and create Conventional
 
 # /review
 
-Review toàn bộ thay đổi và tạo commits.
+Review all changes and create commits.
 
 ## Steps
 
 ### Step 1: Pre-Commit Diff Audit
 ```bash
 // turbo
-agy run --agent reviewer "Bạn là Principal Code Reviewer. Thực hiện:
+agy run --agent reviewer "You are a Principal Code Reviewer. Execute:
 
-1. PRE-COMMIT DIFF AUDIT — kiểm tra 5 tiêu chí:
-   - Có dư thừa debug log/print/console.log không?
-   - Có sửa nhầm file ngoài File Mutation Manifest (SPEC) không?
-   - Có phá vỡ kiểu dữ liệu / API contract không?
-   - Code có tuân thủ naming convention không?
-   - Đã viết test bù đắp cho code mới chưa?
+1. PRE-COMMIT DIFF AUDIT — check 5 criteria:
+   - Any leftover debug logs (console.log, print, dd, dump)?
+   - Any files modified OUTSIDE the File Mutation Manifest (SPEC)?
+   - Any changes to function signatures or response schemas?
+   - Naming and error handling consistent with codebase?
+   - Tests written for all new code paths?
 
-2. THREE-STATE VERIFICATION — phân loại mỗi nghi vấn:
-   - CONFIRMED: chỉ ra line + trigger path
-   - PLAUSIBLE: cần thêm test/env để xác nhận
-   - REFUTED: chứng minh không phải lỗi bằng code line
+2. THREE-STATE VERIFICATION — classify each concern:
+   - CONFIRMED: issue exists (cite line number + trigger path)
+   - PLAUSIBLE: needs more testing to confirm
+   - REFUTED: not an issue (cite why)
 
-3. CONVENTIONAL COMMITS — gom các file thay đổi thành commit có ý nghĩa:
+3. CONVENTIONAL COMMITS — group changed files into meaningful commits:
    - feat:, fix:, test:, docs:, refactor:, chore:
-   - KHÔNG commit từng file đơn lẻ."
+   - DO NOT commit single files one by one."
 ```

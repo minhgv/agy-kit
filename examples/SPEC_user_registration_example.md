@@ -9,16 +9,16 @@
 ## 1. Executive Summary
 
 ### Goals
-- Cung cấp API endpoint `POST /api/v1/auth/register` cho phép người dùng mới đăng ký tài khoản bằng email, mật khẩu và họ tên.
-- Tự động mã hóa mật khẩu bằng bcrypt (cost factor = 12) trước khi lưu vào DB.
-- Tự động sinh verification token an toàn (HMAC-SHA256, thời hạn 24h) và gửi email xác nhận chứa link kích hoạt.
-- Cung cấp API endpoint `POST /api/v1/auth/verify-email` nhận token và cập nhật trạng thái `is_verified = true`.
-- Đảm bảo xử lý lỗi validation, trùng lặp email và hết hạn token chuẩn mực HTTP status codes.
+- Provide API endpoint `POST /api/v1/auth/register` allowing new users to register an account with email, password, and full name.
+- Automatically hash passwords using bcrypt (cost factor = 12) before saving to the DB.
+- Automatically generate a secure verification token (HMAC-SHA256, 24h expiration) and send a confirmation email containing an activation link.
+- Provide API endpoint `POST /api/v1/auth/verify-email` to receive the token and update the status `is_verified = true`.
+- Ensure standard HTTP status code error handling for validation errors, duplicate emails, and expired tokens.
 
 ### Non-Goals
-- Đăng nhập qua mạng xã hội (OAuth2 Google/GitHub/Facebook) — sẽ thực hiện ở SPEC riêng.
-- Đặt lại mật khẩu (Password Reset) và xác thực 2 yếu tố (2FA).
-- Cấu hình template HTML email nâng cao (dùng plain-text + HTML template đơn giản ở phase này).
+- Social login (OAuth2 Google/GitHub/Facebook) — to be implemented in a separate SPEC.
+- Password reset and two-factor authentication (2FA).
+- Advanced email HTML template configuration (using plain-text + simple HTML template in this phase).
 
 ---
 
@@ -41,16 +41,16 @@ graph TD
     AuthService -->|12. Update is_verified = true| UserRepo
 ```
 
-- **Luồng dữ liệu chính:**
-  1. Người dùng gửi payload `email`, `password`, `full_name`.
-  2. `AuthController` kiểm tra định dạng dữ liệu (validation filter).
-  3. `AuthService` kiểm tra trùng lặp email trong `UserRepository`.
-  4. Mật khẩu được hash bằng Bcrypt/Argon2.
-  5. User record được tạo với `is_verified = false`.
-  6. `TokenService` tạo SHA-256 token có TTL 24 giờ.
-  7. `EmailService` gửi email chứa link verification dạng `https://app.domain.com/verify?token=<token>`.
-  8. Người dùng nhấn link, client gọi `POST /api/v1/auth/verify-email` với token.
-  9. Hệ thống xác minh token, chuyển `is_verified = true` và hủy token.
+- **Main data flow:**
+  1. User submits payload `email`, `password`, `full_name`.
+  2. `AuthController` validates data format (validation filter).
+  3. `AuthService` checks for duplicate email in `UserRepository`.
+  4. Password is hashed using Bcrypt/Argon2.
+  5. User record is created with `is_verified = false`.
+  6. `TokenService` creates a SHA-256 token with a 24-hour TTL.
+  7. `EmailService` sends an email containing a verification link in the format `https://app.domain.com/verify?token=<token>`.
+  8. User clicks link, client calls `POST /api/v1/auth/verify-email` with token.
+  9. System verifies token, sets `is_verified = true`, and invalidates token.
 
 ---
 
@@ -60,7 +60,7 @@ graph TD
 
 | Method | Path | Request Body | Response Body | Status Codes |
 |--------|------|-------------|---------------|--------------|
-| `POST` | `/api/v1/auth/register` | `{"email": "user@example.com", "password": "SecurePassword123!", "full_name": "Nguyen Van A"}` | `{"status": "success", "message": "User registered. Verification email sent.", "data": {"user_id": "usr_94a2b1c8", "email": "user@example.com", "is_verified": false}}` | `201 Created`, `400 Bad Request`, `409 Conflict`, `422 Unprocessable` |
+| `POST` | `/api/v1/auth/register` | `{"email": "user@example.com", "password": "SecurePassword123!", "full_name": "John Doe"}` | `{"status": "success", "message": "User registered. Verification email sent.", "data": {"user_id": "usr_94a2b1c8", "email": "user@example.com", "is_verified": false}}` | `201 Created`, `400 Bad Request`, `409 Conflict`, `422 Unprocessable` |
 | `POST` | `/api/v1/auth/verify-email` | `{"token": "vft_a8f9c1d2e3f4..."}` | `{"status": "success", "message": "Email verified successfully.", "data": {"verified_at": "2026-08-06T02:15:00Z"}}` | `200 OK`, `400 Bad Request`, `410 Gone` |
 
 ### Types / Schema Definitions (TypeScript / Pydantic equivalent)
@@ -120,7 +120,7 @@ CREATE INDEX idx_users_verification_token ON users(verification_token) WHERE is_
 | Modify | `src/main.py` | Include auth_controller router in FastAPI main app |
 | Create | `tests/test_auth_register.py` | Unit and integration tests for user registration & verification |
 
-> **Ràng buộc:** Agent KHÔNG được sửa file ngoài manifest này.
+> **Constraint:** Agent MUST NOT edit files outside this manifest.
 
 ---
 
@@ -142,23 +142,23 @@ CREATE INDEX idx_users_verification_token ON users(verification_token) WHERE is_
 ### Boundary Values
 - Email length: 5 chars (min `a@b.c`) to 254 chars (RFC standard limit).
 - Password length: 8 chars (min) to 128 chars (max).
-- Full name: Unicode characters, accented letters (e.g., "Nguyễn Văn Ánh"), emojis handled safely.
+- Full name: Unicode characters, accented letters (e.g., "José García"), emojis handled safely.
 
 ---
 
 ## 6. Backward Compatibility & Migration
 
-- [x] **No breaking changes:** Đây là module mới hoàn toàn, không đụng đến schema hay API hiện có.
-- [x] **Reversible DB migration:** File migration hỗ trợ `downgrade()` xóa bảng `users`.
-- [x] **Feature flag:** Cấu hình `ENABLE_USER_REGISTRATION=true` trong enviroment vars.
+- [x] **No breaking changes:** This is a completely new module, touching neither existing schema nor API.
+- [x] **Reversible DB migration:** Migration file supports `downgrade()` dropping the `users` table.
+- [x] **Feature flag:** Configure `ENABLE_USER_REGISTRATION=true` in environment vars.
 
 ---
 
 ## 7. Definition of Done
 
 - [ ] All 8 test cases in Test Plan pass (`pytest tests/test_auth_register.py -vv`).
-- [ ] Code coverage cho module auth ≥ 90%.
-- [ ] Linter & Typecheck: `ruff check .` và `mypy src/` trả lời 0 error, 0 warning.
-- [ ] Security scan: `gitleaks` clean, không hardcode secret key hay SMTP password.
+- [ ] Code coverage for auth module ≥ 90%.
+- [ ] Linter & Typecheck: `ruff check .` and `mypy src/` return 0 error, 0 warning.
+- [ ] Security scan: `gitleaks` clean, no hardcoded secret key or SMTP password.
 - [ ] OWASP-AI audit: Bcrypt salt & cost factor >= 12, token SHA-256 securely generated using `secrets.token_hex(32)`.
-- [ ] Git commit formatted theo Conventional Commits (`feat(auth): add user registration with email verification`).
+- [ ] Git commit formatted according to Conventional Commits (`feat(auth): add user registration with email verification`).

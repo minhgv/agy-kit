@@ -1,24 +1,24 @@
 # Rollback & Recovery — Transactional Code Modifications
 
-> Đảm bảo codebase luôn về trạng thái sạch nếu agent pipeline thất bại.
+> Ensures the codebase always returns to a clean state if the agent pipeline fails.
 
 ## Git Checkpointing Workflow
 
-### Trước khi subagent can thiệp code:
+### Before subagent modifies code:
 ```bash
-# Tạo checkpoint
+# Create checkpoint
 git stash push -m "pre-agent-checkpoint-$(date +%s)" || \
 git commit -am "checkpoint: pre-coder" --allow-empty
 ```
 
-### Sau khi subagent sửa code:
+### After subagent modifies code:
 ```bash
-# Chạy test runner
-npm test  # hoặc pytest, go test, cargo test
+# Run test runner
+npm test  # or pytest, go test, cargo test
 
-# Nếu test FAIL (exit code != 0):
-git reset --hard HEAD~1  # hoặc git stash pop
-# → Codebase về trạng thái nguyên bản sạch
+# If test FAILS (exit code != 0):
+git reset --hard HEAD~1  # or git stash pop
+# → Codebase returns to original clean state
 ```
 
 ## Auto-Rollback on Test Failure
@@ -63,7 +63,7 @@ echo "✅ $STAGE completed successfully."
 
 ## Session Crash Recovery
 
-State lưu tại `.antigravity/checkpoints/state.json`:
+State saved at `.antigravity/checkpoints/state.json`:
 ```json
 {
   "feature": "auth-oauth2",
@@ -74,11 +74,11 @@ State lưu tại `.antigravity/checkpoints/state.json`:
 }
 ```
 
-Khi resume: đọc state → jump đến `next_stage` → restore `git_checkpoint`.
+When resuming: read state → jump to `next_stage` → restore `git_checkpoint`.
 
 ## Clean Slate Retry Pattern
 
-Thay vì sửa trên nền code hỏng:
-1. Rollback code về checkpoint sạch
-2. Gửi log lỗi của lần chạy trước vào prompt tiếp theo
-3. Agent làm lại từ đầu với thông tin về lỗi đã xảy ra
+Instead of fixing on top of broken code:
+1. Rollback code to a clean checkpoint
+2. Pass error logs from the previous run into the next prompt
+3. Agent retries from scratch with information about the occurred error

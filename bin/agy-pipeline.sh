@@ -21,19 +21,19 @@ run_stage() {
     case "$stage" in
         spec)
             agy run $AUTO_APPROVE --agent plan \
-                "Khảo sát và tạo SPEC cho tính năng $FEATURE tại plans/SPEC_${FEATURE}.md theo SPEC_TEMPLATE.md"
+                "Survey and create SPEC for feature $FEATURE at plans/SPEC_${FEATURE}.md following SPEC_TEMPLATE.md"
             ;;
         build)
             agy run $AUTO_APPROVE --agent coder \
-                "Đọc plans/SPEC_${FEATURE}.md. Thực hiện TDD: RED → GREEN → REFACTOR."
+                "Read plans/SPEC_${FEATURE}.md. Execute TDD: RED → GREEN → REFACTOR."
             ;;
         gate)
             agy run $AUTO_APPROVE --agent reviewer \
-                "Chạy lint, typecheck, gitleaks, OWASP-AI checklist. Sửa mọi lỗi."
+                "Run lint, typecheck, gitleaks, OWASP-AI checklist. Fix all issues."
             ;;
         qa)
             agy run $AUTO_APPROVE --agent qa \
-                "Khởi động local server. Chạy E2E test. Thu thập evidence."
+                "Start local server. Run E2E test. Collect evidence."
             ;;
         review)
             agy run $AUTO_APPROVE --agent reviewer \

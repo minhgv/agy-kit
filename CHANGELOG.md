@@ -35,18 +35,18 @@
 ## [0.4.0] — 2026-08-06 (Phase 3 Research Applied)
 
 ### Added
-- `docs/multi-language-adapters.md` — 5 ngôn ngữ (Python, Go, Rust, PHP, Node/TS) với toolchain matrix + monorepo support
+- `docs/multi-language-adapters.md` — 5 languages (Python, Go, Rust, PHP, Node/TS) with toolchain matrix + monorepo support
 - `docs/rollback-recovery.md` — Git checkpoint, auto-rollback, loop prevention, token budget, session crash recovery
-- `bin/safe-agent-run.sh` — Run agy stage với auto-rollback safety net (auto-detect test runner)
+- `bin/safe-agent-run.sh` — Run agy stage with auto-rollback safety net (auto-detect test runner)
 - `.antigravity/workflows/safe-pipeline.md` — Rollback-aware pipeline workflow (6 slash commands total)
-- `examples/SPEC_user_registration_example.md` — Complete SPEC mẫu cho REST API
+- `examples/SPEC_user_registration_example.md` — Complete sample SPEC for REST API
 - `examples/python_fastapi_config_example/` — Config Python/FastAPI subagents
 - `examples/error_recovery_scenario.md` — Error recovery demo (test fail → agent fix)
 - `examples/parallel_review_workflow.md` — Scatter-gather 3 reviewers (security, performance, style)
-- `examples/getting_started_tutorial.md` — Tutorial từ zero → first feature
+- `examples/getting_started_tutorial.md` — Tutorial from zero → first feature
 
 ### Changed
-- `AGENTS.md` — Thêm Section 7 (Rollback & Recovery Safety) + Section 8 (Multi-Language Support)
+- `AGENTS.md` — Added Section 7 (Rollback & Recovery Safety) + Section 8 (Multi-Language Support)
 
 ### Research Sources (Phase 3)
 - Multi-language toolchain adapters (ruff, golangci-lint, clippy, phpstan, eslint/biome)

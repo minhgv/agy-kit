@@ -1,18 +1,18 @@
-# Hướng Dẫn Bắt Đầu: Từ Zero Đến Feature Đầu Tiên Với agy-kit
+# Getting Started Guide: From Zero to First Feature with agy-kit
 
-Chào mừng bạn đến với **agy-kit** — bộ khung kĩ thuật Agent (Agent Engineering Kit) tối ưu hóa cho Antigravity CLI (`agy`). Tutorial này sẽ hướng dẫn bạn từ chưa có gì đến triển khai hoàn chỉnh một tính năng REST API theo đúng 5 bước tiêu chuẩn.
+Welcome to **agy-kit** — an Agent Engineering Kit optimized for the Antigravity CLI (`agy`). This tutorial will guide you from scratch to fully deploying a REST API feature following the standard 5 steps.
 
 ---
 
-## 📋 Chuẩn Bị Môi Trường
+## 📋 Environment Setup
 
-Yêu cầu hệ thống:
-- Antigravity CLI (`agy`) v2.0 trở lên
-- Git & Python 3.11+ (hoặc Node.js / Go tùy stack của bạn)
-- Thư viện `uv` (cho Python) hoặc `npm` / `pnpm` (cho JS/TS)
+System requirements:
+- Antigravity CLI (`agy`) v2.0 or higher
+- Git & Python 3.11+ (or Node.js / Go depending on your stack)
+- `uv` library (for Python) or `npm` / `pnpm` (for JS/TS)
 
 ```bash
-# 1. Cài đặt agy-kit vào dự án của bạn
+# 1. Install agy-kit into your project
 mkdir my-api-service && cd my-api-service
 git init
 
@@ -24,63 +24,63 @@ rm -rf /tmp/agy-kit
 
 ---
 
-## 5 Bước Xây Dựng Feature: `GET /api/v1/healthcheck`
+## 5 Steps to Build a Feature: `GET /api/v1/healthcheck`
 
 ---
 
-### Bước 1: Lập Kế Hoạch & Viết SPEC (`Planner Agent`)
+### Step 1: Planning & Writing SPEC (`Planner Agent`)
 
-Quy tắc cốt lõi của agy-kit: **Không gõ 1 dòng code nào trước khi có SPEC được duyệt.**
+Core rule of agy-kit: **Do not type a single line of code before a SPEC is approved.**
 
 ```bash
-agy run --agent plan "Khảo sát dự án và tạo SPEC cho tính năng GET /api/v1/healthcheck trả về status OK, uptime, và version. Lưu tại plans/SPEC_healthcheck.md"
+agy run --agent plan "Inspect the project and create a SPEC for the GET /api/v1/healthcheck feature returning status OK, uptime, and version. Save at plans/SPEC_healthcheck.md"
 ```
 
-Agent `planner` sẽ khảo sát codebase và tự động sinh file `plans/SPEC_healthcheck.md` đầy đủ Use-cases, API schema, và File Mutation Manifest.
+The `planner` agent will inspect the codebase and automatically generate `plans/SPEC_healthcheck.md` with full Use-cases, API schema, and File Mutation Manifest.
 
 ---
 
-### Bước 2: Triển Khai TDD Red-Green-Refactor (`Coder Agent`)
+### Step 2: TDD Red-Green-Refactor Implementation (`Coder Agent`)
 
-Kích hoạt Subagent `coder` để thực hiện TDD:
+Trigger the `coder` subagent to perform TDD:
 
 ```bash
-agy run --agent coder "Đọc plans/SPEC_healthcheck.md. Thực hiện TDD: Viết test RED trước trong tests/test_healthcheck.py, chạy test xác nhận FAIL. Sau đó viết logic GREEN trong app/main.py. Cuối cùng Refactor."
+agy run --agent coder "Read plans/SPEC_healthcheck.md. Perform TDD: Write RED test first in tests/test_healthcheck.py, run test to confirm FAIL. Then write GREEN logic in app/main.py. Finally Refactor."
 ```
 
-**Diễn biến của Coder Agent:**
-1. Tạo `tests/test_healthcheck.py` kiểm tra status 200 và response JSON `{"status": "ok"}`.
-2. Chạy `pytest` -> Test **FAIL (RED)** (do endpoint chưa tồn tại).
-3. Sửa `app/main.py` thêm router `GET /api/v1/healthcheck`.
-4. Chạy lại `pytest` -> Test **PASS (GREEN)**.
-5. Tự động chạy `ruff check app/` và `mypy app/` để refactor sạch sẽ.
+**Coder Agent Execution Process:**
+1. Create `tests/test_healthcheck.py` checking status 200 and response JSON `{"status": "ok"}`.
+2. Run `pytest` -> Test **FAIL (RED)** (because endpoint does not exist yet).
+3. Edit `app/main.py` adding `GET /api/v1/healthcheck` router.
+4. Re-run `pytest` -> Test **PASS (GREEN)**.
+5. Automatically run `ruff check app/` and `mypy app/` for clean refactoring.
 
 ---
 
-### Bước 3: Chạy Cổng Kiểm Soát Chất Lượng (`Reviewer Agent`)
+### Step 3: Running Quality Gate Control (`Reviewer Agent`)
 
-Trước khi commit, chạy audit bảo mật và linting:
+Before committing, run security audit and linting:
 
 ```bash
-agy run --agent reviewer "Audit git diff hiện tại. Chạy ruff check, mypy strict, và quét secret gitleaks. Kiểm tra OWASP-AI checklist."
+agy run --agent reviewer "Audit current git diff. Run ruff check, mypy strict, and scan secrets with gitleaks. Check OWASP-AI checklist."
 ```
 
-Reviewer Agent sẽ kiểm tra:
-- Có hardcode API key / Password nào trong code không?
-- Type hint có bị thiếu không?
-- Có hàm chưa được test không?
+Reviewer Agent will check:
+- Are there any hardcoded API keys / passwords in the code?
+- Are type hints missing?
+- Are there untested functions?
 
 ---
 
-### Bước 4: Kiểm Thử E2E Dogfooding (`QA Agent`)
+### Step 4: E2E Dogfooding Testing (`QA Agent`)
 
-Cho phép QA Agent khởi động server thật và cURL kiểm tra trực tiếp:
+Allow QA Agent to start real server and cURL test directly:
 
 ```bash
-agy run --agent qa "Khởi động FastAPI app bằng uvicorn. Chạy cURL test endpoint GET /api/v1/healthcheck. Thu thập bằng chứng HTTP headers và status code."
+agy run --agent qa "Start FastAPI app using uvicorn. Run cURL test for endpoint GET /api/v1/healthcheck. Collect evidence of HTTP headers and status code."
 ```
 
-QA Agent sẽ xuất log bằng chứng E2E:
+QA Agent will output E2E evidence log:
 ```text
 HTTP/1.1 200 OK
 content-type: application/json
@@ -91,16 +91,16 @@ date: Thu, 06 Aug 2026 02:25:00 GMT
 
 ---
 
-### Bước 5: Review & Commit Theo Convention (`Reviewer Agent`)
+### Step 5: Review & Commit Following Convention (`Reviewer Agent`)
 
-Khi mọi cổng kiểm soát đã đạt, tiến hành gom commit chuẩn:
+When all quality gates pass, proceed to group standard commit:
 
 ```bash
 git add .
-agy run --agent review "Tạo git commit theo định dạng Conventional Commits cho feature healthcheck"
+agy run --agent review "Create git commit formatted according to Conventional Commits for healthcheck feature"
 ```
 
-Kết quả commit:
+Commit result:
 ```text
 feat(healthcheck): add GET /api/v1/healthcheck endpoint with uptime and version
 ```
@@ -109,8 +109,8 @@ feat(healthcheck): add GET /api/v1/healthcheck endpoint with uptime and version
 
 ## 🎯 Summary Cheatsheet
 
-| Giai đoạn | Lệnh `agy` tương ứng | Sản phẩm đầu ra |
-|-----------|----------------------|-----------------|
+| Phase | Corresponding `agy` Command | Output Artifact |
+|-------|----------------------|-----------------|
 | **1. Plan** | `agy run --agent plan "..."` | `plans/SPEC_<feature>.md` |
 | **2. TDD** | `agy run --agent coder "..."` | Unit/Integration Tests + Source code |
 | **3. Gate** | `agy run --agent reviewer "..."` | Lint / Typecheck / Security Audit Report |

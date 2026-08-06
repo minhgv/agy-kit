@@ -1,27 +1,27 @@
 # TDD Workflow Skill — Red → Green → Refactor
 
 ## Trigger
-- Bất kỳ tác vụ code mới nào yêu cầu viết logic.
+- Any new coding task that requires writing logic.
 
 ## Procedure
 
 ### RED Phase
-1. Đọc SPEC file (`plans/SPEC_*.md`) để hiểu requirements.
-2. Viết Unit Test + Integration Test mô phỏng toàn bộ requirements.
-3. Chạy test runner: `npm run test` / `pytest` / `php artisan test`.
-4. **Verify:** Tất cả test mới phải FAIL (vì chưa có logic). Nếu test PASS ngay → test sai hoặc logic đã tồn tại.
+1. Read the SPEC file (`plans/SPEC_*.md`) to understand requirements.
+2. Write Unit Test + Integration Test simulating all requirements.
+3. Run test runner: `npm run test` / `pytest` / `php artisan test`.
+4. **Verify:** All new tests must FAIL (no logic yet). If a test PASSES immediately → test is wrong or logic already exists.
 
 ### GREEN Phase
-1. Viết code logic tối thiểu để PASS tất cả test.
-2. Không viết tính năng thừa ngoài SPEC.
-3. Chạy lại test → **Verify:** 100% PASS.
+1. Write minimal code logic to PASS all tests.
+2. Do not implement features outside the SPEC.
+3. Re-run tests → **Verify:** 100% PASS.
 
 ### REFACTOR Phase
-1. Tối ưu: tách hàm dài, đặt tên biến rõ ràng, gỡ code trùng (DRY).
-2. Chạy lại test sau mỗi thay đổi → **Verify:** ALL TESTS STILL PASS.
-3. Báo cáo final coverage.
+1. Optimize: extract long functions, rename variables for clarity, remove duplicate code (DRY).
+2. Re-run tests after each change → **Verify:** ALL TESTS STILL PASS.
+3. Report final coverage.
 
 ## Pitfalls
-- Không bỏ qua RED phase — nếu logic phức tạp, chia nhỏ thành nhiều test.
-- Nếu test khó viết → SPEC có thể thiếu chi tiết → quay lại Planner.
-- Coverage threshold: ≥80% cho code mới.
+- Do not skip the RED phase — if logic is complex, break it into smaller tests.
+- If tests are hard to write → SPEC may lack detail → return to Planner.
+- Coverage threshold: ≥80% for new code.

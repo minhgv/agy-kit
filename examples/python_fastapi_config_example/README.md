@@ -1,8 +1,8 @@
-# Cấu Hình agy-kit cho Dự Án Python / FastAPI
+# agy-kit Configuration for Python / FastAPI Projects
 
-Thư mục này hướng dẫn và cung cấp mẫu cấu hình chuẩn dành cho dự án Python / FastAPI áp dụng bộ công cụ `agy-kit`.
+This directory provides guidance and standard configuration templates for Python / FastAPI projects applying the `agy-kit` toolset.
 
-## Cấu trúc Cấu hình
+## Configuration Structure
 
 ```text
 python_fastapi_config_example/
@@ -18,10 +18,10 @@ python_fastapi_config_example/
 └── README.md
 ```
 
-## Các Công Cụ & Linters Bắt Buộc
+## Required Tools & Linters
 
-- **Linter & Formatter:** `ruff` (Cực nhanh, thay thế flake8, black, isort).
-- **Static Type Checker:** `mypy` (Strict mode cho type annotations).
+- **Linter & Formatter:** `ruff` (Extremely fast, replaces flake8, black, isort).
+- **Static Type Checker:** `mypy` (Strict mode for type annotations).
 - **Test Runner & Coverage:** `pytest`, `pytest-cov`, `httpx` (Asynchronous API client testing).
 - **Security Audit:** `gitleaks` (Scans hardcoded API keys), `bandit` (Python security issues).
 
@@ -99,16 +99,16 @@ python_fastapi_config_example/
 }
 ```
 
-## Setup & Running Commands
+## Setup & Execution Commands
 
 ```bash
-# 1. Khởi tạo virtualenv & cài dependency
+# 1. Initialize virtualenv & install dependencies
 uv venv && source .venv/bin/activate
 uv pip install fastapi uvicorn pytest pytest-cov httpx ruff mypy bandit
 
-# 2. Chạy pipeline TDD bằng agy-kit
-agy run --agent coder "Đọc plans/SPEC_user_registration.md. Thực hiện TDD cho feature register"
+# 2. Run TDD pipeline using agy-kit
+agy run --agent coder "Read plans/SPEC_user_registration.md. Implement TDD for register feature"
 
-# 3. Chạy Quality Gate audit
-agy run --agent reviewer "Audit git diff, chạy ruff, mypy và gitleaks"
+# 3. Run Quality Gate audit
+agy run --agent reviewer "Audit git diff, run ruff, mypy, and gitleaks"
 ```

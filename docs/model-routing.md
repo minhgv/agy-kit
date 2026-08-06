@@ -1,21 +1,21 @@
 # agy-kit — Model Routing Strategy
 
-> Tối ưu chi phí và chất lượng bằng cách dùng model khác nhau cho từng subagent role.
+> Optimize cost and quality by using different models for each subagent role.
 
 ## Routing Matrix
 
-| Role | Model (Primary) | Model (Fallback) | Temperature | Lý do |
-|------|-----------------|-------------------|-------------|-------|
-| **Planner** | gemini-3.6-flash-high | gemini-3.6-flash-low | 0.4 | Cần system reasoning cao, context lớn, phân tích dependency chính xác |
-| **Coder** | gemini-3.6-flash-high | gemini-3.6-flash-low | 0.2 | Coding benchmark cao, sinh code nhanh, tuân thủ TDD strict |
-| **Reviewer** | gemini-3.6-flash-high | gemini-3.6-flash-low | 0.3 | Critical auditing, OWASP detection, DRY/SOLID check, hallucination thấp |
-| **QA** | gemini-3.6-flash-low | gemini-3.6-flash-low | 0.1 | Tốc độ cực nhanh, chi phí thấp, chỉ chạy cURL/E2E + thu thập evidence |
+| Role | Model (Primary) | Model (Fallback) | Temperature | Reason |
+|------|-----------------|-------------------|-------------|--------|
+| **Planner** | gemini-3.6-flash-high | gemini-3.6-flash-low | 0.4 | Requires high system reasoning, large context, accurate dependency analysis |
+| **Coder** | gemini-3.6-flash-high | gemini-3.6-flash-low | 0.2 | High coding benchmark, fast code generation, strict TDD compliance |
+| **Reviewer** | gemini-3.6-flash-high | gemini-3.6-flash-low | 0.3 | Critical auditing, OWASP detection, DRY/SOLID check, low hallucination |
+| **QA** | gemini-3.6-flash-low | gemini-3.6-flash-low | 0.1 | Extremely fast speed, low cost, runs cURL/E2E + collects evidence |
 
 ## Cost Optimization
 
-- Dùng Flash-low cho QA → tiết kiệm ~75-80% token cost so với dùng flagship cho toàn pipeline.
-- Planner & Coder cần Flash-high vì cần reasoning sâu.
-- Reviewer cần Flash-high để catch security issues.
+- Use Flash-low for QA → save ~75-80% token cost compared to using flagship for the entire pipeline.
+- Planner & Coder need Flash-high because deep reasoning is required.
+- Reviewer needs Flash-high to catch security issues.
 
 ## Dynamic Fallback Cascading
 
@@ -26,15 +26,15 @@
 }
 ```
 
-- Nếu primary bị HTTP 429 (rate limit) hoặc 503 (overloaded) → tự động fallback sang secondary.
-- Workflow không bị gián đoạn.
+- If primary hits HTTP 429 (rate limit) or 503 (overloaded) → automatically fallback to secondary.
+- Workflow is not interrupted.
 
 ## OpenTelemetry Tracing
 
-Monitor model performance qua 5 core agent spans:
-1. `create_agent` — khởi tạo + load spec/tools
+Monitor model performance via 5 core agent spans:
+1. `create_agent` — initialization + load spec/tools
 2. `invoke_agent_client` — caller → subagent call
-3. `invoke_agent_internal` — reasoning loop bên trong subagent
+3. `invoke_agent_internal` — internal reasoning loop inside subagent
 4. `invoke_workflow` — multi-agent orchestration span
 5. `execute_tool` — tool execution (read_file, terminal, patch...)
 

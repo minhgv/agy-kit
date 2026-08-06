@@ -17,25 +17,25 @@ git stash push -m "pre-pipeline-$(date +%s)" || git commit -am "checkpoint: pre-
 ### Step 1: Plan
 ```bash
 // turbo
-agy run --agent plan "Khảo sát và tạo SPEC cho $ARGUMENTS tại plans/SPEC_$(echo $ARGUMENTS | tr ' ' '-').md"
+agy run --agent plan "Survey and create SPEC for $ARGUMENTS at plans/SPEC_$(echo $ARGUMENTS | tr ' ' '-').md"
 ```
 
 ### Step 2: TDD (with rollback on failure)
 ```bash
 // turbo
-./bin/safe-agent-run.sh coder "$ARGUMENTS" "Đọc SPEC. Thực hiện TDD: RED → GREEN → REFACTOR."
+./bin/safe-agent-run.sh coder "$ARGUMENTS" "Read SPEC. Execute TDD: RED → GREEN → REFACTOR."
 ```
 
 ### Step 3: Quality Gate (with rollback on lint failure)
 ```bash
 // turbo
-agy run --agent reviewer "Lint + typecheck + gitleaks + OWASP-AI checklist. Sửa mọi lỗi."
+agy run --agent reviewer "Lint + typecheck + gitleaks + OWASP-AI checklist. Fix all issues."
 ```
 
 ### Step 4: E2E QA (with rollback on test failure)
 ```bash
 // turbo
-agy run --agent qa "Khởi động local server. Chạy E2E test. Thu thập evidence."
+agy run --agent qa "Start local server. Run E2E test. Collect evidence."
 ```
 
 ### Step 5: Review & Commit

@@ -1,6 +1,6 @@
 # Multi-Language Toolchain Adapters
 
-> Tự động phát hiện ngôn ngữ và áp dụng toolchain phù hợp. agy-kit hỗ trợ 5 ngôn ngữ.
+> Automatically detect language and apply appropriate toolchain. agy-kit supports 5 languages.
 
 ## Detection Matrix
 
@@ -68,9 +68,9 @@
 }
 ```
 
-## Usage trong Subagent Configs
+## Usage in Subagent Configs
 
-Inject toolchain commands vào `coder` và `reviewer` subagent `instructions` để tránh agent đoán sai lệnh:
+Inject toolchain commands into `coder` and `reviewer` subagent `instructions` to prevent agents from misguessing commands:
 
 ```json
 {
@@ -86,5 +86,5 @@ Inject toolchain commands vào `coder` và `reviewer` subagent `instructions` đ
 ## Monorepo Support
 
 - **Hierarchical context scoping:** `packages/auth/AGENTS.md` → root `AGENTS.md` (auto-resolve up the tree).
-- **Path boundary isolation:** `"allow_write": ["packages/auth/**"]` trong subagent permissions.
+- **Path boundary isolation:** `"allow_write": ["packages/auth/**"]` in subagent permissions.
 - **Scoped execution:** `turbo --filter=@app/auth`, `pnpm --filter`, `cargo test -p`.

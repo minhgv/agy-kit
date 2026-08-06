@@ -9,11 +9,11 @@
 ## 1. Executive Summary
 
 ### Goals
-- [Mục tiêu chính của tính năng]
-- [Use-case cụ thể]
+- [Primary objective of the feature]
+- [Specific use-case]
 
 ### Non-Goals
-- [Ranh giới — những gì KHÔNG làm trong phase này]
+- [Boundary — what is NOT included in this phase]
 
 ---
 
@@ -25,8 +25,8 @@ graph LR
     B --> C[Output]
 ```
 
-- **Luồng dữ liệu chính:** ...
-- **Components liên quan:** ...
+- **Main data flow:** ...
+- **Related components:** ...
 
 ---
 
@@ -60,7 +60,7 @@ interface Resource {
 | Modify | `src/routes/index.ts` | Register new route |
 | Create | `tests/resource.test.ts` | Unit + integration tests |
 
-> **Ràng buộc:** Agent KHÔNG được sửa file ngoài manifest này.
+> **Constraint:** Agent MUST NOT modify files outside this manifest.
 
 ---
 

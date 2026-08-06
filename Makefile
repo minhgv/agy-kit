@@ -18,23 +18,23 @@ pipeline: spec build gate qa review
 
 # Step 1: Create SPEC
 spec:
-	agy run --agent plan "Khảo sát và tạo SPEC cho tính năng $(FEATURE) tại plans/SPEC_$(FEATURE).md theo SPEC_TEMPLATE.md"
+	agy run --agent plan "Survey and create SPEC for feature $(FEATURE) at plans/SPEC_$(FEATURE).md following SPEC_TEMPLATE.md"
 
 # Step 2: TDD Implementation
 build:
-	agy run --agent coder "Đọc plans/SPEC_$(FEATURE).md. Thực hiện TDD: RED → GREEN → REFACTOR. Chỉ sửa file trong File Mutation Manifest."
+	agy run --agent coder "Read plans/SPEC_$(FEATURE).md. Execute TDD: RED → GREEN → REFACTOR. Only modify files in the File Mutation Manifest."
 
 # Step 3: Quality Gate (lint + security)
 gate:
-	agy run --agent reviewer "Chạy lint, typecheck, gitleaks, OWASP-AI checklist. Sửa mọi lỗi."
+	agy run --agent reviewer "Run lint, typecheck, gitleaks, OWASP-AI checklist. Fix all issues."
 
 # Step 4: E2E QA
 qa:
-	agy run --agent qa "Khởi động local server. Chạy cURL/Playwright test theo Test Plan. Thu thập evidence."
+	agy run --agent qa "Start local server. Run cURL/Playwright tests per Test Plan. Collect evidence."
 
 # Step 5: Review & Commit
 review:
-	agy run --agent reviewer "Review git diff. Pre-commit audit + 3-state verification. Gom Conventional Commits."
+	agy run --agent reviewer "Review git diff. Pre-commit audit + 3-state verification. Group Conventional Commits."
 
 # Clean QA evidence
 clean:

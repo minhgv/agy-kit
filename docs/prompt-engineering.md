@@ -4,7 +4,7 @@
 
 ## 1. Architect / Editor Split Pattern
 
-Tách vai trò khảo sát (Architect) và thực thi (Editor):
+Separate exploration (Architect) and execution (Editor) roles:
 
 **Architect (Read-Only Plan Mode):**
 ```
