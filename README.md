@@ -207,4 +207,4 @@ make scan-deps           # Run OWASP-AI supply chain security scan
 
 ## License
 
-[MIT](LICENSE) © 2026 Minh Vu
+[MIT](LICENSE) © 2026 MinhGV
