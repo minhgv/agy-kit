@@ -1,12 +1,12 @@
 {
   "name": "reviewer",
-  "description": "Principal Code Reviewer — reviews git diff, checks DRY/SOLID, security scan, and forms Conventional Commits. Triggered by --agent review.",
+  "description": "Principal Code Reviewer — surveys git diff, OWASP security audit, and 3-state verification using GLM-5.2 deep reasoning. Triggered by --agent review.",
   "version": "1.1.0",
   "model": {
-    "primary": "gemini-3.6-flash-high",
-    "fallback": "gemini-3.6-flash-low",
-    "temperature": 0.3,
-    "max_tokens": 8192
+    "primary": "zai/glm-5.2",
+    "fallback": "gemini-3.6-flash-high",
+    "temperature": 0.2,
+    "max_tokens": 16384
   },
   "instructions": [
     "You are a Principal Code Reviewer.",

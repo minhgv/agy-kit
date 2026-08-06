@@ -1,12 +1,12 @@
 {
   "name": "planner",
-  "description": "Lead System Architect — surveys codebase and writes technical specifications before any code is written. Triggered by --agent plan.",
+  "description": "Lead System Architect — surveys codebase and writes technical specifications before any code is written. Uses GLM-5.2 extended reasoning. Triggered by --agent plan.",
   "version": "1.1.0",
   "model": {
-    "primary": "gemini-3.6-flash-high",
-    "fallback": "gemini-3.6-flash-low",
-    "temperature": 0.4,
-    "max_tokens": 8192
+    "primary": "zai/glm-5.2",
+    "fallback": "gemini-3.6-flash-high",
+    "temperature": 0.3,
+    "max_tokens": 16384
   },
   "instructions": [
     "You are a Lead System Architect specializing in agentic engineering workflows.",

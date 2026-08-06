@@ -1,41 +1,47 @@
 # agy-kit — Model Routing Strategy
 
-> Optimize cost and quality by using different models for each subagent role.
+> **Architect-Executor Hybrid Pattern:** Utilize deep extended reasoning (`zai/glm-5.2`) for evaluation, analysis, and planning; leverage high-speed execution (`gemini-3.6-flash-high`) for code generation and testing.
 
-## Routing Matrix
+---
 
-| Role | Model (Primary) | Model (Fallback) | Temperature | Reason |
-|------|-----------------|-------------------|-------------|--------|
-| **Planner** | gemini-3.6-flash-high | gemini-3.6-flash-low | 0.4 | Requires high system reasoning, large context, accurate dependency analysis |
-| **Coder** | gemini-3.6-flash-high | gemini-3.6-flash-low | 0.2 | High coding benchmark, fast code generation, strict TDD compliance |
-| **Reviewer** | gemini-3.6-flash-high | gemini-3.6-flash-low | 0.3 | Critical auditing, OWASP detection, DRY/SOLID check, low hallucination |
-| **QA** | gemini-3.6-flash-low | gemini-3.6-flash-low | 0.1 | Extremely fast speed, low cost, runs cURL/E2E + collects evidence |
+## 1. Routing Matrix
 
-## Cost Optimization
+| Role | Subagent | Primary Model | Fallback Model | Max Tokens | Rationale |
+|------|----------|---------------|----------------|------------|-----------|
+| **Architect / Planner** | `planner` | `zai/glm-5.2` | `gemini-3.6-flash-high` | 16,384 | Deep extended reasoning (Thinking Mode) for architectural design, system boundary analysis, and SPEC authoring |
+| **Executor / Developer** | `coder` | `gemini-3.6-flash-high` | `gemini-3.6-flash-low` | 16,384 | High coding throughput, fast tool execution, TDD cycle (RED → GREEN → REFACTOR) |
+| **Auditor / Evaluator** | `reviewer` | `zai/glm-5.2` | `gemini-3.6-flash-high` | 16,384 | Extended reasoning for OWASP-AI security audit, 3-state verification, and DRY/SOLID code review |
+| **QA / Tester** | `qa` | `gemini-3.6-flash-high` | `gemini-3.6-flash-low` | 8,192 | Fast execution speed, cURL/Playwright test runner, log evidence collection |
 
-- Use Flash-low for QA → save ~75-80% token cost compared to using flagship for the entire pipeline.
-- Planner & Coder need Flash-high because deep reasoning is required.
-- Reviewer needs Flash-high to catch security issues.
+---
 
-## Dynamic Fallback Cascading
+## 2. Why `zai/glm-5.2` for Planning & Review?
+
+1. **Native Extended Reasoning (Thinking Mode):**
+   - `glm-5.2` generates detailed internal monologues (`reasoning_tokens`) analyzing edge cases and dependency risks before emitting the final text.
+   - Ideal for `planner` (writing SPEC documents) and `reviewer` (auditing git diffs).
+2. **Token Budgeting for Thinking Models:**
+   - Because `glm-5.2` consumes 300–600 tokens for internal reasoning, `max_tokens` is configured to `16384` to prevent truncation.
+
+---
+
+## 3. Dynamic Fallback Cascading
 
 ```json
 "model": {
-  "primary": "gemini-3.6-flash-high",
-  "fallback": "gemini-3.6-flash-low"
+  "primary": "zai/glm-5.2",
+  "fallback": "gemini-3.6-flash-high"
 }
 ```
 
-- If primary hits HTTP 429 (rate limit) or 503 (overloaded) → automatically fallback to secondary.
-- Workflow is not interrupted.
+- If `zai/glm-5.2` hits rate limit (HTTP 429) or quota reset window → automatically fall back to `gemini-3.6-flash-high`.
+- If delegation fails or quota is exhausted, fall back to `opencode-go/mimo-v2.5`.
 
-## OpenTelemetry Tracing
+---
 
-Monitor model performance via 5 core agent spans:
-1. `create_agent` — initialization + load spec/tools
-2. `invoke_agent_client` — caller → subagent call
-3. `invoke_agent_internal` — internal reasoning loop inside subagent
-4. `invoke_workflow` — multi-agent orchestration span
-5. `execute_tool` — tool execution (read_file, terminal, patch...)
+## 4. OpenTelemetry Tracing & Observability
 
-Track attributes: `gen_ai.request.model`, `gen_ai.agent.name`, `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`.
+`agy` tracks token usage separately for reasoning vs output:
+- `gen_ai.usage.input_tokens`
+- `gen_ai.usage.output_tokens`
+- `gen_ai.usage.reasoning_tokens` (for `glm-5.2`)
