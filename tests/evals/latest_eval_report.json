@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T04:08:05.275174",
+  "timestamp": "2026-08-06T04:09:32.176134",
   "scaffold": "agy-kit",
   "target_cli": "Antigravity CLI (agy)",
   "metrics": {
@@ -82,50 +82,5 @@
     },
     "pass_at_1_tdd_target": "\u2265 85%",
     "spec_compliance_target": "100%"
-  },
-  "telemetry": {
-    "timestamp": "2026-08-06T04:08:07.862009",
-    "token_summary": {
-      "prompt_tokens": 90000,
-      "completion_tokens": 17000,
-      "total_tokens": 107000,
-      "total_cost_usd": 0.063125
-    },
-    "latency_summary_ms": {
-      "p50": 320,
-      "p95": 610,
-      "p99": 610
-    },
-    "stages": [
-      {
-        "stage": "planner",
-        "model": "zai/glm-5.2",
-        "tokens": 18000,
-        "cost_usd": 0.024
-      },
-      {
-        "stage": "coder",
-        "model": "gemini-3.6-flash-high",
-        "tokens": 53000,
-        "cost_usd": 0.005775
-      },
-      {
-        "stage": "reviewer",
-        "model": "zai/glm-5.2",
-        "tokens": 24000,
-        "cost_usd": 0.032
-      },
-      {
-        "stage": "qa",
-        "model": "gemini-3.6-flash-high",
-        "tokens": 12000,
-        "cost_usd": 0.00135
-      }
-    ],
-    "success_metrics": {
-      "pass_at_1_tdd_rate": "100%",
-      "flaky_test_retries": 0,
-      "boundary_violations": 0
-    }
   }
 }
