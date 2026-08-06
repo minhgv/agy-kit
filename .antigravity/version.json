@@ -1,7 +1,7 @@
 {
-  "scaffold_version": "0.6.0",
+  "scaffold_version": "0.7.0",
   "schema_version": "1.1",
   "compatible_cli_range": "agy >= 1.1.0",
   "target_platform": "Antigravity CLI (agy)",
-  "last_updated": "2026-08-06T03:00:00Z"
+  "last_updated": "2026-08-06T05:00:00Z"
 }

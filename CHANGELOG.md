@@ -1,5 +1,28 @@
 # agy-kit — Changelog
 
+## [0.7.0] — 2026-08-06 (Phase 13 — Release Polish & Documentation)
+
+### Added
+- **Architect-Executor Model Routing:** Configured `zai/glm-5.2` for deep reasoning (`planner`, `reviewer`) and `gemini-3.6-flash-high` for high-throughput execution (`coder`, `qa`).
+- **Complete 9 Skills Suite:** Added and synchronized `tdd-workflow`, `quality-gate`, `ba-expert`, `qa-auditor`, `qa-test-gen`, `qa-reproducer`, `brainstorming`, `grill-me`, and `problem-solving` skills across `.hermes/skills/` and `.antigravity/skills/`.
+- **Complete 9 Slash Workflows:** Added native slash commands `/pipeline`, `/plan`, `/gate`, `/review`, `/qa`, `/safe-pipeline`, `/brainstorm`, `/grill`, `/solve` under `.antigravity/workflows/`.
+- **10 Executable Automation Scripts:** Added `agy-pipeline.sh`, `safe-agent-run.sh`, `agy-doctor.sh`, `validate-agents.sh`, `check-path-boundaries.sh`, `synthesize-skill.sh`, `scan-dependencies.sh`, `validate-traceability.sh`, `validate-workflows-sync.sh`, `validate-brainstorm-skills.sh` under `bin/`.
+- **13-Benchmark Evaluation Harness:** Upgraded `tests/evals/eval_harness.py` to run 13 automated benchmarks achieving 100/100 pass score.
+
+### Summary of Phases 6–13 Progress
+- **Phase 6 (Workspace Isolation):** Multi-agent path boundary verification script (`check-path-boundaries.sh`) and path scoping rules.
+- **Phase 7 (Supply Chain Security):** OWASP-AI-01 dependency vulnerability and slopsquatting scanner (`scan-dependencies.sh`).
+- **Phase 8 (Telemetry & Tracing):** OpenTelemetry exporter (`export_telemetry_summary.py`) and token/cost metrics reporting.
+- **Phase 9 (Skill Auto-Synthesis):** Automated skill artifact synthesis protocol script (`synthesize-skill.sh`).
+- **Phase 10 (BA & Quality Framework):** Full Business Analysis core, 12-Dimensional Edge Matrix (ACM), Requirements Traceability Matrix (RTM), and Quality Framework documentation (`docs/ba-and-quality-framework.md`, `docs/business-analysis.md`, `docs/quality-framework.md`, `docs/reliability.md`).
+- **Phase 11 (Workflows Sync):** 100% alignment verification script for workflows, subagent specs, and skills (`validate-workflows-sync.sh`).
+- **Phase 12 (Ideation & Problem Solving):** Integrated `brainstorming` (4-category unknowns), `grill-me` (11-question plan stress testing), and `problem-solving` (5 techniques with 7 reference guides).
+- **Phase 13 (Release & Documentation Polish):** Updated version tracking to v0.7.0, overhauled `README.md`, updated `CHANGELOG.md`, verified 13/13 evals pass (100/100).
+
+### Changed
+- `.antigravity/version.json` — Updated to `0.7.0` targeting Antigravity CLI (`agy >= 1.1.0`).
+- `README.md` — Overhauled to document Antigravity CLI focus, model routing, skills, workflows, scripts, and evaluation harness.
+
 ## [0.6.0] — 2026-08-06 (Phase 5 — Antigravity Native Deep Optimization)
 
 ### Added
