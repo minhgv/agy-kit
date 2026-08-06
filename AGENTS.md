@@ -38,3 +38,17 @@
 | `coder` | TDD implementation | `--agent build` (default) |
 | `reviewer` | Code review, security scan | `--agent review` |
 | `qa` | E2E testing, dogfooding | `--agent qa` |
+
+## 7. Rollback & Recovery Safety
+
+- Trước khi subagent can thiệp code → tạo git checkpoint (`git stash` hoặc temp commit).
+- Sau khi sửa code → chạy test runner. Nếu test FAIL → auto-rollback về checkpoint sạch.
+- Max 3 retries per failing test → nếu vượt quá, STOP và escalate.
+- Max 15 turns per session → auto-exit để tránh vòng lặp vô hạn.
+- Chi tiết: `docs/rollback-recovery.md`
+
+## 8. Multi-Language Support
+
+- Tự động phát hiện ngôn ngữ qua root indicator file (`pyproject.toml`, `go.mod`, `Cargo.toml`, `composer.json`, `package.json`).
+- Mỗi ngôn ngữ có toolchain adapter riêng (linter, formatter, typechecker, test runner).
+- Chi tiết: `docs/multi-language-adapters.md`

@@ -1,6 +1,27 @@
 # agy-kit — Changelog
 
-## [0.3.0] — 2026-08-06 (Phase 2 Research Applied)
+## [0.4.0] — 2026-08-06 (Phase 3 Research Applied)
+
+### Added
+- `docs/multi-language-adapters.md` — 5 ngôn ngữ (Python, Go, Rust, PHP, Node/TS) với toolchain matrix + monorepo support
+- `docs/rollback-recovery.md` — Git checkpoint, auto-rollback, loop prevention, token budget, session crash recovery
+- `bin/safe-agent-run.sh` — Run agy stage với auto-rollback safety net (auto-detect test runner)
+- `.antigravity/workflows/safe-pipeline.md` — Rollback-aware pipeline workflow (6 slash commands total)
+- `examples/SPEC_user_registration_example.md` — Complete SPEC mẫu cho REST API
+- `examples/python_fastapi_config_example/` — Config Python/FastAPI subagents
+- `examples/error_recovery_scenario.md` — Error recovery demo (test fail → agent fix)
+- `examples/parallel_review_workflow.md` — Scatter-gather 3 reviewers (security, performance, style)
+- `examples/getting_started_tutorial.md` — Tutorial từ zero → first feature
+
+### Changed
+- `AGENTS.md` — Thêm Section 7 (Rollback & Recovery Safety) + Section 8 (Multi-Language Support)
+
+### Research Sources (Phase 3)
+- Multi-language toolchain adapters (ruff, golangci-lint, clippy, phpstan, eslint/biome)
+- Monorepo patterns (hierarchical context scoping, path boundary isolation, turbo/nx filter)
+- Token budget management (soft cap 75-80%, hard cap 100%, max_turns=15, 4-stage compression)
+- Transactional rollback (git checkpoint, auto-rollback on test fail, clean slate retry)
+- Enterprise case studies (Replit 3→20 engineers, McKinsey 40% PR uplift, narrow-scoped subagents +88% merge rate)
 
 ### Added
 - `plans/SPEC_TEMPLATE.md` — 7-section SPEC template (Exec Summary, Architecture, Schema, File Manifest, Test Plan, Migration, Definition of Done)
