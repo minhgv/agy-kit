@@ -1,16 +1,25 @@
 # agy-kit — Changelog
 
-## [0.5.0] — 2026-08-06 (Phase 4 — Cross-Tool Compatibility)
+## [0.5.0] — 2026-08-06 (Phase 4 — Cross-Tool Compatibility + Production Polish)
 
 ### Added
 - `.claude/agents/*.md` — Claude Code adapter (4 agents: planner, coder, reviewer, qa)
 - `.opencode/agents.json` — OpenCode adapter (4 agents in single JSON)
+- `.codex/agents/*.toml` — Codex CLI adapter (4 agents, TOML format with sandbox_mode)
 - `.cursorrules` — Cursor IDE project rules adapter
 - `.windsurfrules` — Windsurf IDE project rules adapter
 - `.github/copilot-instructions.md` — GitHub Copilot adapter
+- `.antigravity/version.json` — Scaffold version tracking (semver + compatible CLI range)
+- `bin/sync-adapters.sh` — Auto-generate all tool adapters from `.antigravity/agents/` (source of truth)
 - `docs/cross-tool-compat.md` — Full compatibility matrix (7 tools) + customization patterns
+- `docs/upgrade-guide.md` — Semver policy, non-destructive merge, migration guides, layered AGENTS.md
+- `docs/meta-testing.md` — 3-layer testing: deterministic meta-tests, trajectory evals, prompt regression
 - `CONTRIBUTING.md` — Contribution guide + semver rules
 - `LICENSE` — MIT
+
+### Architecture Decision
+- **Canonical Spec + Sync CLI** model (from ECC pattern): `.antigravity/agents/*.json` is the single source of truth. `bin/sync-adapters.sh` regenerates all tool adapters.
+- **Layered AGENTS.md:** root → subfolder → file-level inheritance for monorepo.
 
 ### Tool Compatibility
 | Tool | Status |
