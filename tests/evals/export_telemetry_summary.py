@@ -4,6 +4,7 @@ agy-kit Telemetry & Tracing Benchmark Exporter
 
 Aggregates token consumption, API cost, tool call latencies, and agent success rates into markdown and JSON.
 """
+from __future__ import annotations
 
 import json
 import os

@@ -11,6 +11,7 @@ Assumes ALL newly written features contain hidden flaws. Executes 5 destructive 
 
 Outputs evidence artifacts to tests/qa-evidence/destructive_test_report.json.
 """
+from __future__ import annotations
 
 import concurrent.futures
 import json

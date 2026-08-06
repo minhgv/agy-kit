@@ -7,6 +7,7 @@ Verifies the integrity of eval_harness.py using:
 2. Deterministic Stability Test (10 consecutive runs with 0 variance).
 3. Performance Profiler (Execution latency < 2.0s).
 """
+from __future__ import annotations
 
 import os
 import subprocess

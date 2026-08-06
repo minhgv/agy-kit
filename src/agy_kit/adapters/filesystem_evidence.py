@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 filesystem_evidence.py — Structured JSONL Event Logger & Secret Redactor
 """

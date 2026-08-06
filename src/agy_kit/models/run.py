@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 run.py — Pipeline Run Manifest data model
 """

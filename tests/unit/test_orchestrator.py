@@ -2,6 +2,7 @@
 """
 test_orchestrator.py — Unit tests for agy-kit orchestrator, path safety, and schema validation
 """
+from __future__ import annotations
 
 import os
 import sys

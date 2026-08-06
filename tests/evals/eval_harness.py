@@ -20,6 +20,7 @@ Measures 16 core benchmarks:
 15. Phase 17 Writing-Skills Integration & TDD Skill Authoring Benchmark
 16. Phase 18 Harness Meta-Evaluation & Synthetic Fault Injection Benchmark
 """
+from __future__ import annotations
 
 import json
 import os

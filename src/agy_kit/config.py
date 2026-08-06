@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 config.py — TOML configuration resolver for agy-kit
 """

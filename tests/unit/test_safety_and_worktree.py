@@ -2,6 +2,7 @@
 """
 test_safety_and_worktree.py — Comprehensive Unit Tests for Safety Locks, Worktree Manager, and Dynamic Mirroring (R-CLN-001 to R-CLN-004)
 """
+from __future__ import annotations
 
 import os
 import sys

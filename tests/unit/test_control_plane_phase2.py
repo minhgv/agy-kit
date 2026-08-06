@@ -2,6 +2,7 @@
 """
 test_control_plane_phase2.py — Comprehensive Unit & Adversarial Tests for Control Plane Phase 2 (R-CP2-001 to R-CP2-005)
 """
+from __future__ import annotations
 
 import json
 import os

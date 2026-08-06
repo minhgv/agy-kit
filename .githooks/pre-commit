@@ -7,6 +7,11 @@
 # pre-commit: gitleaks + conventional commit format check
 set -euo pipefail
 
+# 0. Run Autonomous Single-Pass Linter Fixer
+python3 bin/fix_linter.py || {
+    echo "⚠️ Warning: fix_linter encountered issues."
+}
+
 # 1. Gitleaks secret scan on staged files
 if command -v gitleaks &>/dev/null; then
     gitleaks protect --staged --verbose --redact || {

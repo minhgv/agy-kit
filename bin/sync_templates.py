@@ -7,6 +7,7 @@ Supports:
   --check: Check for drift without modifying templates (returns exit code 1 if drift detected).
   --sync: Automatically update src/templates/ from active working assets.
 """
+from __future__ import annotations
 
 import argparse
 import glob
@@ -132,6 +133,22 @@ def main():
                 with open(dest_agents_md, "w", encoding="utf-8") as f:
                     f.write(tpl_agents_md)
                 print("  -> Synced AGENTS.md to src/templates/AGENTS.md.tpl")
+
+    # 4.5 Sync / Check bin/fix_linter.py
+    fix_linter_src = os.path.join(PROJECT_ROOT, "bin/fix_linter.py")
+    if os.path.exists(fix_linter_src):
+        dest_fix_linter = os.path.join(TEMPLATES_DIR, "bin/fix_linter.py")
+        os.makedirs(os.path.join(TEMPLATES_DIR, "bin"), exist_ok=True)
+        active_fl = get_file_content(fix_linter_src)
+        tpl_fl = get_file_content(dest_fix_linter)
+
+        if active_fl != tpl_fl:
+            drift_found = True
+            print("[DRIFT] bin/fix_linter.py template mismatch")
+            if args.sync:
+                with open(dest_fix_linter, "w", encoding="utf-8") as f:
+                    f.write(active_fl)
+                print("  -> Synced bin/fix_linter.py to src/templates/bin/fix_linter.py")
 
     # 5. Dynamic Mirror Sync for .antigravity/ and .hermes/
     if args.sync:

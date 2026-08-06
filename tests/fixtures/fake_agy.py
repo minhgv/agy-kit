@@ -10,6 +10,7 @@ Simulates AGY CLI behavior:
     - FAKE_AGY_UNSUPPORTED=1: outputs unsupported version error
     - FAKE_AGY_LEAK_SECRET=1: writes a secret key to output
 """
+from __future__ import annotations
 
 import os
 import sys

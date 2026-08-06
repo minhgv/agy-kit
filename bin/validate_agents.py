@@ -2,6 +2,8 @@
 """
 validate_agents.py — Validate native subagent Markdown specs (.agents/agents/*.md) and AGENTS.md consistency
 """
+from __future__ import annotations
+
 import glob
 import os
 import sys

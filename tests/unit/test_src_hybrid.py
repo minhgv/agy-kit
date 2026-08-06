@@ -2,6 +2,7 @@
 """
 test_src_hybrid.py — Unit tests for Hybrid src/ directory structure (R-SRC-001 to R-SRC-004)
 """
+from __future__ import annotations
 
 import os
 import sys

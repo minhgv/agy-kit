@@ -3,6 +3,7 @@
 Token Cost Calculator Module for agy-kit Evaluation Harness
 Computes estimated API costs based on model pricing registry.
 """
+from __future__ import annotations
 
 PRICING_REGISTRY = {
     "gemini-3.6-flash-high": {"input": 0.075, "output": 0.30},  # USD per 1M tokens
