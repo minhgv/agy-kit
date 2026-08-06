@@ -45,10 +45,25 @@ if [ -z "$MODIFIED_FILES" ]; then
     exit 0
 fi
 
-# Forbidden global patterns
+# Forbidden global patterns & security checks
 FORBIDDEN_PATTERNS="^\.env$|^\.ssh/|^/etc/|^\.git/"
 
 for file in $MODIFIED_FILES; do
+    # 1. Check traversal & control characters
+    if [[ "$file" == *".."* ]] || [[ "$file" == *$'\n'* ]] || [[ "$file" == -$* ]]; then
+        log_fail "SECURITY VIOLATION: Invalid filename pattern or path traversal detected: $file"
+        continue
+    fi
+
+    # 2. Symlink escape check
+    if [ -L "$file" ]; then
+        TARGET=$(readlink "$file" || true)
+        if [[ "$TARGET" == /* ]] || [[ "$TARGET" == *".."* ]]; then
+            log_fail "SECURITY VIOLATION: Symlink escape detected on $file -> $TARGET"
+            continue
+        fi
+    fi
+
     if echo "$file" | grep -qE "$FORBIDDEN_PATTERNS"; then
         log_fail "CRITICAL: Modification detected on forbidden path: $file"
     else
@@ -59,7 +74,7 @@ done
 # Stage-specific checks
 if [ "$STAGE" = "coder" ]; then
     for file in $MODIFIED_FILES; do
-        if echo "$file" | grep -qE "^\.antigravity/agents/"; then
+        if echo "$file" | grep -qE "^\.antigravity/agents/|^\.agents/agents/"; then
             log_fail "ROLE VIOLATION: Coder agent modified agent prompt spec: $file"
         fi
     done

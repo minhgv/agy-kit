@@ -1,220 +1,180 @@
 # agy-kit
 
-> **Antigravity-First Agent Engineering Kit (v0.7.0)** — production-ready rules, specialist subagents, slash-command workflows, MCP integration, safety hooks, persistent memory, multi-language support, business analysis core, quality framework, and ideation/stress-testing skills built exclusively for **Antigravity CLI (`agy`)**.
+> **Antigravity-First Agent Engineering Kit (v1.0-RC)** — experimental, AGY-native rules, specialist subagents, slash-command workflows, MCP integration, safety hooks, isolated worktree execution, multi-language support, business analysis core, quality framework, and template synchronization built exclusively for **Google Antigravity CLI (`agy`)**.
 
-[![Version](https://img.shields.io/badge/scaffold-v0.7.0-blue.svg)](.antigravity/version.json)
+[![Version](https://img.shields.io/badge/scaffold-v1.0--RC-orange.svg)](.agents/version.json)
 [![Platform](https://img.shields.io/badge/target-Antigravity--CLI-emerald.svg)](https://github.com/minhgv/agy-kit)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Benchmarks](https://img.shields.io/badge/evals-16%2F16%20passed%20(100%2F100)-success.svg)](tests/evals/eval_harness.py)
+[![Status](https://img.shields.io/badge/status-experimental--in--progress-yellow.svg)](docs/PRD_agy_kit.md)
 
 ---
 
 ## Overview
 
-`agy-kit` is a dedicated scaffold designed 100% exclusively for **Antigravity CLI (`agy`)**. It provides an end-to-end framework for autonomous agentic software engineering, combining an **Architect-Executor model routing strategy**, strict Test-Driven Development (TDD), Business Analysis (BA) core traceability, multi-tiered Quality Gates, System Reliability Layer (SRL) rollbacks, and a complete suite of ideation, stress-testing, and problem-solving skills.
+`agy-kit` is a dedicated scaffold designed 100% exclusively for **Antigravity CLI (`agy`)**. It provides an end-to-end framework for autonomous agentic software engineering, combining an **Architect-Executor model routing strategy**, strict Test-Driven Development (TDD), Business Analysis (BA) core traceability, multi-tiered Quality Gates, isolated Git worktree execution, template synchronization, and a complete suite of ideation, stress-testing, and problem-solving skills.
 
 ---
 
 ## Key Architecture & Features
 
-### 1. Architect-Executor Model Routing
+### 1. AGY-Native Subagents (`.agents/agents/*.md`)
 
-`agy-kit` pairs deep reasoning models for planning and auditing with high-throughput coding models for implementation:
+`agy-kit` defines native Markdown subagents with YAML frontmatter conforming strictly to the official Antigravity subagent specification:
 
-| Subagent | Role | Primary Model | Fallback Model | Command |
-|----------|------|---------------|----------------|---------|
-| `planner` | Lead System Architect & BA | `gemini-3.6-flash-high` | `gemini-3.6-flash-low` | `agy run --agent plan` |
-| `coder` | Senior Developer (TDD) | `gemini-3.6-flash-high` | `gemini-3.6-flash-low` | `agy run --agent build` |
-| `reviewer` | Principal Reviewer & Security | `gemini-3.6-flash-high` | `gemini-3.6-flash-low` | `agy run --agent review` |
-| `qa` | QA Automation Engineer | `gemini-3.6-flash-low` | `gemini-3.6-flash-low` | `agy run --agent qa` |
+| Subagent | Role | Primary Model | Fallback Model | Spec Path |
+|----------|------|---------------|----------------|-----------|
+| `planner` | Lead System Architect & BA | `gemini-3.6-flash-high` | `gemini-3.6-flash-low` | [planner.md](file:///.agents/agents/planner.md) |
+| `coder` | Senior Developer (TDD) | `gemini-3.6-flash-high` | `gemini-3.6-flash-low` | [coder.md](file:///.agents/agents/coder.md) |
+| `reviewer` | Principal Reviewer & Security | `gemini-3.6-flash-high` | `gemini-3.6-flash-low` | [reviewer.md](file:///.agents/agents/reviewer.md) |
+| `qa` | QA Automation Engineer | `gemini-3.6-flash-low` | `gemini-3.6-flash-low` | [qa.md](file:///.agents/agents/qa.md) |
 
-### 2. Complete Skills Suite
+### 2. Complete 14 Slash Workflows
 
-`agy-kit` includes a complete suite of specialist skills mirrored across `.hermes/skills/` and `.antigravity/skills/`:
+Native slash commands configured in `.agents/workflows/` and `.antigravity/workflows/`:
 
-1. **`tdd-workflow`**: Enforces strict RED → GREEN → REFACTOR execution cycle with failing test proof logs.
-2. **`quality-gate`**: Zero-warning linting, OWASP-AI 5-point security audit, SARIF artifact generation.
-3. **`ba-expert`**: Business Analysis Core — Ubiquitous language, 12-Dimensional Business Edge Case Matrix (ACM), Requirements Traceability Matrix (RTM), Zod/Pydantic schemas.
-4. **`qa-auditor`**: Structured JSON Audit Contracts and runtime risk matrix evaluation.
-5. **`qa-test-gen`**: Automated boundary test plan generation and contract coverage matrices.
-6. **`qa-reproducer`**: Minimal Reproducible Example (MRE) bug reproduction pipeline (`reproductions/repro-xxx.py`).
-7. **`brainstorming`**: Classifies unknowns into 4 categories (Known knowns, Known unknowns, Unknown knowns, Unknown unknowns) and presents 2–4 concrete option variants with trade-offs.
-8. **`grill-me`**: 11-question technical spec stress-testing, assumption challenge, scale limits, and rollback check.
-9. **`problem-solving`**: 5 core problem-solving techniques (Simplification Cascades, Collision-Zone Thinking, Meta-Pattern Recognition, Inversion Exercise, Scale Game) with dedicated reference guides in `references/`.
-10. **`writing-skills`**: Applies Test-Driven Development (TDD) for skill authoring: RED → GREEN → REFACTOR pressure testing with subagents before writing, iterating until bulletproof against rationalization.
+| Phase / Category | Workflow | Description |
+|---|---|---|
+| **Ideation** | `/brainstorm` | Phân loại 4 nhóm unknowns, tạo 2-4 biến thể thiết kế |
+| **Specification** | `/plan` | Lập SPEC, RTM (Traceability), DFD, 12D Edge Case Matrix |
+| **Stress Testing** | `/grill` | Thử thách 11 câu hỏi soi rủi ro architecture |
+| **Full Lifecycle** | `/pipeline` | Quy trình 5 bước khép kín (Plan → TDD → Gate → QA → Review) |
+| **Safe Execution** | `/safe-pipeline` | Chạy 5 bước trên Git worktree cô lập + auto-rollback khi lỗi |
+| **Quality Gate** | `/gate` | Kiểm định linter, secret scan, OWASP-AI 5 điểm & ranh giới path |
+| **Code Review** | `/review` | Audit git diff, 3-State Verification & Conventional Commits |
+| **E2E QA** | `/qa` | Playwright/cURL dogfooding & tạo MRE tái tạo lỗi (`reproductions/`) |
+| **Troubleshooting** | `/solve` | Gỡ bế tắc bằng 5 kỹ thuật suy luận (Simplification, Inversion...) |
+| **Diagnostics** | `/doctor` | Chẩn đoán sức khỏe môi trường, CLI version & toolchain |
+| **Scaffolding** | `/init` | Khởi tạo agy-kit scaffold vào repository mới |
+| **Memory** | `/learn` | Trích xuất bài học & quy tắc mới vào `MEMORY.md` |
+| **Scheduling** | `/schedule` | Cấu hình timer / background audit task định kỳ |
+| **Migration** | `/migrate` | Chuyển đổi cấu hình cũ v0.7.x sang AGY 2.0 chuẩn |
 
-### 3. Complete 9 Slash Workflows
+### 3. Hybrid `src/` Directory Architecture
 
-Native slash commands configured in `.antigravity/workflows/`, chronologically grouped by Phase / Lifecycle Stage:
+`src/` separates installer template assets from internal Python package logic:
+- `src/templates/`: Stores canonical template assets (`AGENTS.md.tpl`, `mcp_config.json.tpl`, `version.json.tpl`, `agents/*.md`, `workflows/*.md`) unrolled by `./bin/init-agy-kit.sh`.
+- `src/agy_kit/`: Core Python package containing `orchestrator.py` (state machine), `worktree.py` (Git worktree manager), `validators.py` (path safety), and `cli.py`.
 
-- **Phase 1: Ideation & Pre-Planning**
-  - **`/brainstorm`**: Option variants & 4-category unknown classification.
-- **Phase 2: Architecture & Specification**
-  - **`/plan`**: Architecture SPEC, RTM generation, and 12-D edge matrix.
-  - **`/grill`**: Pre-implementation 11-question plan stress-testing & scrutiny.
-- **Phase 3: Full Engineering Lifecycle & Execution**
-  - **`/pipeline`**: Full 5-stage sequential lifecycle (Plan → TDD → Gate → QA → Review).
-  - **`/safe-pipeline`**: Auto-rollback safety net pipeline.
-- **Phase 4: Quality Gate, Security Audit & Troubleshooting**
-  - **`/gate`**: OWASP-AI 5-point audit & path boundaries.
-  - **`/solve`**: Systematic 5-technique problem solving when stuck.
-- **Phase 5: Verification, QA & Review Handoff**
-  - **`/qa`**: E2E Playwright/cURL dogfooding & MRE bug reproduction.
-  - **`/review`**: 3-State Verification Audit, traceability audit & conventional commits.
+### 4. Template Drift Verification & Sync
 
-### 4. Tooling & Executable Scripts (`bin/`)
+Keep working assets and scaffolding templates 100% in sync:
+- `make sync-templates`: Automatically updates `src/templates/` from `.agents/`.
+- `bin/sync-templates.sh --check`: Fails Quality Gate CI if templates and live assets diverge.
 
-- `bin/agy-pipeline.sh`: Headless CI pipeline runner (`--auto-approve`).
-- `bin/safe-agent-run.sh`: Rollback-aware agent execution harness.
-- `bin/agy-doctor.sh`: System diagnostics & dependency health checker.
-- `bin/validate-agents.sh`: Subagent specification and schema validator.
-- `bin/check-path-boundaries.sh`: Multi-agent workspace path boundary checker.
-- `bin/synthesize-skill.sh`: Skill auto-synthesis protocol runner.
-- `bin/scan-dependencies.sh`: OWASP-AI-01 supply chain & slopsquatting scanner.
-- `bin/validate-traceability.sh`: Requirement Traceability Matrix (RTM) & SPEC validator.
-- `bin/validate-workflows-sync.sh`: Workflows, agent specs, and skills synchronization validator.
-- `bin/validate-brainstorm-skills.sh`: Ideation, stress-testing, and problem-solving skills validator.
-- `bin/verify-eval-harness.sh`: Harness meta-evaluation & fault injection verification tool.
+### 5. Multi-Language Toolchain Adapters
 
-### 5. Benchmark Evaluation Harness
-
-`agy-kit` ships with a comprehensive evaluation harness in `tests/evals/eval_harness.py` covering **16 core benchmarks** with a **100/100 pass score**:
-
-1. **Quality Gate Audit Compliance**: Zero lint errors & zero hardcoded secrets.
-2. **Subagent Specification Validation**: Agent JSON schema & prompt safety validation.
-3. **`agy-doctor` System Diagnostics**: Health check of environment runtimes & tools.
-4. **Workspace Path Boundary Check**: Multi-agent file boundary isolation.
-5. **Automated Token Cost Tracking**: Token efficiency & API cost estimation.
-6. **Supply Chain Security Scan**: OWASP-AI-01 dependency scanning.
-7. **Telemetry Metric Exporter**: OpenTelemetry & benchmark summary exporter.
-8. **Skill Auto-Synthesis Protocol**: Automated skill creation & validation.
-9. **End-to-End Requirement Traceability Audit**: RTM & SPEC compliance audit.
-10. **BA & Quality Assurance Framework Docs Validator**: Framework documentation integrity.
-11. **Phase 10 BA & QA Skills Suite Benchmark**: BA & QA skills synchronization audit.
-12. **Workflows & Skills Sync Validator**: Workflows, subagent specs, and skills alignment.
-13. **Phase 12 Brainstorming, Stress-Testing & Problem-Solving Skills Benchmark**: Ideation & problem-solving skills integrity.
-14. **Developer Scaffolding Installer Benchmark**: Scaffolding CLI & language project templates audit (`bin/init-agy-kit.sh`).
-15. **Phase 17 Writing Skills Integration Benchmark**: `writing-skills` skill suite synchronization, file integrity, and TDD skill authoring protocols.
-16. **Phase 18 Harness Meta-Evaluation Benchmark**: Synthetic fault injection suite (5/5 RED failures detected), deterministic stability (10/10 runs 0 variance), and execution latency profiler (< 2.0s).
+Integrated test and linter adapters in `agy-kit/adapters/`:
+- **Python**: pytest + ruff + mypy + pip-audit (`python.sh`)
+- **TypeScript**: vitest + tsc + eslint + npm audit (`typescript.sh`)
+- **Go**: go test + golangci-lint + govulncheck (`go.sh`)
+- **Rust**: cargo test + clippy + cargo audit (`rust.sh`)
+- **PHP**: phpunit + phpstan + composer audit (`php.sh`)
 
 ---
 
 ## Directory Structure
 
-```
+```text
 agy-kit/
 ├── AGENTS.md                      # Core rules & system instructions for agy
 ├── GEMINI.md                      # Antigravity model routing & tracing overrides
-├── MEMORY.md                      # Persistent project memory (stack, decisions, conventions)
-├── README.md                      # Project documentation
-├── Makefile                       # Command wrapper: make pipeline FEATURE=auth
-├── .antigravity/
-│   ├── agents/                    # Specialist subagent definitions (v2.0 schema)
-│   │   ├── planner.json           # Survey, SPEC authoring & BA (gemini-3.6-flash-high)
-│   │   ├── coder.json             # TDD implementation (gemini-3.6-flash-high)
-│   │   ├── reviewer.json          # Code review & security audit (gemini-3.6-flash-high)
-│   │   └── qa.json                # E2E QA & dogfooding (gemini-3.6-flash-low)
-│   ├── mcp.json                   # MCP server integrations (filesystem, github, playwright, sqlite)
-│   ├── workflows/                 # 9 Native agy slash commands
-│   │   ├── pipeline.md            # /pipeline
-│   │   ├── plan.md                # /plan
-│   │   ├── gate.md                # /gate
-│   │   ├── review.md              # /review
-│   │   ├── qa.md                  # /qa
-│   │   ├── safe-pipeline.md       # /safe-pipeline
-│   │   ├── brainstorm.md          # /brainstorm
-│   │   ├── grill.md               # /grill
-│   │   └── solve.md               # /solve
-│   └── version.json               # Scaffold version tracking (v0.7.0)
-├── .githooks/                     # Git security & commit enforcement
-│   ├── pre-commit                 # Gitleaks & lint validation
-│   └── commit-msg                 # Conventional Commits format validator
-├── .github/workflows/ci.yml       # GitHub Actions CI pipeline
-├── .hermes/skills/                # Agent Skills Suite
-│   ├── tdd-workflow/
-│   ├── quality-gate/
-│   ├── ba-expert/
-│   ├── qa-auditor/
-│   ├── qa-test-gen/
-│   ├── qa-reproducer/
-│   ├── brainstorming/
-│   ├── grill-me/
-│   ├── problem-solving/
-│   └── writing-skills/
-├── bin/                           # 11 Executable verification and runner scripts
-│   ├── agy-pipeline.sh
-│   ├── safe-agent-run.sh
+├── MEMORY.md                      # Persistent project memory & learned rules
+├── Makefile                       # Command wrapper (make pipeline, make doctor, etc.)
+├── .agents/                       # Native AGY 2.0 Configuration
+│   ├── agents/                    # Subagent specifications (.md format)
+│   ├── mcp_config.json            # MCP server integrations
+│   ├── skills/                    # Specialized skills suite
+│   └── workflows/                 # 14 Native slash command workflows
+├── src/                           # Hybrid Architecture Root
+│   ├── templates/                 # Scaffolding templates for new projects
+│   └── agy_kit/                   # Core Python package (orchestrator, worktree, validators)
+├── agy-kit/adapters/              # 5 Language toolchain adapters (Python, TS, Go, Rust, PHP)
+├── bin/                           # Executable scripts & diagnostics
 │   ├── agy-doctor.sh
-│   ├── validate-agents.sh
-│   ├── check-path-boundaries.sh
-│   ├── synthesize-skill.sh
-│   ├── scan-dependencies.sh
-│   ├── validate-traceability.sh
-│   ├── validate-workflows-sync.sh
-│   ├── validate-brainstorm-skills.sh
-│   └── verify-eval-harness.sh
-├── docs/                          # Comprehensive framework & system documentation
-│   ├── skills-completeness-matrix.md
-│   ├── repository-quality-assessment.md
-│   ├── ba-and-quality-framework.md
-│   ├── business-analysis.md
-│   ├── quality-framework.md
-│   ├── reliability.md
-│   ├── orchestration-patterns.md
-│   ├── model-routing.md
-│   ├── owasp-ai-checklist.md
-│   ├── prompt-engineering.md
-│   ├── memory-guide.md
-│   ├── multi-language-adapters.md
-│   ├── rollback-recovery.md
-│   └── meta-testing.md
-├── tests/evals/                   # Evaluation harness & benchmarks
-│   ├── eval_harness.py
-│   ├── meta_eval_harness.py
-│   └── token_calculator.py
+│   ├── init-agy-kit.sh
+│   ├── safe-agent-run.sh
+│   ├── sync-templates.sh
+│   └── validate-agents.sh
+├── tests/                         # Test pyramid & evaluation suite
+│   ├── unit/                      # Unit tests
+│   ├── fixtures/                  # Fake AGY simulator CLI
+│   └── evals/                     # Benchmark suite (eval_harness.py, meta_eval_harness.py)
 └── plans/                         # Technical specifications & templates
     └── SPEC_TEMPLATE.md
 ```
 
 ---
 
-## Quick Start
+## End-to-End Workflow for New Projects
+
+### Phase 1: Initialize Project
+```bash
+# 1. Scaffold agy-kit into a target project directory
+./bin/init-agy-kit.sh --target ./my-app --lang python
+
+# 2. Run environment diagnostics
+/doctor
+```
+
+### Phase 2: Ideation & Architecture
+```bash
+# 3. Brainstorm unknown categories & option variants (optional)
+/brainstorm "OAuth2 refresh token service"
+
+# 4. Generate SPEC, RTM, 12D Edge Case Matrix
+/plan "OAuth2 refresh token service"
+
+# 5. Stress-test plan with 11 scrutiny questions
+/grill "OAuth2 refresh token service"
+```
+
+### Phase 3: Safe TDD Implementation
+```bash
+# 6. Execute 5-stage pipeline with isolated Git worktree & auto-rollback
+/safe-pipeline "OAuth2 refresh token service"
+```
+
+### Phase 4: Quality Gate & E2E QA
+```bash
+# 7. Run static analysis, secret scan, OWASP-AI checklist
+/gate
+
+# 8. Run E2E dogfooding tests & produce MRE bug reproductions
+/qa
+```
+
+### Phase 5: Code Review & Memory Handoff
+```bash
+# 9. Audit 3-state verification & group Conventional Commits
+/review
+
+# 10. Extract learned rules into MEMORY.md
+/learn "Token revocation pattern"
+```
+
+---
+
+## Command Reference (`Makefile`)
 
 ```bash
-# 1. Clone agy-kit
-git clone https://github.com/minhgv/agy-kit.git my-project
-cd my-project
-
-# 2. Set up git hooks
-git config core.hooksPath .githooks
-
-# 3. Run diagnostics & system verification
-./bin/agy-doctor.sh
-
-# 4. Run evaluation harness (verifies all 16 benchmarks pass 100/100)
-python3 tests/evals/eval_harness.py
-
-# 5. Execute full feature pipeline
-make pipeline FEATURE=auth-oauth2
+make doctor              # Run system health diagnostics
+make validate            # Run subagent, workflow sync & template drift audit
+make verify-eval         # Run meta-eval & 5 synthetic fault injection tests
+make sync-templates      # Synchronize active assets to src/templates/
+make pipeline FEATURE=x  # Run full 5-step pipeline for feature
+make check-boundaries    # Verify multi-agent path boundaries
+make scan-deps           # Run OWASP-AI supply chain security scan
 ```
 
 ---
 
 ## Documentation
 
-- [Skills Completeness Matrix (Phase 20)](docs/skills-completeness-matrix.md)
-- [Repository Quality Assessment (Phase 19)](docs/repository-quality-assessment.md)
 - [BA Core & Quality Framework](docs/ba-and-quality-framework.md)
-- [Business Analysis Architecture](docs/business-analysis.md)
-- [Quality Framework & Gates](docs/quality-framework.md)
-- [System Reliability Layer](docs/reliability.md)
-- [Orchestration Patterns](docs/orchestration-patterns.md)
-- [Model Routing Strategy](docs/model-routing.md)
-- [OWASP AI Security Checklist](docs/owasp-ai-checklist.md)
-- [Prompt Engineering Guide](docs/prompt-engineering.md)
-- [Memory Management Guide](docs/memory-guide.md)
 - [Multi-Language Adapters](docs/multi-language-adapters.md)
 - [Rollback & Recovery Safety](docs/rollback-recovery.md)
+- [OWASP AI Security Checklist](docs/owasp-ai-checklist.md)
+- [Target PRD](docs/PRD_agy_kit.md)
 
 ---
 

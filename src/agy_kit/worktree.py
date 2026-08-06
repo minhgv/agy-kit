@@ -1,0 +1,25 @@
+"""
+worktree.py — Git worktree isolation manager
+"""
+
+import subprocess
+import os
+
+class WorktreeManager:
+
+    def __init__(self, project_root: str, run_id: str):
+        self.project_root = project_root
+        self.run_id = run_id
+        self.worktree_dir = None
+
+    def create_isolated_worktree(self, feature: str) -> str:
+        branch_name = f"agy-wt-{feature}-{self.run_id}"
+        temp_dir = f"/tmp/agy-wt-{self.run_id}"
+        cmd = ["git", "-C", self.project_root, "worktree", "add", "-b", branch_name, temp_dir, "HEAD"]
+        subprocess.run(cmd, check=True, capture_output=True)
+        self.worktree_dir = temp_dir
+        return temp_dir
+
+    def remove_worktree(self):
+        if self.worktree_dir and os.path.exists(self.worktree_dir):
+            subprocess.run(["git", "-C", self.project_root, "worktree", "remove", "--force", self.worktree_dir], capture_output=True)

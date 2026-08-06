@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RunManifest",
+  "type": "object",
+  "required": [
+    "run_id",
+    "feature",
+    "status",
+    "permission_mode",
+    "created_at",
+    "baseline_commit",
+    "stages"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string"
+    },
+    "feature": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["created", "in_progress", "completed", "failed", "cancelled"]
+    },
+    "permission_mode": {
+      "type": "string",
+      "enum": ["sandbox", "review", "unsafe"]
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "baseline_commit": {
+      "type": "string"
+    },
+    "result_commit": {
+      "type": ["string", "null"]
+    },
+    "stages": {
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  }
+}

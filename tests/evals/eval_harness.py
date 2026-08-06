@@ -82,6 +82,7 @@ def eval_quality_gate():
     passed = (not has_secret and py_syntax_ok and sh_syntax_ok)
     return {
         "secrets_found": has_secret,
+        "syntax_ok": (py_syntax_ok and sh_syntax_ok),
         "py_syntax_ok": py_syntax_ok,
         "py_files_checked": len(py_files),
         "py_errors": py_errors,

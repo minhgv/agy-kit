@@ -45,7 +45,8 @@ def test_fault_syntax_error():
         with open(temp_file, "w") as f:
             f.write("def invalid_syntax_func(: pass\n")
         res = eval_harness.eval_quality_gate()
-        detected = (res.get("syntax_ok", True) is False) and (res.get("score", 100) == 0)
+        syntax_ok = res.get("syntax_ok", res.get("py_syntax_ok", True))
+        detected = (syntax_ok is False) and (res.get("score", 100) == 0)
         return detected, res
     finally:
         if os.path.exists(temp_file):

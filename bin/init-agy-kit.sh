@@ -1,20 +1,22 @@
 #!/usr/bin/env bash
-# init-agy-kit.sh — Developer Scaffolding Installer CLI for agy-kit
+# init-agy-kit.sh — Safe Non-Destructive Developer Scaffolding Installer CLI for agy-kit (FR-SAFE-005)
 #
 # Usage:
-#   ./bin/init-agy-kit.sh --target /path/to/project --lang python
+#   ./bin/init-agy-kit.sh --target /path/to/project --lang python [--dry-run] [--force]
 #   ./bin/init-agy-kit.sh --help
 
 set -euo pipefail
 
 SHOW_HELP=0
+DRY_RUN=0
+FORCE=0
 TARGET_DIR="."
 LANG_CHOICE="python"
 
 show_usage() {
     cat << 'EOF'
 ==================================================
-  agy-kit Developer Scaffolding Installer CLI
+  agy-kit Safe Developer Scaffolding Installer CLI
 ==================================================
 Usage:
   init-agy-kit.sh [OPTIONS]
@@ -22,31 +24,29 @@ Usage:
 Options:
   -t, --target DIR     Target directory to scaffold (default: .)
   -l, --lang LANG      Primary project language: python | go | rust | php | ts (default: python)
+  --dry-run            Display actions without modifying the filesystem
+  -f, --force          Allow overwriting existing files (creates backup automatically)
   -h, --help           Show this help message and exit
 
 Examples:
-  ./bin/init-agy-kit.sh --target ./my-app --lang python
-  ./bin/init-agy-kit.sh --target ./go-service --lang go
-  ./bin/init-agy-kit.sh --target ./rust-crate --lang rust
-  ./bin/init-agy-kit.sh --target ./laravel-app --lang php
-  ./bin/init-agy-kit.sh --target ./express-api --lang ts
-
-Scaffolded Artifacts:
-  - .antigravity/        (Subagent specs: planner, coder, reviewer, qa & version.json)
-  - AGENTS.md            (Root project rules & quality gates for language)
-  - .githooks/           (Pre-commit security & quality hooks)
-  - skills/              (Core agy-kit agent skills)
-  - workflows/           (Agentic workflow pipelines)
-  - Language Config      (pyproject.toml / golangci.yml / Cargo.toml / phpstan.neon / tsconfig.json)
+  ./bin/init-agy-kit.sh --target ./my-app --lang python --dry-run
+  ./bin/init-agy-kit.sh --target ./go-service --lang go --force
 
 EOF
 }
 
-# Parse command line arguments
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -h|--help)
             SHOW_HELP=1
+            shift
+            ;;
+        --dry-run)
+            DRY_RUN=1
+            shift
+            ;;
+        -f|--force)
+            FORCE=1
             shift
             ;;
         -t|--target)
@@ -73,21 +73,11 @@ fi
 # Normalize language choice
 LANG_CHOICE="$(echo "$LANG_CHOICE" | tr '[:upper:]' '[:lower:]')"
 case "$LANG_CHOICE" in
-    python|py)
-        LANG_CHOICE="python"
-        ;;
-    go|golang)
-        LANG_CHOICE="go"
-        ;;
-    rust|rs)
-        LANG_CHOICE="rust"
-        ;;
-    php|laravel)
-        LANG_CHOICE="php"
-        ;;
-    ts|typescript|node|javascript|js)
-        LANG_CHOICE="ts"
-        ;;
+    python|py) LANG_CHOICE="python" ;;
+    go|golang) LANG_CHOICE="go" ;;
+    rust|rs) LANG_CHOICE="rust" ;;
+    php|laravel) LANG_CHOICE="php" ;;
+    ts|typescript|node|javascript|js) LANG_CHOICE="ts" ;;
     *)
         echo "[ERROR] Unsupported language '$LANG_CHOICE'. Supported: python, go, rust, php, ts"
         exit 1
@@ -99,117 +89,71 @@ echo "   Scaffolding agy-kit Developer Environment      "
 echo "=================================================="
 echo "Target Directory : $TARGET_DIR"
 echo "Language Choice  : $LANG_CHOICE"
+echo "Dry Run          : $DRY_RUN"
+echo "Force Overwrite  : $FORCE"
 echo ""
 
-mkdir -p "$TARGET_DIR/.antigravity/agents"
-mkdir -p "$TARGET_DIR/.antigravity/skills"
-mkdir -p "$TARGET_DIR/.antigravity/workflows"
+if [ "$DRY_RUN" -eq 1 ]; then
+    echo "🔍 DRY-RUN MODE ACTIVE: No files will be created or modified."
+    echo "Would create directories: $TARGET_DIR/.agents/agents, $TARGET_DIR/.agents/skills, $TARGET_DIR/.agents/workflows"
+    echo "Would scaffold: AGENTS.md, mcp_config.json, install-manifest.json, native subagent Markdown specs"
+    exit 0
+fi
+
+# Safety check for non-destructive behavior
+if [ -f "$TARGET_DIR/AGENTS.md" ] && [ "$FORCE" -eq 0 ]; then
+    echo "❌ ERROR: Target directory already contains AGENTS.md!"
+    echo "Use --force to permit overwriting (an automatic backup will be created)."
+    exit 1
+fi
+
+if [ "$FORCE" -eq 1 ] && [ -d "$TARGET_DIR/.agents" ]; then
+    BACKUP_DIR="${TARGET_DIR}/.agents_backup_$(date +%s)"
+    echo "📦 Creating safety backup of existing .agents configuration at $BACKUP_DIR..."
+    cp -r "$TARGET_DIR/.agents" "$BACKUP_DIR"
+fi
+
 mkdir -p "$TARGET_DIR/.agents/agents"
 mkdir -p "$TARGET_DIR/.agents/skills"
 mkdir -p "$TARGET_DIR/.agents/workflows"
 mkdir -p "$TARGET_DIR/.githooks"
-mkdir -p "$TARGET_DIR/skills"
-mkdir -p "$TARGET_DIR/workflows"
 mkdir -p "$TARGET_DIR/plans"
 mkdir -p "$TARGET_DIR/docs"
 
-# 1. Version file
-cat << 'EOF' > "$TARGET_DIR/.antigravity/version.json"
+# Copy scaffold assets from src/templates/ if available, otherwise use defaults
+TEMPLATES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../src/templates" 2>/dev/null && pwd || echo "")"
+
+if [ -n "$TEMPLATES_DIR" ] && [ -d "$TEMPLATES_DIR" ]; then
+    echo "📦 Copying scaffolding assets from $TEMPLATES_DIR..."
+    sed "s/\${LANG}/$LANG_CHOICE/g" "$TEMPLATES_DIR/AGENTS.md.tpl" > "$TARGET_DIR/AGENTS.md"
+    cp "$TEMPLATES_DIR/mcp_config.json.tpl" "$TARGET_DIR/.agents/mcp_config.json"
+    TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+    sed "s/\${TIMESTAMP}/$TIMESTAMP/g" "$TEMPLATES_DIR/version.json.tpl" > "$TARGET_DIR/.agents/version.json"
+    cp "$TEMPLATES_DIR/agents/"*.md "$TARGET_DIR/.agents/agents/"
+else
+    # Fallback to inline default generation
+    cat << 'EOF' > "$TARGET_DIR/.agents/version.json"
 {
-  "version": "0.7.0",
+  "version": "1.0.0-RC",
   "schema_version": "2.0.0",
   "generator": "init-agy-kit.sh",
   "installed_at": "2026-08-06T00:00:00Z"
 }
 EOF
+fi
 
-# 2. MCP JSON
-cat << 'EOF' > "$TARGET_DIR/.antigravity/mcp.json"
+# 4. Installation Manifest
+cat << EOF > "$TARGET_DIR/.agents/install-manifest.json"
 {
-  "mcpServers": {
-    "git": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-git"]
-    },
-    "memory": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
-    }
-  }
+  "installed_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+  "target_directory": "$TARGET_DIR",
+  "language": "$LANG_CHOICE",
+  "version": "1.0.0-RC",
+  "safe_mode": true
 }
 EOF
 
-# 3. Subagent specs (.antigravity/agents/*.json)
-cat << 'EOF' > "$TARGET_DIR/.antigravity/agents/planner.json"
-{
-  "name": "planner",
-  "description": "Architect subagent responsible for codebase survey, SPEC creation, RTM & edge-case matrix.",
-  "version": "2.0.0",
-  "model": {
-    "primary": "gemini-3.6-flash-high",
-    "fallback": "gemini-3.6-flash-low"
-  },
-  "instructions": [
-    "Survey codebase and write SPEC at plans/SPEC_<feature>.md.",
-    "Produce RTM, DFD, NFR register entry, and 12-dimensional edge matrix.",
-    "Propose at least 3 design variants and run grill-me self-stress testing."
-  ],
-  "tools": ["read_file", "write_file", "search_files", "terminal"]
-}
-EOF
-
-cat << EOF > "$TARGET_DIR/.antigravity/agents/coder.json"
-{
-  "name": "coder",
-  "description": "Senior Developer — implements features using strict TDD (RED -> GREEN -> REFACTOR) for $LANG_CHOICE.",
-  "version": "2.0.0",
-  "model": {
-    "primary": "gemini-3.6-flash-high",
-    "fallback": "gemini-3.6-flash-low"
-  },
-  "instructions": [
-    "Execute TDD for $LANG_CHOICE: RED (failing tests) -> GREEN (pass tests) -> REFACTOR (clean code).",
-    "Enforce L1 linter and L2 unit test gates. Auto-rollback after 3 failing attempts."
-  ],
-  "tools": ["read_file", "write_file", "search_files", "terminal", "patch"]
-}
-EOF
-
-cat << EOF > "$TARGET_DIR/.antigravity/agents/reviewer.json"
-{
-  "name": "reviewer",
-  "description": "Code and security reviewer auditing diffs, linters, and security scanners for $LANG_CHOICE.",
-  "version": "2.0.0",
-  "model": {
-    "primary": "gemini-3.6-flash-high",
-    "fallback": "gemini-3.6-flash-low"
-  },
-  "instructions": [
-    "Audit git diff against OWASP-AI checklist and language quality standards.",
-    "Verify 3-state verification (pre, action, post) and emit plan-review stamp."
-  ],
-  "tools": ["read_file", "search_files", "terminal", "patch"]
-}
-EOF
-
-cat << EOF > "$TARGET_DIR/.antigravity/agents/qa.json"
-{
-  "name": "qa",
-  "description": "QA subagent executing end-to-end integration and dogfooding test suites.",
-  "version": "2.0.0",
-  "model": {
-    "primary": "gemini-3.6-flash-low",
-    "fallback": "gemini-3.6-flash-high"
-  },
-  "instructions": [
-    "Execute L4 E2E boundary test suites and record test evidence.",
-    "Verify 100% of RTM acceptance criteria."
-  ],
-  "tools": ["read_file", "write_file", "search_files", "terminal"]
-}
-EOF
-
-# 4. AGENTS.md tailored to language
+# 5. AGENTS.md tailored to language
 cat << EOF > "$TARGET_DIR/AGENTS.md"
 # AGENTS.md — agy-kit Project Rules ($LANG_CHOICE)
 
@@ -217,184 +161,17 @@ cat << EOF > "$TARGET_DIR/AGENTS.md"
 
 ## 1. Planning First Rule
 - Features touching >3 files or changing architecture MUST create \`plans/SPEC_<feature>.md\` first.
-- Includes RTM, DFD, 12-dimensional edge matrix, and 3 design variants.
 
 ## 2. Test-Driven Development (TDD)
 - Language: **$LANG_CHOICE**
 - Cycle: RED -> GREEN -> REFACTOR.
-- Unit test coverage target: >= 85% line, 75% branch.
 
 ## 3. Strict Quality Gates
 - Gate L1: Zero linter/typecheck errors.
 - Gate L2: All unit tests pass.
 - Gate L3: Integration tests pass.
 - Gate L4: E2E boundary tests pass.
-- Gate L5: OWASP security audit & plan-review stamp approved.
-
-## 4. Rollback & Reliability
-- Git checkpoint created before code mutations.
-- Maximum 3 retries on test failure before auto-rollback and escalation.
-- Maximum 15 turns per subagent session.
+- Gate L5: OWASP security audit approved.
 EOF
-
-# 5. Pre-commit hook (.githooks/pre-commit)
-cat << 'EOF' > "$TARGET_DIR/.githooks/pre-commit"
-#!/usr/bin/env bash
-# agy-kit pre-commit quality gate hook
-set -euo pipefail
-echo "Executing agy-kit pre-commit quality check..."
-
-# Secret scanning
-if command -v gitleaks &>/dev/null; then
-    gitleaks detect --staged --verbose
-else
-    git diff --cached | grep -iE '(api_key|password|secret|private_key)' && { echo "Error: Potential secret detected!"; exit 1; } || true
-fi
-
-echo "Pre-commit check passed!"
-EOF
-chmod +x "$TARGET_DIR/.githooks/pre-commit"
-
-# 6. Core Skills & Workflows starters
-cat << 'EOF' > "$TARGET_DIR/skills/ba-expert.md"
-# Skill: Business Analysis Expert
-Enforces SPEC, RTM, DFD, and 12-Dimensional Edge Case Matrix generation.
-EOF
-
-cat << 'EOF' > "$TARGET_DIR/skills/writing-skills.md"
-# Skill: Writing Skills & TDD Skill Authoring
-Enforces TDD for skill authoring (RED -> GREEN -> REFACTOR pressure testing), concise structure, anti-patterns avoidance, and rationale documentation.
-EOF
-
-cat << 'EOF' > "$TARGET_DIR/workflows/pipeline.yml"
-name: agy-kit-pipeline
-steps:
-  - plan
-  - build
-  - gate
-  - qa
-  - review
-EOF
-
-# 7. Language specific config file template
-case "$LANG_CHOICE" in
-    python)
-        cat << 'EOF' > "$TARGET_DIR/pyproject.toml"
-[tool.ruff]
-line-length = 100
-target-version = "py311"
-
-[tool.mypy]
-strict = true
-ignore_missing_imports = true
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-addopts = "-v --cov=src"
-EOF
-        ;;
-    go)
-        cat << 'EOF' > "$TARGET_DIR/golangci.yml"
-run:
-  timeout: 5m
-linters:
-  enable:
-    - errcheck
-    - gosimple
-    - govet
-    - ineffassign
-    - staticcheck
-    - unused
-EOF
-        cat << 'EOF' > "$TARGET_DIR/go.mod"
-module example.com/app
-
-go 1.22
-EOF
-        ;;
-    rust)
-        cat << 'EOF' > "$TARGET_DIR/Cargo.toml"
-[package]
-name = "example-app"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-EOF
-        cat << 'EOF' > "$TARGET_DIR/clippy.toml"
-avoid-breaking-exported-api = false
-EOF
-        ;;
-    php)
-        cat << 'EOF' > "$TARGET_DIR/composer.json"
-{
-  "name": "example/app",
-  "description": "Scaffolded PHP Laravel Application",
-  "require": {
-    "php": "^8.2"
-  },
-  "require-dev": {
-    "phpstan/phpstan": "^1.10",
-    "phpunit/phpunit": "^10.0"
-  }
-}
-EOF
-        cat << 'EOF' > "$TARGET_DIR/phpstan.neon"
-parameters:
-  level: 8
-  paths:
-    - app
-    - tests
-EOF
-        ;;
-    ts)
-        cat << 'EOF' > "$TARGET_DIR/package.json"
-{
-  "name": "example-express-app",
-  "version": "1.0.0",
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "tsc",
-    "test": "vitest run",
-    "lint": "eslint ."
-  },
-  "devDependencies": {
-    "typescript": "^5.0.0",
-    "vitest": "^1.0.0",
-    "eslint": "^8.0.0"
-  }
-}
-EOF
-        cat << 'EOF' > "$TARGET_DIR/tsconfig.json"
-{
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist"
-  },
-  "include": ["src/**/*"]
-}
-EOF
-        ;;
-esac
 
 echo "[SUCCESS] agy-kit successfully scaffolded in $TARGET_DIR ($LANG_CHOICE)!"
-# Mirror .antigravity to .agents
-cp -r "$TARGET_DIR/.antigravity/agents"/* "$TARGET_DIR/.agents/agents/"
-cp "$TARGET_DIR/.antigravity/mcp.json" "$TARGET_DIR/.agents/mcp_config.json"
-cp "$TARGET_DIR/.antigravity/mcp.json" "$TARGET_DIR/.agents/mcp.json"
-echo "Scaffolded files:"
-echo "  - $TARGET_DIR/.antigravity/version.json"
-echo "  - $TARGET_DIR/.antigravity/mcp.json"
-echo "  - $TARGET_DIR/.agents/mcp_config.json"
-echo "  - $TARGET_DIR/.antigravity/agents/{planner,coder,reviewer,qa}.json"
-echo "  - $TARGET_DIR/AGENTS.md"
-echo "  - $TARGET_DIR/.githooks/pre-commit"
-echo "  - $TARGET_DIR/skills/ba-expert.md"
-echo "  - $TARGET_DIR/skills/writing-skills.md"
-echo "  - $TARGET_DIR/workflows/pipeline.yml"

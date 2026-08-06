@@ -22,31 +22,38 @@
 
 FEATURE ?= unnamed
 
-.PHONY: pipeline spec build gate qa review doctor validate check-boundaries eval-cost test-recovery scan-deps synthesize-skill export-telemetry check-traceability validate-ba validate-phase10 validate-workflows-sync validate-phase11 validate-brainstorm verify-eval clean
+.PHONY: pipeline spec build gate qa review doctor validate check-boundaries eval-cost test-recovery scan-deps synthesize-skill export-telemetry check-traceability validate-ba validate-phase10 validate-workflows-sync validate-phase11 validate-brainstorm verify-eval sync-templates clean
+
+# Template Synchronization Target
+sync-templates:
+	@chmod +x bin/sync-templates.sh
+	@./bin/sync-templates.sh --sync
 
 # Full 5-step pipeline
 pipeline: spec build gate qa review
 	@echo "✅ Pipeline complete for feature: $(FEATURE)"
 
+AGY_FLAGS ?=
+
 # Step 1: Create SPEC
 spec:
-	agy -p "Survey and create SPEC for feature $(FEATURE) at plans/SPEC_$(FEATURE).md following SPEC_TEMPLATE.md" --dangerously-skip-permissions
+	agy -p "Survey and create SPEC for feature $(FEATURE) at plans/SPEC_$(FEATURE).md following SPEC_TEMPLATE.md" $(AGY_FLAGS)
 
 # Step 2: TDD Implementation
 build:
-	agy -p "Read plans/SPEC_$(FEATURE).md. Execute TDD: RED → GREEN → REFACTOR. Only modify files in the File Mutation Manifest." --dangerously-skip-permissions
+	agy -p "Read plans/SPEC_$(FEATURE).md. Execute TDD: RED → GREEN → REFACTOR. Only modify files in the File Mutation Manifest." $(AGY_FLAGS)
 
 # Step 3: Quality Gate (lint + security)
 gate:
-	agy -p "Run lint, typecheck, gitleaks, OWASP-AI checklist. Fix all issues." --dangerously-skip-permissions
+	agy -p "Run lint, typecheck, gitleaks, OWASP-AI checklist. Fix all issues." $(AGY_FLAGS)
 
 # Step 4: E2E QA
 qa:
-	agy -p "Start local server. Run cURL/Playwright tests per Test Plan. Collect evidence." --dangerously-skip-permissions
+	agy -p "Start local server. Run cURL/Playwright tests per Test Plan. Collect evidence." $(AGY_FLAGS)
 
 # Step 5: Review & Commit
 review:
-	agy -p "Review git diff. Pre-commit audit + 3-state verification. Group Conventional Commits." --dangerously-skip-permissions
+	agy -p "Review git diff. Pre-commit audit + 3-state verification. Group Conventional Commits." $(AGY_FLAGS)
 
 # Health & Diagnostics
 doctor:

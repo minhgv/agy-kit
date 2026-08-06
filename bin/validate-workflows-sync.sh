@@ -28,7 +28,7 @@ AGENTS_MIRROR_DIR=".agents"
 # 1. Audit Workflow Files Existence
 echo ""
 echo "Auditing Workflow Files in $WORKFLOWS_DIR..."
-REQUIRED_WORKFLOWS=("pipeline.md" "plan.md" "gate.md" "review.md" "qa.md" "safe-pipeline.md")
+REQUIRED_WORKFLOWS=("pipeline.md" "plan.md" "gate.md" "review.md" "qa.md" "safe-pipeline.md" "doctor.md" "init.md" "learn.md" "schedule.md" "migrate.md")
 
 for wf in "${REQUIRED_WORKFLOWS[@]}"; do
     WF_PATH="$WORKFLOWS_DIR/$wf"
@@ -115,9 +115,9 @@ fi
 echo ""
 echo "Auditing Agent Specs ($AGENTS_DIR) Alignment with Skills..."
 
-REQUIRED_AGENTS=("planner.json" "coder.json" "reviewer.json" "qa.json")
+REQUIRED_AGENTS=("planner.md" "coder.md" "reviewer.md" "qa.md")
 for agent in "${REQUIRED_AGENTS[@]}"; do
-    AGENT_PATH="$AGENTS_DIR/$agent"
+    AGENT_PATH="$AGENTS_MIRROR_DIR/agents/$agent"
     if [ -f "$AGENT_PATH" ]; then
         log_ok "Agent spec $agent exists."
     else
@@ -125,28 +125,28 @@ for agent in "${REQUIRED_AGENTS[@]}"; do
     fi
 done
 
-if [ -f "$AGENTS_DIR/planner.json" ] && grep -q "ba-expert" "$AGENTS_DIR/planner.json"; then
-    log_ok "planner.json aligns with ba-expert skill."
+if [ -f "$AGENTS_MIRROR_DIR/agents/planner.md" ] && grep -q "ba-expert" "$AGENTS_MIRROR_DIR/agents/planner.md"; then
+    log_ok "planner.md aligns with ba-expert skill."
 else
-    log_fail "planner.json missing ba-expert skill reference!"
+    log_fail "planner.md missing ba-expert skill reference!"
 fi
 
-if [ -f "$AGENTS_DIR/coder.json" ] && (grep -q "qa-test-gen" "$AGENTS_DIR/coder.json" || grep -q "qa-auditor" "$AGENTS_DIR/coder.json"); then
-    log_ok "coder.json aligns with QA skills suite."
+if [ -f "$AGENTS_MIRROR_DIR/agents/coder.md" ] && (grep -q "qa-test-gen" "$AGENTS_MIRROR_DIR/agents/coder.md" || grep -q "qa-auditor" "$AGENTS_MIRROR_DIR/agents/coder.md"); then
+    log_ok "coder.md aligns with QA skills suite."
 else
-    log_fail "coder.json missing QA skills suite reference!"
+    log_fail "coder.md missing QA skills suite reference!"
 fi
 
-if [ -f "$AGENTS_DIR/reviewer.json" ] && grep -q "qa-auditor" "$AGENTS_DIR/reviewer.json"; then
-    log_ok "reviewer.json aligns with qa-auditor skill."
+if [ -f "$AGENTS_MIRROR_DIR/agents/reviewer.md" ] && grep -q "qa-auditor" "$AGENTS_MIRROR_DIR/agents/reviewer.md"; then
+    log_ok "reviewer.md aligns with qa-auditor skill."
 else
-    log_fail "reviewer.json missing qa-auditor skill reference!"
+    log_fail "reviewer.md missing qa-auditor skill reference!"
 fi
 
-if [ -f "$AGENTS_DIR/qa.json" ] && grep -q "qa-reproducer" "$AGENTS_DIR/qa.json"; then
-    log_ok "qa.json aligns with qa-reproducer skill."
+if [ -f "$AGENTS_MIRROR_DIR/agents/qa.md" ] && grep -q "qa-reproducer" "$AGENTS_MIRROR_DIR/agents/qa.md"; then
+    log_ok "qa.md aligns with qa-reproducer skill."
 else
-    log_fail "qa.json missing qa-reproducer skill reference!"
+    log_fail "qa.md missing qa-reproducer skill reference!"
 fi
 
 # 4. Audit Skill Mirroring & Integrity (.hermes/skills <-> .antigravity/skills <-> .agents/skills)
@@ -193,6 +193,15 @@ for wf in "${REQUIRED_WORKFLOWS[@]}"; do
         log_fail ".agents/workflows/$wf missing!"
     fi
 done
+
+# 6. Audit Template Synchronization Drift (src/templates/)
+echo ""
+echo "Auditing Template Synchronization Drift (src/templates/)..."
+if python3 "${SCRIPT_DIR}/sync_templates.py" --check; then
+    log_ok "Templates in src/templates/ are 100% synchronized with live assets."
+else
+    log_fail "Template drift detected between live assets and src/templates/!"
+fi
 
 echo "=================================================="
 if [ "$ERRORS" -gt 0 ]; then

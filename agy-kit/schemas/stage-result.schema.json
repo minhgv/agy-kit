@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "StageResult",
+  "type": "object",
+  "required": [
+    "run_id",
+    "stage",
+    "agent",
+    "status",
+    "started_at",
+    "finished_at",
+    "input_commit",
+    "files_changed",
+    "commands_run",
+    "checks",
+    "evidence",
+    "errors"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "stage": {
+      "type": "string",
+      "enum": ["plan", "build", "gate", "qa", "review"]
+    },
+    "agent": {
+      "type": "string",
+      "enum": ["planner", "coder", "reviewer", "qa"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["passed", "failed", "blocked", "cancelled"]
+    },
+    "started_at": {
+      "type": "string"
+    },
+    "finished_at": {
+      "type": "string"
+    },
+    "input_commit": {
+      "type": "string"
+    },
+    "output_commit": {
+      "type": ["string", "null"]
+    },
+    "files_changed": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "commands_run": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "checks": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
