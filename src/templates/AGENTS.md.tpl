@@ -1,6 +1,6 @@
-# AGENTS.md — agy-kit Project Rules (${LANG})
+# AGENTS.md — agy-kit Project Rules
 
-> **agy-kit scaffolded project** (${LANG}) — rules, skills, specialist agents, workflows, persistent memory, MCP guidance, orchestration, and native safety hooks.
+> **agy-kit** is an Antigravity-first agent engineering kit: rules, skills, specialist agents, workflows, persistent memory, MCP guidance, orchestration, and native safety hooks.
 
 ## 1. Planning First Rule
 
@@ -10,7 +10,6 @@
 
 ## 2. Test-Driven Development (TDD)
 
-- Primary language: **${LANG}**
 - Every new logic must ship with Unit/Integration Test.
 - Enforce RED → GREEN → REFACTOR cycle. Confirm test FAIL before writing logic.
 
@@ -33,12 +32,12 @@
 
 ## 6. Subagent Roles
 
-| Agent | Role | Specification |
-|-------|------|---------------|
-| `planner` | Survey codebase, write SPEC | `.agents/agents/planner.md` |
-| `coder` | TDD implementation | `.agents/agents/coder.md` |
-| `reviewer` | Code review, security scan | `.agents/agents/reviewer.md` |
-| `qa` | E2E testing, dogfooding | `.agents/agents/qa.md` |
+| Agent | Role | Trigger |
+|-------|------|---------|
+| `planner` | Survey codebase, write SPEC | `--agent plan` |
+| `coder` | TDD implementation | `--agent build` (default) |
+| `reviewer` | Code review, security scan | `--agent review` |
+| `qa` | E2E testing, dogfooding | `--agent qa` |
 
 ## 7. Rollback & Recovery Safety
 
@@ -46,18 +45,24 @@
 - After modifying code → run test runner. If test FAIL → auto-rollback to clean checkpoint.
 - Max 3 retries per failing test → if exceeded, STOP and escalate.
 - Max 15 turns per session → auto-exit to prevent infinite loops.
+- Details: `docs/rollback-recovery.md`
 
 ## 8. Multi-Language Support
 
-- Primary language adapter configured for **${LANG}**.
 - Auto-detect language via root indicator file (`pyproject.toml`, `go.mod`, `Cargo.toml`, `composer.json`, `package.json`).
+- Each language has its own toolchain adapter (linter, formatter, typechecker, test runner).
+- Details: `docs/multi-language-adapters.md`
 
 ## 9. Problem Solving, Ideation & Stress Testing
 
 - **Brainstorming (`/brainstorm`, `brainstorming` skill):** Before writing code or implementation plans for novel/vague features, classify unknowns into 4 categories (Known knowns, Known unknowns, Unknown knowns, Unknown unknowns) and present 2–4 concrete option variants with explicit trade-offs. Respect hard gate: no code or implementation plans until design is approved by user.
-- **Stress Testing (`/grill`, `grill-me` skill):** Before implementing technical specs or ADRs, subject plans to 11-question scrutiny. Force concrete answers — no hand-waving "figure out later".
-- **Systematic Problem Solving (`/solve`, `problem-solving` skill):** Dispatch 5 core techniques (Simplification Cascades, Collision-Zone Thinking, Meta-Pattern Recognition, Inversion Exercise, Scale Game).
+- **Stress Testing (`/grill`, `grill-me` skill):** Before implementing technical specs or ADRs, subject plans to 11-question scrutiny (assumptions, failure modes, 10x scale extremes, cost of being wrong, simplest test, hardest part, rollback plan, potential mistakes, disagreements, non-goals, unaddressed topics). Force concrete answers — no hand-waving "figure out later".
+- **Systematic Problem Solving (`/solve`, `problem-solving` skill):** When stuck on complexity spirals, innovation blocks, recurring patterns, assumption constraints, or scale uncertainty, dispatch one of the 5 core techniques (Simplification Cascades, Collision-Zone Thinking, Meta-Pattern Recognition, Inversion Exercise, Scale Game) and load detailed reference guides from `references/`.
+- **Skill Authoring & TDD (`writing-skills` skill):** Apply Test-Driven Development (TDD) for skill authoring: RED -> GREEN -> REFACTOR pressure testing. Run subagents against pressure scenarios without skill to confirm failure (RED), author minimal skill that flips failure (GREEN), and refactor against adversarial prompts and rationalization loopholes before deployment.
 
-## 10. Quality Assurance & Evaluation
+## 10. Harness Meta-Evaluation & Synthetic Fault Injection Suite
 
-- Validates pipeline execution, test coverage, and OWASP security audit.
+- **Meta-Evaluation Suite (`tests/evals/meta_eval_harness.py`, `./bin/verify-eval-harness.sh`, `make verify-eval`):** Validates the benchmark harness (`eval_harness.py`) itself to guarantee evaluation reliability and prevent benchmark drift.
+- **5 Synthetic Fault Injection Scenarios:** Secret Leak, Syntax Error, Missing Skill, Path Violation, and Malformed Spec. Verifies that `eval_harness.py` detects 5/5 RED failures.
+- **Deterministic Stability Test:** Executes 10 consecutive evaluation cycles to ensure 0 variance in benchmark scoring.
+- **Performance Profiler:** Enforces execution latency target (< 2.0s) for rapid CI evaluation feedback.

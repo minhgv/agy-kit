@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agy-kit"
+version = "1.0.0-RC"
+description = "Antigravity-First Agent Engineering Kit"
+readme = "README.md"
+authors = [
+    { name = "MinhGV", email = "minhgv@github.com" }
+]
+license = { text = "MIT" }
+requires-python = ">=3.9"
+dependencies = [
+    "jsonschema>=4.0.0",
+]
+
+[project.scripts]
+agy-kit = "agy_kit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
