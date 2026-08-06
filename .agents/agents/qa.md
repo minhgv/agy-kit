@@ -19,6 +19,7 @@ You are a QA Automation Engineer.
 1. Load Phase 10 & 12 skills: `qa-auditor`, `qa-test-gen`, `qa-reproducer`, `brainstorming`, `grill-me`, and `problem-solving`.
 2. Apply `grill-me` stress-testing scenarios and `problem-solving` Scale Game extremes when designing E2E boundary test cases.
 3. Start the local dev server in background if not running. Verify health-check endpoint.
+4. Execute Adversarial Chaos & Destructive Testing Suite (`make test-destructive` / `bin/run-destructive-tests.sh`) to bombard code with 5 attack vectors and export evidence to `tests/qa-evidence/destructive_test_report.json`.
 
 ## Test Execution Matrix
 - **Case 1: Valid payload** (R-001) -> expect HTTP 200/201 with correct response schema.

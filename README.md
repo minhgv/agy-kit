@@ -105,18 +105,37 @@ agy-kit/
 
 ---
 
-## End-to-End Workflow for New Projects
+## End-to-End SDLC Workflow for New Projects
 
-### Phase 1: Initialize Project
+```text
+[Phase 1: Init & Health Check] 
+    ↓
+[Phase 2: Ideation & Architecture Spec (RTM + 12D Edge Case Matrix)] 
+    ↓
+[Phase 3: Shift-Left Destructive TDD Execution] 
+    ├── RED: Generate Functional Tests AND Destructive Testcases (Null bytes, Traversal, Race Conditions) -> Verify FAIL
+    ├── GREEN: Write minimal code to pass functional + destructive tests
+    └── REFACTOR: Clean code & SOLID design principles
+    ↓
+[Phase 4: Quality Gate & Security Audit (OWASP-AI 5-Point Check)] 
+    ↓
+[Phase 5: Runtime Chaos Fuzzing & E2E QA] 
+    ├── Step 5.1: E2E Playwright/cURL dogfooding tests
+    └── Step 5.2: Adversarial Chaos Fuzzing (make test-destructive) -> Produce MRE bug reproductions
+    ↓
+[Phase 6: Review, 3-State Verification & Memory Handoff]
+```
+
+### Phase 1: Initialize & Diagnostics
 ```bash
 # 1. Scaffold agy-kit into a target project directory
 ./bin/init-agy-kit.sh --target ./my-app --lang python
 
-# 2. Run environment diagnostics
+# 2. Run environment health diagnostics
 /doctor
 ```
 
-### Phase 2: Ideation & Architecture
+### Phase 2: Ideation & Architecture Spec
 ```bash
 # 3. Brainstorm unknown categories & option variants (optional)
 /brainstorm "OAuth2 refresh token service"
@@ -128,27 +147,34 @@ agy-kit/
 /grill "OAuth2 refresh token service"
 ```
 
-### Phase 3: Safe TDD Implementation
+### Phase 3: Shift-Left Destructive TDD Implementation
 ```bash
 # 6. Execute 5-stage pipeline with isolated Git worktree & auto-rollback
+# Subagent 'coder' generates both Functional + Destructive Testcases in RED phase
 /safe-pipeline "OAuth2 refresh token service"
 ```
 
-### Phase 4: Quality Gate & E2E QA
+### Phase 4: Quality Gate & Security Audit
 ```bash
 # 7. Run static analysis, secret scan, OWASP-AI checklist
 /gate
-
-# 8. Run E2E dogfooding tests & produce MRE bug reproductions
-/qa
 ```
 
-### Phase 5: Code Review & Memory Handoff
+### Phase 5: Runtime Chaos Fuzzing & E2E QA
 ```bash
-# 9. Audit 3-state verification & group Conventional Commits
+# 8. Run E2E dogfooding tests & produce MRE bug reproductions
+/qa
+
+# 9. Execute Adversarial Chaos & Destructive Testing Suite
+make test-destructive
+```
+
+### Phase 6: Code Review & Memory Handoff
+```bash
+# 10. Audit 3-state verification & group Conventional Commits
 /review
 
-# 10. Extract learned rules into MEMORY.md
+# 11. Extract learned rules into MEMORY.md
 /learn "Token revocation pattern"
 ```
 
@@ -161,6 +187,7 @@ make doctor              # Run system health diagnostics
 make validate            # Run subagent, workflow sync & template drift audit
 make verify-eval         # Run meta-eval & 5 synthetic fault injection tests
 make sync-templates      # Synchronize active assets to src/templates/
+make test-destructive    # Run Adversarial Chaos & Destructive Testing Suite
 make pipeline FEATURE=x  # Run full 5-step pipeline for feature
 make check-boundaries    # Verify multi-agent path boundaries
 make scan-deps           # Run OWASP-AI supply chain security scan

@@ -22,7 +22,12 @@
 
 FEATURE ?= unnamed
 
-.PHONY: pipeline spec build gate qa review doctor validate check-boundaries eval-cost test-recovery scan-deps synthesize-skill export-telemetry check-traceability validate-ba validate-phase10 validate-workflows-sync validate-phase11 validate-brainstorm verify-eval sync-templates clean
+.PHONY: pipeline spec build gate qa review doctor validate check-boundaries eval-cost test-recovery scan-deps synthesize-skill export-telemetry check-traceability validate-ba validate-phase10 validate-workflows-sync validate-phase11 validate-brainstorm verify-eval sync-templates test-destructive clean
+
+# Adversarial Chaos & Destructive Test Target
+test-destructive:
+	@chmod +x bin/run-destructive-tests.sh
+	@./bin/run-destructive-tests.sh
 
 # Template Synchronization Target
 sync-templates:
