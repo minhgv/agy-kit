@@ -1,6 +1,17 @@
 # agy-kit — Changelog
 
-## [0.5.0] — 2026-08-06 (Phase 4 — Cross-Tool Compatibility + Production Polish)
+## [0.6.0] — 2026-08-06 (Phase 5 — Antigravity Native Deep Optimization)
+
+### Added
+- `docs/opentelemetry-tracing.md` — OpenTelemetry (OTLP) tracing setup, GenAI semantic attributes, and span visualizer guide for `agy`
+- `tests/evals/eval_harness.py` — Local subagent evaluation harness measuring Pass@1 TDD rate, SPEC compliance, and token cost
+- Pure Antigravity CLI scaffold focus — removed legacy cross-tool adapters (`.claude/`, `.opencode/`, `.codex/`, `.cursorrules`, `.windsurfrules`)
+
+### Changed
+- `.antigravity/version.json` — Updated to v0.6.0 with `target_platform: Antigravity CLI (agy)`
+- `README.md` — Updated to focus 100% exclusively on Antigravity CLI (`agy`)
+
+## [0.5.0] — 2026-08-06 (Phase 4 — Production Polish)
 
 ### Added
 - `.claude/agents/*.md` — Claude Code adapter (4 agents: planner, coder, reviewer, qa)

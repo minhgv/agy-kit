@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-08-06T03:12:58.986092",
+  "scaffold": "agy-kit",
+  "target_cli": "Antigravity CLI (agy)",
+  "metrics": {
+    "quality_gate": {
+      "secrets_found": false,
+      "syntax_ok": true,
+      "score": 100
+    },
+    "pass_at_1_tdd_target": "\u2265 85%",
+    "spec_compliance_target": "100%"
+  }
+}
