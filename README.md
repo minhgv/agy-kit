@@ -23,10 +23,10 @@
 
 | Subagent | Role | Primary Model | Fallback Model | Command |
 |----------|------|---------------|----------------|---------|
-| `planner` | Lead System Architect & BA | `zai/glm-5.2` | `gemini-3.6-flash-high` | `agy run --agent plan` |
+| `planner` | Lead System Architect & BA | `gemini-3.6-flash-high` | `gemini-3.6-flash-low` | `agy run --agent plan` |
 | `coder` | Senior Developer (TDD) | `gemini-3.6-flash-high` | `gemini-3.6-flash-low` | `agy run --agent build` |
-| `reviewer` | Principal Reviewer & Security | `zai/glm-5.2` | `gemini-3.6-flash-high` | `agy run --agent review` |
-| `qa` | QA Automation Engineer | `gemini-3.6-flash-high` | `gemini-3.6-flash-low` | `agy run --agent qa` |
+| `reviewer` | Principal Reviewer & Security | `gemini-3.6-flash-high` | `gemini-3.6-flash-low` | `agy run --agent review` |
+| `qa` | QA Automation Engineer | `gemini-3.6-flash-low` | `gemini-3.6-flash-low` | `agy run --agent qa` |
 
 ### 2. Complete Skills Suite
 
@@ -100,10 +100,10 @@ agy-kit/
 ├── Makefile                       # Command wrapper: make pipeline FEATURE=auth
 ├── .antigravity/
 │   ├── agents/                    # Specialist subagent definitions (v2.0 schema)
-│   │   ├── planner.json           # Survey, SPEC authoring & BA (zai/glm-5.2)
+│   │   ├── planner.json           # Survey, SPEC authoring & BA (gemini-3.6-flash-high)
 │   │   ├── coder.json             # TDD implementation (gemini-3.6-flash-high)
-│   │   ├── reviewer.json          # Code review & security audit (zai/glm-5.2)
-│   │   └── qa.json                # E2E QA & dogfooding (gemini-3.6-flash-high)
+│   │   ├── reviewer.json          # Code review & security audit (gemini-3.6-flash-high)
+│   │   └── qa.json                # E2E QA & dogfooding (gemini-3.6-flash-low)
 │   ├── mcp.json                   # MCP server integrations (filesystem, github, playwright, sqlite)
 │   ├── workflows/                 # 9 Native agy slash commands
 │   │   ├── pipeline.md            # /pipeline

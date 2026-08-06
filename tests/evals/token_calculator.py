@@ -6,6 +6,7 @@ Computes estimated API costs based on model pricing registry.
 
 PRICING_REGISTRY = {
     "gemini-3.6-flash-high": {"input": 0.075, "output": 0.30},  # USD per 1M tokens
+    "gemini-3.6-flash-low": {"input": 0.0375, "output": 0.15},
     "gemini-1.5-pro": {"input": 1.25, "output": 5.00},
     "claude-3-5-sonnet": {"input": 3.00, "output": 15.00},
     "gpt-4o": {"input": 2.50, "output": 10.00},

@@ -58,11 +58,11 @@ flowchart TD
 
 | Stage | Subagent Role | Primary Model | Key Deliverable / Artifact |
 |-------|--------------|---------------|----------------------------|
-| **Stage 1: Plan & BA** | `planner` | `zai/glm-5.2` | `plans/SPEC_<feature>.md` (containing RTM, 12-ACM, NFR, DFD) + `plan-review` stamp |
+| **Stage 1: Plan & BA** | `planner` | `gemini-3.6-flash-high` | `plans/SPEC_<feature>.md` (containing RTM, 12-ACM, NFR, DFD) + `plan-review` stamp |
 | **Stage 2: TDD** | `coder` | `gemini-3.6-flash-high` | Source code + Test suites in `src/` and `tests/` + `tests/red/<feature>.log` |
-| **Stage 3: Quality Gate** | `reviewer` | `zai/glm-5.2` | Clean linter / L1-L5 Quality scan / OWASP security scan results |
+| **Stage 3: Quality Gate** | `reviewer` | `gemini-3.6-flash-high` | Clean linter / L1-L5 Quality scan / OWASP security scan results |
 | **Stage 4: E2E QA** | `qa` | `gemini-3.6-flash-low` | Raw execution logs in `tests/qa-evidence/<feature_name>/` + QA Report |
-| **Stage 5: Review & Commit** | `reviewer` | `zai/glm-5.2` | 3-State Verification audit report & Git commit |
+| **Stage 5: Review & Commit** | `reviewer` | `gemini-3.6-flash-high` | 3-State Verification audit report & Git commit |
 
 ---
 

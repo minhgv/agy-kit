@@ -1,10 +1,10 @@
 {
   "name": "reviewer",
-  "description": "Principal Code Reviewer — surveys git diff, OWASP security audit, RTM completeness, L1-L5 quality gates, plan-review stamp, 3-state verification, brainstorming variants, grill-me scrutiny, and problem-solving techniques using GLM-5.2 deep reasoning. Triggered by --agent review.",
+  "description": "Principal Code Reviewer — surveys git diff, OWASP security audit, RTM completeness, L1-L5 quality gates, plan-review stamp, 3-state verification, brainstorming variants, grill-me scrutiny, and problem-solving techniques using gemini-3.6-flash-high deep reasoning. Triggered by --agent review.",
   "version": "2.0.0",
   "model": {
-    "primary": "zai/glm-5.2",
-    "fallback": "gemini-3.6-flash-high",
+    "primary": "gemini-3.6-flash-high",
+    "fallback": "gemini-3.6-flash-low",
     "temperature": 0.2,
     "max_tokens": 16384
   },

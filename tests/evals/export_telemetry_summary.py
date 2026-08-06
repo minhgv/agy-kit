@@ -21,10 +21,10 @@ from token_calculator import calculate_cost
 def generate_telemetry_metrics():
     # Simulated execution metrics derived from evaluation sessions
     stages = [
-        {"stage": "planner", "model": "zai/glm-5.2", "prompt_tokens": 15000, "completion_tokens": 3000, "latencies_ms": [320, 450, 610]},
+        {"stage": "planner", "model": "gemini-3.6-flash-high", "prompt_tokens": 15000, "completion_tokens": 3000, "latencies_ms": [320, 450, 610]},
         {"stage": "coder", "model": "gemini-3.6-flash-high", "prompt_tokens": 45000, "completion_tokens": 8000, "latencies_ms": [180, 240, 390]},
-        {"stage": "reviewer", "model": "zai/glm-5.2", "prompt_tokens": 20000, "completion_tokens": 4000, "latencies_ms": [290, 380, 520]},
-        {"stage": "qa", "model": "gemini-3.6-flash-high", "prompt_tokens": 10000, "completion_tokens": 2000, "latencies_ms": [150, 210, 310]},
+        {"stage": "reviewer", "model": "gemini-3.6-flash-high", "prompt_tokens": 20000, "completion_tokens": 4000, "latencies_ms": [290, 380, 520]},
+        {"stage": "qa", "model": "gemini-3.6-flash-low", "prompt_tokens": 10000, "completion_tokens": 2000, "latencies_ms": [150, 210, 310]},
     ]
     
     total_prompt = 0

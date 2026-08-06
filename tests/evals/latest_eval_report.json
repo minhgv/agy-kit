@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T05:00:24.635658",
+  "timestamp": "2026-08-06T05:15:16.052489",
   "scaffold": "agy-kit",
   "target_cli": "Antigravity CLI (agy)",
   "metrics": {
@@ -24,15 +24,15 @@
     "token_cost_tracking": {
       "passed": true,
       "total_tokens": 107000,
-      "total_cost_usd": 0.063125,
+      "total_cost_usd": 0.011175,
       "stages": [
         {
-          "model": "zai/glm-5.2",
+          "model": "gemini-3.6-flash-high",
           "prompt_tokens": 15000,
           "completion_tokens": 3000,
-          "input_cost_usd": 0.015,
-          "output_cost_usd": 0.009,
-          "total_cost_usd": 0.024,
+          "input_cost_usd": 0.001125,
+          "output_cost_usd": 0.0009,
+          "total_cost_usd": 0.002025,
           "stage": "planner"
         },
         {
@@ -45,21 +45,21 @@
           "stage": "coder"
         },
         {
-          "model": "zai/glm-5.2",
+          "model": "gemini-3.6-flash-high",
           "prompt_tokens": 20000,
           "completion_tokens": 4000,
-          "input_cost_usd": 0.02,
-          "output_cost_usd": 0.012,
-          "total_cost_usd": 0.032,
+          "input_cost_usd": 0.0015,
+          "output_cost_usd": 0.0012,
+          "total_cost_usd": 0.0027,
           "stage": "reviewer"
         },
         {
-          "model": "gemini-3.6-flash-high",
+          "model": "gemini-3.6-flash-low",
           "prompt_tokens": 10000,
           "completion_tokens": 2000,
-          "input_cost_usd": 0.00075,
-          "output_cost_usd": 0.0006,
-          "total_cost_usd": 0.00135,
+          "input_cost_usd": 0.000375,
+          "output_cost_usd": 0.0003,
+          "total_cost_usd": 0.000675,
           "stage": "qa"
         }
       ],

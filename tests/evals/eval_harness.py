@@ -88,10 +88,10 @@ def eval_token_cost_tracking():
         from token_calculator import calculate_cost
         
         stages = [
-            {"stage": "planner", "model": "zai/glm-5.2", "prompt_tokens": 15000, "completion_tokens": 3000},
+            {"stage": "planner", "model": "gemini-3.6-flash-high", "prompt_tokens": 15000, "completion_tokens": 3000},
             {"stage": "coder", "model": "gemini-3.6-flash-high", "prompt_tokens": 45000, "completion_tokens": 8000},
-            {"stage": "reviewer", "model": "zai/glm-5.2", "prompt_tokens": 20000, "completion_tokens": 4000},
-            {"stage": "qa", "model": "gemini-3.6-flash-high", "prompt_tokens": 10000, "completion_tokens": 2000},
+            {"stage": "reviewer", "model": "gemini-3.6-flash-high", "prompt_tokens": 20000, "completion_tokens": 4000},
+            {"stage": "qa", "model": "gemini-3.6-flash-low", "prompt_tokens": 10000, "completion_tokens": 2000},
         ]
         
         stage_costs = []
