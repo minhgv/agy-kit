@@ -17,10 +17,12 @@
 #   make validate-phase10
 #   make validate-workflows-sync
 #   make validate-phase11
+#   make validate-brainstorm
+#   make verify-eval
 
 FEATURE ?= unnamed
 
-.PHONY: pipeline spec build gate qa review doctor validate check-boundaries eval-cost test-recovery scan-deps synthesize-skill export-telemetry check-traceability validate-ba validate-phase10 validate-workflows-sync validate-phase11 validate-brainstorm clean
+.PHONY: pipeline spec build gate qa review doctor validate check-boundaries eval-cost test-recovery scan-deps synthesize-skill export-telemetry check-traceability validate-ba validate-phase10 validate-workflows-sync validate-phase11 validate-brainstorm verify-eval clean
 
 # Full 5-step pipeline
 pipeline: spec build gate qa review
@@ -86,6 +88,12 @@ validate-phase11: check-traceability validate-workflows-sync
 validate-brainstorm: check-traceability validate-workflows-sync
 	@chmod +x bin/validate-brainstorm-skills.sh
 	@./bin/validate-brainstorm-skills.sh
+	@python3 tests/evals/eval_harness.py
+
+# Phase 18 Harness Meta-Evaluation & Fault Injection Target
+verify-eval: check-traceability validate-workflows-sync
+	@chmod +x bin/verify-eval-harness.sh
+	@./bin/verify-eval-harness.sh
 	@python3 tests/evals/eval_harness.py
 
 # Multi-Agent Workspace Boundary Check

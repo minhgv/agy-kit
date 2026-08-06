@@ -60,3 +60,9 @@
 - **Systematic Problem Solving (`/solve`, `problem-solving` skill):** When stuck on complexity spirals, innovation blocks, recurring patterns, assumption constraints, or scale uncertainty, dispatch one of the 5 core techniques (Simplification Cascades, Collision-Zone Thinking, Meta-Pattern Recognition, Inversion Exercise, Scale Game) and load detailed reference guides from `references/`.
 - **Skill Authoring & TDD (`writing-skills` skill):** Apply Test-Driven Development (TDD) for skill authoring: RED -> GREEN -> REFACTOR pressure testing. Run subagents against pressure scenarios without skill to confirm failure (RED), author minimal skill that flips failure (GREEN), and refactor against adversarial prompts and rationalization loopholes before deployment.
 
+## 10. Harness Meta-Evaluation & Synthetic Fault Injection Suite
+
+- **Meta-Evaluation Suite (`tests/evals/meta_eval_harness.py`, `./bin/verify-eval-harness.sh`, `make verify-eval`):** Validates the benchmark harness (`eval_harness.py`) itself to guarantee evaluation reliability and prevent benchmark drift.
+- **5 Synthetic Fault Injection Scenarios:** Secret Leak, Syntax Error, Missing Skill, Path Violation, and Malformed Spec. Verifies that `eval_harness.py` detects 5/5 RED failures.
+- **Deterministic Stability Test:** Executes 10 consecutive evaluation cycles to ensure 0 variance in benchmark scoring.
+- **Performance Profiler:** Enforces execution latency target (< 2.0s) for rapid CI evaluation feedback.

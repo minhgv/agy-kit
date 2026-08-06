@@ -5,7 +5,7 @@
 [![Version](https://img.shields.io/badge/scaffold-v0.7.0-blue.svg)](.antigravity/version.json)
 [![Platform](https://img.shields.io/badge/target-Antigravity--CLI-emerald.svg)](https://github.com/minhgv/agy-kit)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Benchmarks](https://img.shields.io/badge/evals-15%2F15%20passed%20(100%2F100)-success.svg)](tests/evals/eval_harness.py)
+[![Benchmarks](https://img.shields.io/badge/evals-16%2F16%20passed%20(100%2F100)-success.svg)](tests/evals/eval_harness.py)
 
 ---
 
@@ -74,10 +74,11 @@ Native slash commands configured in `.antigravity/workflows/`, chronologically g
 - `bin/validate-traceability.sh`: Requirement Traceability Matrix (RTM) & SPEC validator.
 - `bin/validate-workflows-sync.sh`: Workflows, agent specs, and skills synchronization validator.
 - `bin/validate-brainstorm-skills.sh`: Ideation, stress-testing, and problem-solving skills validator.
+- `bin/verify-eval-harness.sh`: Harness meta-evaluation & fault injection verification tool.
 
 ### 5. Benchmark Evaluation Harness
 
-`agy-kit` ships with a comprehensive evaluation harness in `tests/evals/eval_harness.py` covering **15 core benchmarks** with a **100/100 pass score**:
+`agy-kit` ships with a comprehensive evaluation harness in `tests/evals/eval_harness.py` covering **16 core benchmarks** with a **100/100 pass score**:
 
 1. **Quality Gate Audit Compliance**: Zero lint errors & zero hardcoded secrets.
 2. **Subagent Specification Validation**: Agent JSON schema & prompt safety validation.
@@ -94,6 +95,7 @@ Native slash commands configured in `.antigravity/workflows/`, chronologically g
 13. **Phase 12 Brainstorming, Stress-Testing & Problem-Solving Skills Benchmark**: Ideation & problem-solving skills integrity.
 14. **Developer Scaffolding Installer Benchmark**: Scaffolding CLI & language project templates audit (`bin/init-agy-kit.sh`).
 15. **Phase 17 Writing Skills Integration Benchmark**: `writing-skills` skill suite synchronization, file integrity, and TDD skill authoring protocols.
+16. **Phase 18 Harness Meta-Evaluation Benchmark**: Synthetic fault injection suite (5/5 RED failures detected), deterministic stability (10/10 runs 0 variance), and execution latency profiler (< 2.0s).
 
 ---
 
@@ -139,7 +141,7 @@ agy-kit/
 │   ├── grill-me/
 │   ├── problem-solving/
 │   └── writing-skills/
-├── bin/                           # 10 Executable verification and runner scripts
+├── bin/                           # 11 Executable verification and runner scripts
 │   ├── agy-pipeline.sh
 │   ├── safe-agent-run.sh
 │   ├── agy-doctor.sh
@@ -149,7 +151,8 @@ agy-kit/
 │   ├── scan-dependencies.sh
 │   ├── validate-traceability.sh
 │   ├── validate-workflows-sync.sh
-│   └── validate-brainstorm-skills.sh
+│   ├── validate-brainstorm-skills.sh
+│   └── verify-eval-harness.sh
 ├── docs/                          # Comprehensive framework & system documentation
 │   ├── ba-and-quality-framework.md
 │   ├── business-analysis.md
@@ -165,6 +168,7 @@ agy-kit/
 │   └── meta-testing.md
 ├── tests/evals/                   # Evaluation harness & benchmarks
 │   ├── eval_harness.py
+│   ├── meta_eval_harness.py
 │   └── token_calculator.py
 └── plans/                         # Technical specifications & templates
     └── SPEC_TEMPLATE.md
@@ -185,7 +189,7 @@ git config core.hooksPath .githooks
 # 3. Run diagnostics & system verification
 ./bin/agy-doctor.sh
 
-# 4. Run evaluation harness (verifies all 13 benchmarks pass 100/100)
+# 4. Run evaluation harness (verifies all 16 benchmarks pass 100/100)
 python3 tests/evals/eval_harness.py
 
 # 5. Execute full feature pipeline

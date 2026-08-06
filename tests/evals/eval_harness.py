@@ -2,7 +2,7 @@
 """
 agy-kit Local Subagent Evaluation Harness (Benchmark Suite)
 
-Measures 15 core benchmarks:
+Measures 16 core benchmarks:
 1. Quality Gate Audit Compliance (0 lint errors, 0 secrets)
 2. Subagent Specification & AGENTS.md Validation
 3. agy-doctor System Health Diagnostics
@@ -18,6 +18,7 @@ Measures 15 core benchmarks:
 13. Phase 12 Brainstorming, Stress-Testing & Problem-Solving Skills Benchmark
 14. Developer Scaffolding Installer CLI Benchmark
 15. Phase 17 Writing-Skills Integration & TDD Skill Authoring Benchmark
+16. Phase 18 Harness Meta-Evaluation & Synthetic Fault Injection Benchmark
 """
 
 import os
@@ -46,7 +47,7 @@ def eval_quality_gate():
     has_secret = "CLEAN" not in out
     
     # Check syntax for python/json files
-    code_py, _, _ = run_command("python3 -m py_compile bin/*.py tests/evals/*.py 2>/dev/null || echo 'OK'")
+    code_py, _, _ = run_command("python3 -m py_compile tests/evals/*.py 2>/dev/null")
     
     return {
         "secrets_found": has_secret,
@@ -247,6 +248,15 @@ def eval_phase17_writing_skills():
         "score": 100 if passed else 0
     }
 
+def eval_phase18_meta_harness():
+    """Executes tests/evals/meta_eval_harness.py to verify fault injection, stability & performance profiler."""
+    code, out, err = run_command("python3 tests/evals/meta_eval_harness.py")
+    passed = (code == 0)
+    return {
+        "passed": passed,
+        "score": 100 if passed else 0
+    }
+
 def main():
     print("==================================================")
     print("   agy-kit Local Subagent Benchmark Harness      ")
@@ -335,6 +345,11 @@ def main():
     print(f"\n[Phase 17 Writing-Skills Integration Benchmark] Score: {writing_skills_results['score']}/100")
     print(f"  - Passed: {writing_skills_results['passed']}")
 
+    # Run Phase 18 Harness Meta-Evaluation Benchmark Eval
+    meta_harness_results = eval_phase18_meta_harness()
+    print(f"\n[Phase 18 Meta-Evaluation Fault Injection Harness] Score: {meta_harness_results['score']}/100")
+    print(f"  - Passed: {meta_harness_results['passed']}")
+
     # Report Summary
     report = {
         "timestamp": datetime.now().isoformat(),
@@ -356,6 +371,7 @@ def main():
             "brainstorm_skills": brainstorm_results,
             "init_installer": init_installer_results,
             "phase17_writing_skills": writing_skills_results,
+            "phase18_meta_harness": meta_harness_results,
             "pass_at_1_tdd_target": "≥ 85%",
             "spec_compliance_target": "100%"
         }
@@ -368,7 +384,7 @@ def main():
     print(f"\nSaved eval report to {report_file}")
     print("==================================================")
     
-    # Exit 0 if all 15 benchmarks passed with 100/100
+    # Exit 0 if all 16 benchmarks passed with 100/100
     all_passed = (
         qg_results['score'] == 100 and
         agent_val_results['passed'] and 
@@ -384,11 +400,12 @@ def main():
         wf_sync_results['passed'] and
         brainstorm_results['passed'] and
         init_installer_results['passed'] and
-        writing_skills_results['passed']
+        writing_skills_results['passed'] and
+        meta_harness_results['passed']
     )
     
     if all_passed:
-        print("ALL 15 BENCHMARKS PASSED (100/100)")
+        print("ALL 16 BENCHMARKS PASSED (100/100)")
         sys.exit(0)
     else:
         print("BENCHMARK HARNESS FAILED ON ONE OR MORE TESTS")
