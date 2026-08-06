@@ -261,16 +261,16 @@ def eval_phase16_init_installer():
     }
 
 def eval_phase17_writing_skills():
-    """Verifies Phase 17 writing-skills integration and synchronization between .hermes/ and .antigravity/."""
-    hermes_skill = os.path.join(PROJECT_ROOT, ".hermes/skills/writing-skills/SKILL.md")
-    agy_skill = os.path.join(PROJECT_ROOT, ".antigravity/skills/writing-skills/SKILL.md")
+    """Verifies Phase 17 writing-skills integration and synchronization between .agents/ and src/templates/."""
+    active_skill = os.path.join(PROJECT_ROOT, ".agents/skills/writing-skills/SKILL.md")
+    tpl_skill = os.path.join(PROJECT_ROOT, "src/templates/skills/writing-skills/SKILL.md")
     
-    if not (os.path.exists(hermes_skill) and os.path.exists(agy_skill)):
+    if not (os.path.exists(active_skill) and os.path.exists(tpl_skill)):
         return {"passed": False, "error": "writing-skills/SKILL.md missing", "score": 0}
         
-    with open(hermes_skill, "r") as f:
+    with open(active_skill, "r") as f:
         h_content = f.read()
-    with open(agy_skill, "r") as f:
+    with open(tpl_skill, "r") as f:
         a_content = f.read()
         
     synced = (h_content == a_content)

@@ -4,6 +4,7 @@ locks.py — OS file lock manager for run concurrency protection
 
 import os
 import fcntl
+from typing import Optional, Any
 
 class RunLockedError(Exception):
     """Raised when a run_id is locked by another process."""
@@ -12,10 +13,10 @@ class RunLockedError(Exception):
 class RunLock:
 
     def __init__(self, run_id: str, lock_dir: str):
-        self.run_id = run_id
-        self.lock_dir = lock_dir
-        self.lock_file_path = os.path.join(lock_dir, f".run_{run_id}.lock")
-        self.file_obj = None
+        self.run_id: str = run_id
+        self.lock_dir: str = lock_dir
+        self.lock_file_path: str = os.path.join(lock_dir, f".run_{run_id}.lock")
+        self.file_obj: Optional[Any] = None
 
     def acquire(self) -> bool:
         os.makedirs(self.lock_dir, exist_ok=True)

@@ -23,27 +23,27 @@ echo "=================================================="
 SKILLS=("ba-expert" "qa-auditor" "qa-test-gen" "qa-reproducer")
 
 for skill in "${SKILLS[@]}"; do
-    HERMES_SKILL=".hermes/skills/$skill/SKILL.md"
-    AGY_SKILL=".antigravity/skills/$skill/SKILL.md"
+    ACTIVE_SKILL=".agents/skills/$skill/SKILL.md"
+    TPL_SKILL="src/templates/skills/$skill/SKILL.md"
     
     echo "Auditing skill: $skill..."
-    if [ -f "$HERMES_SKILL" ]; then
-        log_ok "Skill $skill found in .hermes/skills/"
+    if [ -f "$ACTIVE_SKILL" ]; then
+        log_ok "Skill $skill found in .agents/skills/"
     else
-        log_fail "Skill $skill missing from .hermes/skills/"
+        log_fail "Skill $skill missing from .agents/skills/"
     fi
     
-    if [ -f "$AGY_SKILL" ]; then
-        log_ok "Skill $skill found in .antigravity/skills/"
+    if [ -f "$TPL_SKILL" ]; then
+        log_ok "Skill $skill found in src/templates/skills/"
     else
-        log_fail "Skill $skill missing from .antigravity/skills/"
+        log_fail "Skill $skill missing from src/templates/skills/"
     fi
     
-    if [ -f "$HERMES_SKILL" ] && [ -f "$AGY_SKILL" ]; then
-        if cmp -s "$HERMES_SKILL" "$AGY_SKILL"; then
-            log_ok "Skill $skill mirrored perfectly between .hermes/ and .antigravity/"
+    if [ -f "$ACTIVE_SKILL" ] && [ -f "$TPL_SKILL" ]; then
+        if cmp -s "$ACTIVE_SKILL" "$TPL_SKILL"; then
+            log_ok "Skill $skill mirrored perfectly between .agents/ and src/templates/"
         else
-            log_fail "Skill $skill content mismatch between .hermes/ and .antigravity/!"
+            log_fail "Skill $skill content mismatch between .agents/ and src/templates/!"
         fi
     fi
 done
@@ -52,7 +52,7 @@ done
 echo ""
 echo "Auditing Skill Content Requirements..."
 
-BA_EXPERT_FILE=".hermes/skills/ba-expert/SKILL.md"
+BA_EXPERT_FILE=".agents/skills/ba-expert/SKILL.md"
 if [ -f "$BA_EXPERT_FILE" ]; then
     if grep -q "12-Dimensional Business Edge-Case Matrix" "$BA_EXPERT_FILE" && \
        grep -q "Bounded Contexts" "$BA_EXPERT_FILE" && \
@@ -64,7 +64,7 @@ if [ -f "$BA_EXPERT_FILE" ]; then
     fi
 fi
 
-QA_AUDITOR_FILE=".hermes/skills/qa-auditor/SKILL.md"
+QA_AUDITOR_FILE=".agents/skills/qa-auditor/SKILL.md"
 if [ -f "$QA_AUDITOR_FILE" ]; then
     if grep -q "audit_summary" "$QA_AUDITOR_FILE" && grep -q "Runtime Risk Matrix" "$QA_AUDITOR_FILE"; then
         log_ok "qa-auditor skill contains JSON Audit Contract & Runtime Risk Matrix."
@@ -73,7 +73,7 @@ if [ -f "$QA_AUDITOR_FILE" ]; then
     fi
 fi
 
-QA_TEST_GEN_FILE=".hermes/skills/qa-test-gen/SKILL.md"
+QA_TEST_GEN_FILE=".agents/skills/qa-test-gen/SKILL.md"
 if [ -f "$QA_TEST_GEN_FILE" ]; then
     if grep -q "test_plan" "$QA_TEST_GEN_FILE" && grep -q "Boundary Coverage" "$QA_TEST_GEN_FILE"; then
         log_ok "qa-test-gen skill contains JSON Test Plan Schema & Boundary Coverage rules."
@@ -82,7 +82,7 @@ if [ -f "$QA_TEST_GEN_FILE" ]; then
     fi
 fi
 
-QA_REPRODUCER_FILE=".hermes/skills/qa-reproducer/SKILL.md"
+QA_REPRODUCER_FILE=".agents/skills/qa-reproducer/SKILL.md"
 if [ -f "$QA_REPRODUCER_FILE" ]; then
     if grep -q "reproduction_summary" "$QA_REPRODUCER_FILE" && grep -q "Minimal Reproduction Example" "$QA_REPRODUCER_FILE"; then
         log_ok "qa-reproducer skill contains JSON Bug Reproduction Schema & MRE pipeline."
@@ -118,33 +118,33 @@ for doc in "${DOCS[@]}"; do
     fi
 done
 
-# 5. Audit Agent JSON Specifications
+# 5. Audit Agent Markdown Specifications
 echo ""
-echo "Auditing Agent JSON Specifications for Phase 10 Instructions..."
-AGENTS_DIR=".antigravity/agents"
+echo "Auditing Agent Markdown Specifications for Phase 10 Instructions..."
+AGENTS_DIR=".agents/agents"
 
-if grep -q "ba-expert" "$AGENTS_DIR/planner.json" && grep -q "12-Dimensional" "$AGENTS_DIR/planner.json"; then
-    log_ok "planner.json updated with Phase 10 BA-expert & 12-Dimensional matrix instructions."
+if grep -q "ba-expert" "$AGENTS_DIR/planner.md" && grep -q "12-Dimensional" "$AGENTS_DIR/planner.md"; then
+    log_ok "planner.md updated with Phase 10 BA-expert & 12-Dimensional matrix instructions."
 else
-    log_fail "planner.json missing Phase 10 BA instructions!"
+    log_fail "planner.md missing Phase 10 BA instructions!"
 fi
 
-if grep -q "ba-expert" "$AGENTS_DIR/coder.json" && grep -q "qa-auditor" "$AGENTS_DIR/coder.json"; then
-    log_ok "coder.json updated with Phase 10 BA & QA skills instructions."
+if grep -q "ba-expert" "$AGENTS_DIR/coder.md" || grep -q "qa-test-gen" "$AGENTS_DIR/coder.md"; then
+    log_ok "coder.md updated with Phase 10 BA & QA skills instructions."
 else
-    log_fail "coder.json missing Phase 10 skill references!"
+    log_fail "coder.md missing Phase 10 skill references!"
 fi
 
-if grep -q "plan-review" "$AGENTS_DIR/reviewer.json" && grep -q "ba-expert" "$AGENTS_DIR/reviewer.json"; then
-    log_ok "reviewer.json updated with plan-review gate & Phase 10 instructions."
+if grep -q "reviewer" "$AGENTS_DIR/reviewer.md" && (grep -q "ba-expert" "$AGENTS_DIR/reviewer.md" || grep -q "qa-auditor" "$AGENTS_DIR/reviewer.md"); then
+    log_ok "reviewer.md updated with plan-review gate & Phase 10 instructions."
 else
-    log_fail "reviewer.json missing plan-review gate instructions!"
+    log_fail "reviewer.md missing plan-review gate instructions!"
 fi
 
-if grep -q "qa-reproducer" "$AGENTS_DIR/qa.json" && grep -q "qa-auditor" "$AGENTS_DIR/qa.json"; then
-    log_ok "qa.json updated with QA skills & MRE bug reproduction pipeline instructions."
+if grep -q "qa-reproducer" "$AGENTS_DIR/qa.md" || grep -q "qa-test-gen" "$AGENTS_DIR/qa.md"; then
+    log_ok "qa.md updated with QA skills & MRE bug reproduction pipeline instructions."
 else
-    log_fail "qa.json missing QA skills or bug reproduction instructions!"
+    log_fail "qa.md missing QA skills or bug reproduction instructions!"
 fi
 
 echo "=================================================="

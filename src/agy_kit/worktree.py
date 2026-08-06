@@ -5,13 +5,14 @@ worktree.py — Git worktree isolation manager & safe apply checker
 import subprocess
 import os
 import tempfile
+from typing import Optional
 
 class WorktreeManager:
 
     def __init__(self, project_root: str, run_id: str):
-        self.project_root = project_root
-        self.run_id = run_id
-        self.worktree_dir = None
+        self.project_root: str = project_root
+        self.run_id: str = run_id
+        self.worktree_dir: Optional[str] = None
 
     def create_isolated_worktree(self, feature: str) -> str:
         branch_name = f"agy-wt-{feature}-{self.run_id}"

@@ -21,14 +21,15 @@ class TestOrchestrator(unittest.TestCase):
     def test_schema_files_exist(self):
         schemas = ["stage-result.schema.json", "run-manifest.schema.json"]
         for s in schemas:
-            p = os.path.join(PROJECT_ROOT, "agy-kit/schemas", s)
+            p = os.path.join(PROJECT_ROOT, "src/agy_kit/schemas", s)
             self.assertTrue(os.path.exists(p), f"Missing schema: {p}")
 
     def test_forbidden_paths_detection(self):
+        from agy_kit.validators import validate_path_safety
         forbidden = [".env", ".ssh/id_rsa", "/etc/passwd", "../outside.py", "-rf"]
         for f in forbidden:
-            is_forbidden = (".." in f) or f.startswith("-") or f in [".env", ".ssh/id_rsa"]
-            self.assertTrue(is_forbidden, f"Path {f} should be flagged as forbidden")
+            is_safe = validate_path_safety(f, PROJECT_ROOT)
+            self.assertFalse(is_safe, f"Path {f} should be flagged as forbidden/unsafe")
 
 if __name__ == "__main__":
     unittest.main()

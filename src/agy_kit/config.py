@@ -2,13 +2,14 @@
 config.py — TOML configuration resolver for agy-kit
 """
 
-import os
+from typing import Any
 
+tomllib: Any = None
 try:
-    import tomllib
+    import tomllib  # type: ignore
 except ImportError:
     try:
-        import tomli as tomllib
+        import tomli as tomllib  # type: ignore
     except ImportError:
         tomllib = None
 

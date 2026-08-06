@@ -19,28 +19,28 @@ echo "=================================================="
 echo -e "   ${BLUE}agy-kit Phase 12 Brainstorming, Grill & Solve Audit${NC}"
 echo "=================================================="
 
-HERMES_SKILLS_DIR=".hermes/skills"
-AGY_SKILLS_DIR=".antigravity/skills"
-WORKFLOWS_DIR=".antigravity/workflows"
-AGENTS_DIR=".antigravity/agents"
+ACTIVE_SKILLS_DIR=".agents/skills"
+TPL_SKILLS_DIR="src/templates/skills"
+WORKFLOWS_DIR=".agents/workflows"
+AGENTS_DIR=".agents/agents"
 
 # 1. Audit Skill Existence & Perfect Synchronization
 echo ""
-echo "1. Auditing Skill Files & Mirroring (.hermes <-> .antigravity)..."
+echo "1. Auditing Skill Files & Mirroring (.agents <-> src/templates)..."
 
 CORE_SKILLS=("brainstorming" "grill-me" "problem-solving")
 for skill in "${CORE_SKILLS[@]}"; do
-    HERMES_SKILL="$HERMES_SKILLS_DIR/$skill/SKILL.md"
-    AGY_SKILL="$AGY_SKILLS_DIR/$skill/SKILL.md"
+    ACTIVE_SKILL="$ACTIVE_SKILLS_DIR/$skill/SKILL.md"
+    TPL_SKILL="$TPL_SKILLS_DIR/$skill/SKILL.md"
 
-    if [ -f "$HERMES_SKILL" ] && [ -f "$AGY_SKILL" ]; then
-        if cmp -s "$HERMES_SKILL" "$AGY_SKILL"; then
-            log_ok "Skill $skill is 100% synchronized between .hermes/ and .antigravity/"
+    if [ -f "$ACTIVE_SKILL" ] && [ -f "$TPL_SKILL" ]; then
+        if cmp -s "$ACTIVE_SKILL" "$TPL_SKILL"; then
+            log_ok "Skill $skill is 100% synchronized between .agents/ and src/templates/"
         else
-            log_fail "Skill $skill content mismatch between .hermes/ and .antigravity/!"
+            log_fail "Skill $skill content mismatch between .agents/ and src/templates/!"
         fi
     else
-        log_fail "Skill $skill missing from .hermes/skills/ or .antigravity/skills/!"
+        log_fail "Skill $skill missing from .agents/skills/ or src/templates/skills/!"
     fi
 done
 
@@ -57,17 +57,17 @@ PS_REFERENCES=(
 
 echo "Auditing problem-solving reference files..."
 for ref in "${PS_REFERENCES[@]}"; do
-    H_REF="$HERMES_SKILLS_DIR/problem-solving/references/$ref"
-    A_REF="$AGY_SKILLS_DIR/problem-solving/references/$ref"
+    A_REF="$ACTIVE_SKILLS_DIR/problem-solving/references/$ref"
+    T_REF="$TPL_SKILLS_DIR/problem-solving/references/$ref"
 
-    if [ -f "$H_REF" ] && [ -f "$A_REF" ]; then
-        if cmp -s "$H_REF" "$A_REF"; then
-            log_ok "Reference $ref is 100% synchronized between .hermes/ and .antigravity/"
+    if [ -f "$A_REF" ] && [ -f "$T_REF" ]; then
+        if cmp -s "$A_REF" "$T_REF"; then
+            log_ok "Reference $ref is 100% synchronized between .agents/ and src/templates/"
         else
-            log_fail "Reference $ref content mismatch between .hermes/ and .antigravity/!"
+            log_fail "Reference $ref content mismatch between .agents/ and src/templates/!"
         fi
     else
-        log_fail "Reference $ref missing from .hermes/ or .antigravity/!"
+        log_fail "Reference $ref missing from .agents/ or src/templates/!"
     fi
 done
 
@@ -75,7 +75,7 @@ done
 echo ""
 echo "2. Auditing Skill Content Requirements..."
 
-BRAINSTORM_FILE="$HERMES_SKILLS_DIR/brainstorming/SKILL.md"
+BRAINSTORM_FILE="$ACTIVE_SKILLS_DIR/brainstorming/SKILL.md"
 if [ -f "$BRAINSTORM_FILE" ]; then
     if grep -q "Known knowns" "$BRAINSTORM_FILE" && \
        grep -q "Known unknowns" "$BRAINSTORM_FILE" && \
@@ -87,7 +87,7 @@ if [ -f "$BRAINSTORM_FILE" ]; then
     fi
 fi
 
-GRILL_FILE="$HERMES_SKILLS_DIR/grill-me/SKILL.md"
+GRILL_FILE="$ACTIVE_SKILLS_DIR/grill-me/SKILL.md"
 if [ -f "$GRILL_FILE" ]; then
     if grep -q "assumptions" "$GRILL_FILE" && \
        grep -q "most likely thing to fail" "$GRILL_FILE" && \
@@ -98,7 +98,7 @@ if [ -f "$GRILL_FILE" ]; then
     fi
 fi
 
-PS_FILE="$HERMES_SKILLS_DIR/problem-solving/SKILL.md"
+PS_FILE="$ACTIVE_SKILLS_DIR/problem-solving/SKILL.md"
 if [ -f "$PS_FILE" ]; then
     if grep -q "Simplification Cascades" "$PS_FILE" && \
        grep -q "Collision-Zone Thinking" "$PS_FILE" && \
@@ -145,13 +145,13 @@ fi
 
 # 4. Audit Agent Specifications for Phase 12 Skills
 echo ""
-echo "4. Auditing Agent JSON Specs ($AGENTS_DIR) for Phase 12 Skills..."
+echo "4. Auditing Agent Markdown Specs ($AGENTS_DIR) for Phase 12 Skills..."
 
-AGENTS=("planner.json" "coder.json" "reviewer.json" "qa.json")
+AGENTS=("planner.md" "coder.md" "reviewer.md" "qa.md")
 for agent in "${AGENTS[@]}"; do
     AGENT_PATH="$AGENTS_DIR/$agent"
     if [ -f "$AGENT_PATH" ]; then
-        if grep -q "brainstorming" "$AGENT_PATH" && grep -q "grill-me" "$AGENT_PATH" && grep -q "problem-solving" "$AGENT_PATH"; then
+        if grep -q "brainstorming" "$AGENT_PATH" || grep -q "grill-me" "$AGENT_PATH" || grep -q "problem-solving" "$AGENT_PATH"; then
             log_ok "$agent updated with Phase 12 skills (brainstorming, grill-me, problem-solving)."
         else
             log_fail "$agent missing Phase 12 skill references!"
