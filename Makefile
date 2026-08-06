@@ -12,10 +12,12 @@
 #   make check-boundaries
 #   make eval-cost
 #   make test-recovery
+#   make check-traceability
+#   make validate-ba
 
 FEATURE ?= unnamed
 
-.PHONY: pipeline spec build gate qa review doctor validate check-boundaries eval-cost test-recovery scan-deps synthesize-skill export-telemetry clean
+.PHONY: pipeline spec build gate qa review doctor validate check-boundaries eval-cost test-recovery scan-deps synthesize-skill export-telemetry check-traceability validate-ba clean
 
 # Full 5-step pipeline
 pipeline: spec build gate qa review
@@ -45,9 +47,18 @@ review:
 doctor:
 	./bin/agy-doctor.sh
 
-# Subagent Specification Validation
-validate:
+# Subagent Specification & Requirement Traceability Validation
+validate: check-traceability
 	./bin/validate-agents.sh
+
+# Requirement Traceability Audit Target
+check-traceability:
+	@chmod +x bin/validate-traceability.sh
+	@./bin/validate-traceability.sh
+
+# Business Analysis & QA Framework Benchmark Validation
+validate-ba: check-traceability
+	@python3 tests/evals/eval_harness.py
 
 # Multi-Agent Workspace Boundary Check
 check-boundaries:

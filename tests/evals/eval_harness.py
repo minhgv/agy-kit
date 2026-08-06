@@ -2,17 +2,17 @@
 """
 agy-kit Local Subagent Evaluation Harness (Benchmark Suite)
 
-Measures:
-1. Pass@1 TDD Rate (% of features implemented that pass unit/integration tests on first try)
-2. SPEC Compliance Score (verifies code modifications match File Mutation Manifest in SPEC)
-3. Token Efficiency & Cost Tracking (tracks prompt/completion tokens and estimated API cost per feature)
+Measures 10 core benchmarks:
+1. Quality Gate Audit Compliance (0 lint errors, 0 secrets)
+2. Subagent Specification & AGENTS.md Validation
+3. agy-doctor System Health Diagnostics
 4. Multi-Agent Workspace Path Boundaries (verifies path scoping and isolation)
-5. Quality Gate Audit Compliance (0 lint errors, 0 secrets)
-6. Subagent Specification & AGENTS.md Validation
-7. agy-doctor System Health Diagnostics
-8. Supply Chain & OWASP-AI-01 Dependency Security Scan
-9. Telemetry & Tracing Benchmark Metric Exporter
-10. Skill Auto-Synthesis Protocol & Artifact Validator
+5. Token Efficiency & Cost Tracking (tracks prompt/completion tokens and estimated API cost per feature)
+6. Supply Chain & OWASP-AI-01 Dependency Security Scan
+7. Telemetry & Tracing Benchmark Metric Exporter
+8. Skill Auto-Synthesis Protocol & Artifact Validator
+9. End-to-End Requirement Traceability Audit
+10. BA & Quality Assurance Framework Documentation Verification
 """
 
 import os
@@ -153,6 +153,34 @@ def eval_skill_synthesis():
         "score": 100 if passed else 0
     }
 
+def eval_traceability_audit():
+    """Executes bin/validate-traceability.sh to verify requirement traceability & SPEC compliance."""
+    code, out, err = run_command("./bin/validate-traceability.sh")
+    passed = (code == 0)
+    return {
+        "passed": passed,
+        "score": 100 if passed else 0
+    }
+
+def eval_ba_framework_docs():
+    """Verifies existence and required sections of docs/ba-and-quality-framework.md."""
+    doc_file = os.path.join(PROJECT_ROOT, "docs/ba-and-quality-framework.md")
+    if not os.path.exists(doc_file):
+        return {"passed": False, "missing_file": True, "score": 0}
+    
+    with open(doc_file, "r") as f:
+        content = f.read()
+        
+    required_sections = ["RTM", "Edge Case Matrix", "OWASP-AI", "3-State Verification", "E2E QA"]
+    missing = [sec for sec in required_sections if sec not in content]
+    passed = (len(missing) == 0)
+    
+    return {
+        "passed": passed,
+        "missing_sections": missing,
+        "score": 100 if passed else 0
+    }
+
 def main():
     print("==================================================")
     print("   agy-kit Local Subagent Benchmark Harness      ")
@@ -205,6 +233,17 @@ def main():
     print(f"  - Passed: {skill_synth_results['passed']}")
     print(f"  - Skill artifact created: {skill_synth_results['skill_created']}")
 
+    # Run Requirement Traceability Audit Eval
+    traceability_results = eval_traceability_audit()
+    print(f"\n[Requirement Traceability Audit] Score: {traceability_results['score']}/100")
+    print(f"  - Passed: {traceability_results['passed']}")
+
+    # Run BA Framework Documentation Eval
+    ba_docs_results = eval_ba_framework_docs()
+    print(f"\n[BA & QA Framework Docs Validator] Score: {ba_docs_results['score']}/100")
+    print(f"  - Passed: {ba_docs_results['passed']}")
+    print(f"  - Missing sections: {ba_docs_results.get('missing_sections', [])}")
+
     # Report Summary
     report = {
         "timestamp": datetime.now().isoformat(),
@@ -219,6 +258,8 @@ def main():
             "dependency_scan": dep_scan_results,
             "telemetry_export": telemetry_results,
             "skill_synthesis": skill_synth_results,
+            "traceability_audit": traceability_results,
+            "ba_framework_docs": ba_docs_results,
             "pass_at_1_tdd_target": "≥ 85%",
             "spec_compliance_target": "100%"
         }
@@ -231,13 +272,25 @@ def main():
     print(f"\nSaved eval report to {report_file}")
     print("==================================================")
     
-    # Exit 0 if all benchmarks passed
-    if (qg_results['score'] == 100 and agent_val_results['passed'] and 
-        doctor_results['score'] == 100 and boundary_results['passed'] and 
-        cost_results['passed'] and dep_scan_results['passed'] and
-        telemetry_results['passed'] and skill_synth_results['passed']):
+    # Exit 0 if all 10 benchmarks passed with 100/100
+    all_passed = (
+        qg_results['score'] == 100 and
+        agent_val_results['passed'] and 
+        doctor_results['score'] == 100 and
+        boundary_results['passed'] and 
+        cost_results['passed'] and
+        dep_scan_results['passed'] and
+        telemetry_results['passed'] and
+        skill_synth_results['passed'] and
+        traceability_results['passed'] and
+        ba_docs_results['passed']
+    )
+    
+    if all_passed:
+        print("ALL 10 BENCHMARKS PASSED (100/100)")
         sys.exit(0)
     else:
+        print("BENCHMARK HARNESS FAILED ON ONE OR MORE TESTS")
         sys.exit(1)
 
 if __name__ == "__main__":
