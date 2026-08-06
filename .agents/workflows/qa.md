@@ -12,15 +12,14 @@ Run E2E QA testing on a local server using `qa-test-gen` and `qa-reproducer` ski
 Invoke the **`qa`** subagent (`.agents/agents/qa.md`):
 - Load the `qa-test-gen` and `qa-reproducer` skills.
 - Start local dev server (if not running). Verify health-check.
-- Run test cases according to the Test Plan in `plans/SPEC_*.md` covering the 12-Dimensional Edge Case Matrix:
-  - Case 1: Valid payload → HTTP 200/201
-  - Case 2: Missing/wrong fields → HTTP 400/422
-  - Case 3: SQL injection / XSS payload → HTTP 400/422
-  - Case 4: Unauthorized / expired token → HTTP 401/403
-  - Case 5: 12-Dimensional Edge Cases (Unicode, Concurrency, Boundary, Timezone, Scale, Network failure)
+- Run test cases according to Section 1.4 (User Stories & Gherkin BDD Matrix) and Section 6 (ACM) in `plans/SPEC_*.md`:
+  - Happy Path Scenarios: Valid payload & correct user flow → HTTP 200/201
+  - Fail Path Scenarios: Missing/invalid fields → HTTP 400/422 with exact specified error message
+  - Fail Path Scenarios: Expired/invalid auth tokens → HTTP 401/403 with exact error message
+  - 12-Dimensional Edge Cases: Boundary, Unicode, Concurrency, Network failure, Timeout
 - For any failures, invoke `qa-reproducer` to build Minimal Reproduction Examples (MRE) and format JSON Bug Reproduction Schema.
 - Collect cURL output, response headers, server logs into `tests/qa-evidence/`.
-- Report pass/fail per case.
+- Report pass/fail per User Story BDD scenario and edge case.
 
 ### Step 2: Traceability & RTM Update
 ```bash

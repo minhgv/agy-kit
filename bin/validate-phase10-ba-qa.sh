@@ -56,9 +56,9 @@ BA_EXPERT_FILE=".agents/skills/ba-expert/SKILL.md"
 if [ -f "$BA_EXPERT_FILE" ]; then
     if grep -q "12-Dimensional Business Edge-Case Matrix" "$BA_EXPERT_FILE" && \
        grep -q "Bounded Contexts" "$BA_EXPERT_FILE" && \
-       grep -q "Ubiquitous Language" "$BA_EXPERT_FILE" && \
+       grep -q "User Stories" "$BA_EXPERT_FILE" && \
        grep -q "Zod" "$BA_EXPERT_FILE"; then
-        log_ok "ba-expert skill contains 12-Dimensional Matrix, Bounded Contexts, Ubiquitous Language, and Zod/Pydantic schemas."
+        log_ok "ba-expert skill contains 12-Dimensional Matrix, Bounded Contexts, User Stories BDD, and Zod/Pydantic schemas."
     else
         log_fail "ba-expert skill missing mandatory BA matrix or domain modeling constructs!"
     fi
@@ -75,8 +75,8 @@ fi
 
 QA_TEST_GEN_FILE=".agents/skills/qa-test-gen/SKILL.md"
 if [ -f "$QA_TEST_GEN_FILE" ]; then
-    if grep -q "test_plan" "$QA_TEST_GEN_FILE" && grep -q "Boundary Coverage" "$QA_TEST_GEN_FILE"; then
-        log_ok "qa-test-gen skill contains JSON Test Plan Schema & Boundary Coverage rules."
+    if grep -q "test_plan" "$QA_TEST_GEN_FILE" && grep -q "Gherkin BDD" "$QA_TEST_GEN_FILE"; then
+        log_ok "qa-test-gen skill contains JSON Test Plan Schema, Gherkin BDD mapping & Boundary Coverage rules."
     else
         log_fail "qa-test-gen skill missing JSON Test Plan Schema or Boundary Coverage rules!"
     fi

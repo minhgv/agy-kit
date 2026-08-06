@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T19:34:47.093962",
+  "timestamp": "2026-08-06T20:36:26.690811",
   "scaffold": "agy-kit",
   "target_cli": "Antigravity CLI (agy)",
   "metrics": {
@@ -7,7 +7,7 @@
       "secrets_found": false,
       "syntax_ok": false,
       "py_syntax_ok": true,
-      "py_files_checked": 27,
+      "py_files_checked": 28,
       "py_errors": [],
       "sh_syntax_ok": false,
       "sh_files_checked": 20,
@@ -99,16 +99,16 @@
       "score": 100
     },
     "phase10_ba_qa_skills": {
-      "passed": false,
-      "score": 0
+      "passed": true,
+      "score": 100
     },
     "workflows_skills_sync": {
       "passed": false,
       "score": 0
     },
     "brainstorm_skills": {
-      "passed": false,
-      "score": 0
+      "passed": true,
+      "score": 100
     },
     "init_installer": {
       "passed": false,

@@ -28,9 +28,10 @@ Subagents generating test suites MUST output execution specs adhering to this JS
 ## 2. Core Test Generation Rules
 
 1. **Comprehensive Boundary Coverage:** Every test file must contain at least 1 happy path scenario and ≥3 edge case scenarios (null/undefined values, network timeouts, invalid schema payload, resource limits).
-2. **Strict I/O Mocking:** All external dependencies (Database queries, HTTP calls, Filesystem writes, LLM endpoints) MUST be strictly mocked (e.g. `unittest.mock.patch` in PyTest, `vi.fn()` in Vitest, `jest.spyOn()` in Jest).
-3. **Strict Test Isolation:** Test cases must be completely stateless and independent. No shared state or reliance on execution order between test runs.
-4. **Multi-Framework Auto-Detection:** Automatically detect the project's native test runner (`pytest`, `vitest`, `jest`, `playwright`, `go test`) and generate idiomatic assertions.
+2. **Gherkin BDD Scenario Mapping:** Read the Gherkin Given-When-Then matrix from `plans/SPEC_*.md` Section 1.4 and convert every Happy Path and Fail Path scenario directly into runnable test assertions.
+3. **Strict I/O Mocking:** All external dependencies (Database queries, HTTP calls, Filesystem writes, LLM endpoints) MUST be strictly mocked (e.g. `unittest.mock.patch` in PyTest, `vi.fn()` in Vitest, `jest.spyOn()` in Jest).
+4. **Strict Test Isolation:** Test cases must be completely stateless and independent. No shared state or reliance on execution order between test runs.
+5. **Multi-Framework Auto-Detection:** Automatically detect the project's native test runner (`pytest`, `vitest`, `jest`, `playwright`, `go test`) and generate idiomatic assertions.
 
 ---
 

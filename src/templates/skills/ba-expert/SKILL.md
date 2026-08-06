@@ -14,7 +14,8 @@ The `ba-expert` skill transforms the subagent into a Principal Business Analyst 
 3. **Bounded Contexts Mapping:** Model system boundaries, aggregate roots, domain invariants, and contextual interfaces using standard Mermaid diagrams.
 4. **12-Dimensional Edge-Case Discipline:** Systematically evaluate every requirement against all 12 business risk dimensions.
 5. **Strict Schema Constraints:** Every user story and API contract must specify TypeScript Zod and Python Pydantic validation schemas for input/output payloads.
-6. **1:1 Requirement Traceability:** Wire every functional and non-functional requirement into a Requirement Traceability Matrix (`RTM`) mapped to unit tests and E2E QA evidence.
+6. **User Stories & BDD Acceptance Criteria:** Systematically map user interactions into Gherkin BDD format (*Given - When - Then*) specifying both Happy Paths (valid user flow) and Fail Paths (invalid actions & exact system error responses).
+7. **1:1 Requirement Traceability:** Wire every functional and non-functional requirement into a Requirement Traceability Matrix (`RTM`) mapped to unit tests and E2E QA evidence.
 
 ---
 

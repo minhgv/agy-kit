@@ -25,6 +25,23 @@
 - **Ubiquitous Language:** `CustomerAggregate` (verified customer), `SessionToken` (access credential).
 - **User Journey:** Actor `[Unauthenticated User]` -> Submit Form -> System Validates Payload -> Hashes Password -> Creates User -> Returns JWT.
 
+### 1.4 User Stories & Behavioral Acceptance Criteria (BDD / Gherkin Matrix)
+
+#### Story US-01: [Feature User Story Title]
+- **As a** `[Role/User Type]`
+- **I want to** `[Perform Action / Feature Goal]`
+- **So that** `[Achieve Business Value / Outcome]`
+
+##### Happy Path Scenario (Success Flow)
+- **Given** `[Pre-condition, e.g. Valid user session & correct input payload]`
+- **When** `[User performs action, e.g. Submits valid registration form]`
+- **Then** `[System responds with HTTP 201 Created & returns access token JWT]`
+
+##### Fail Path Scenarios (Invalid Actions & Error Responses)
+- **Scenario FP-01 (Missing Field)**: **Given** `[Missing password field in request]` **When** `[User submits form]` **Then** `[System responds with HTTP 400 Bad Request & error message 'Password is required']`
+- **Scenario FP-02 (Duplicate Resource)**: **Given** `[Resource already exists in database]` **When** `[User submits creation]` **Then** `[System responds with HTTP 409 Conflict & error message 'Resource already exists']`
+- **Scenario FP-03 (Unauthorized Action)**: **Given** `[Expired or invalid Bearer token]` **When** `[User calls endpoint]` **Then** `[System responds with HTTP 401 Unauthorized & error message 'Invalid session']`
+
 ---
 
 ## 2. Architecture & Data Flow Diagram (DFD) (`plans/DFD_[FEATURE].md`)
