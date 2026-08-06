@@ -26,11 +26,23 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install ruff mypy pre-commit
+          pip install -e . pytest pytest-cov mypy ruff pre-commit
 
       - name: Lint & Format Check
         run: |
           ruff check .
+
+      - name: Type Check (mypy)
+        run: |
+          mypy src/agy_kit/ --ignore-missing-imports
+
+      - name: Run Unit Tests
+        run: |
+          python3 -m unittest discover -s tests/unit
+
+      - name: Audit Template Drift
+        run: |
+          python3 bin/sync_templates.py --check
 
       - name: Run Benchmark Evaluation Suite
         run: |

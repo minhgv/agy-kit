@@ -1,13 +1,7 @@
 {
   "test_suite": "Destructive Adversarial Suite",
   "timestamp": "2026-08-06T17:10:00Z",
-  "attacks_executed": 30,
-  "defenses_passed": 9,
-  "bugs_uncovered": [
-    {
-      "attack": "Boundary Bombardment",
-      "input": "   ",
-      "issue": "Validator accepted malicious path escape"
-    }
-  ]
+  "attacks_executed": 31,
+  "defenses_passed": 12,
+  "bugs_uncovered": []
 }

@@ -10,7 +10,10 @@ def validate_path_safety(file_path: str, allowlisted_root: str) -> bool:
     """
     if not file_path or not allowlisted_root:
         return False
-        
+
+    if not file_path.strip() or os.path.isabs(file_path):
+        return False
+
     if ".." in file_path or file_path.startswith("-") or "\n" in file_path:
         return False
         

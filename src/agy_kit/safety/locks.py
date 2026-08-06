@@ -17,7 +17,7 @@ class RunLock:
         self.lock_file_path = os.path.join(lock_dir, f".run_{run_id}.lock")
         self.file_obj = None
 
-    def acquire() -> bool:
+    def acquire(self) -> bool:
         os.makedirs(self.lock_dir, exist_ok=True)
         try:
             self.file_obj = open(self.lock_file_path, "w")
