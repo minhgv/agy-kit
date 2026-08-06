@@ -5,7 +5,7 @@
 [![Version](https://img.shields.io/badge/scaffold-v0.7.0-blue.svg)](.antigravity/version.json)
 [![Platform](https://img.shields.io/badge/target-Antigravity--CLI-emerald.svg)](https://github.com/minhgv/agy-kit)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Benchmarks](https://img.shields.io/badge/evals-13%2F13%20passed%20(100%2F100)-success.svg)](tests/evals/eval_harness.py)
+[![Benchmarks](https://img.shields.io/badge/evals-15%2F15%20passed%20(100%2F100)-success.svg)](tests/evals/eval_harness.py)
 
 ---
 
@@ -41,6 +41,7 @@
 7. **`brainstorming`**: Classifies unknowns into 4 categories (Known knowns, Known unknowns, Unknown knowns, Unknown unknowns) and presents 2–4 concrete option variants with trade-offs.
 8. **`grill-me`**: 11-question technical spec stress-testing, assumption challenge, scale limits, and rollback check.
 9. **`problem-solving`**: 5 core problem-solving techniques (Simplification Cascades, Collision-Zone Thinking, Meta-Pattern Recognition, Inversion Exercise, Scale Game) with dedicated reference guides in `references/`.
+10. **`writing-skills`**: Applies Test-Driven Development (TDD) for skill authoring: RED → GREEN → REFACTOR pressure testing with subagents before writing, iterating until bulletproof against rationalization.
 
 ### 3. Complete 9 Slash Workflows
 
@@ -76,7 +77,7 @@ Native slash commands configured in `.antigravity/workflows/`, chronologically g
 
 ### 5. Benchmark Evaluation Harness
 
-`agy-kit` ships with a comprehensive evaluation harness in `tests/evals/eval_harness.py` covering **13 core benchmarks** with a **100/100 pass score**:
+`agy-kit` ships with a comprehensive evaluation harness in `tests/evals/eval_harness.py` covering **15 core benchmarks** with a **100/100 pass score**:
 
 1. **Quality Gate Audit Compliance**: Zero lint errors & zero hardcoded secrets.
 2. **Subagent Specification Validation**: Agent JSON schema & prompt safety validation.
@@ -91,6 +92,8 @@ Native slash commands configured in `.antigravity/workflows/`, chronologically g
 11. **Phase 10 BA & QA Skills Suite Benchmark**: BA & QA skills synchronization audit.
 12. **Workflows & Skills Sync Validator**: Workflows, subagent specs, and skills alignment.
 13. **Phase 12 Brainstorming, Stress-Testing & Problem-Solving Skills Benchmark**: Ideation & problem-solving skills integrity.
+14. **Developer Scaffolding Installer Benchmark**: Scaffolding CLI & language project templates audit (`bin/init-agy-kit.sh`).
+15. **Phase 17 Writing Skills Integration Benchmark**: `writing-skills` skill suite synchronization, file integrity, and TDD skill authoring protocols.
 
 ---
 
@@ -134,7 +137,8 @@ agy-kit/
 │   ├── qa-reproducer/
 │   ├── brainstorming/
 │   ├── grill-me/
-│   └── problem-solving/
+│   ├── problem-solving/
+│   └── writing-skills/
 ├── bin/                           # 10 Executable verification and runner scripts
 │   ├── agy-pipeline.sh
 │   ├── safe-agent-run.sh

@@ -258,6 +258,11 @@ cat << 'EOF' > "$TARGET_DIR/skills/ba-expert.md"
 Enforces SPEC, RTM, DFD, and 12-Dimensional Edge Case Matrix generation.
 EOF
 
+cat << 'EOF' > "$TARGET_DIR/skills/writing-skills.md"
+# Skill: Writing Skills & TDD Skill Authoring
+Enforces TDD for skill authoring (RED -> GREEN -> REFACTOR pressure testing), concise structure, anti-patterns avoidance, and rationale documentation.
+EOF
+
 cat << 'EOF' > "$TARGET_DIR/workflows/pipeline.yml"
 name: agy-kit-pipeline
 steps:
@@ -383,4 +388,5 @@ echo "  - $TARGET_DIR/.antigravity/agents/{planner,coder,reviewer,qa}.json"
 echo "  - $TARGET_DIR/AGENTS.md"
 echo "  - $TARGET_DIR/.githooks/pre-commit"
 echo "  - $TARGET_DIR/skills/ba-expert.md"
+echo "  - $TARGET_DIR/skills/writing-skills.md"
 echo "  - $TARGET_DIR/workflows/pipeline.yml"

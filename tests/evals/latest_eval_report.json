@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T05:20:44.360610",
+  "timestamp": "2026-08-06T05:47:56.614757",
   "scaffold": "agy-kit",
   "target_cli": "Antigravity CLI (agy)",
   "metrics": {
@@ -99,6 +99,16 @@
     },
     "brainstorm_skills": {
       "passed": true,
+      "score": 100
+    },
+    "init_installer": {
+      "passed": true,
+      "score": 100
+    },
+    "phase17_writing_skills": {
+      "passed": true,
+      "synced": true,
+      "has_tdd_rules": true,
       "score": 100
     },
     "pass_at_1_tdd_target": "\u2265 85%",

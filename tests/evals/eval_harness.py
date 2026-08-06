@@ -2,7 +2,7 @@
 """
 agy-kit Local Subagent Evaluation Harness (Benchmark Suite)
 
-Measures 13 core benchmarks:
+Measures 15 core benchmarks:
 1. Quality Gate Audit Compliance (0 lint errors, 0 secrets)
 2. Subagent Specification & AGENTS.md Validation
 3. agy-doctor System Health Diagnostics
@@ -16,6 +16,8 @@ Measures 13 core benchmarks:
 11. Phase 10 BA-expert & QA Skills Suite Integration Benchmark
 12. Workflows, Agent Specs & Skills Synchronization Audit Benchmark
 13. Phase 12 Brainstorming, Stress-Testing & Problem-Solving Skills Benchmark
+14. Developer Scaffolding Installer CLI Benchmark
+15. Phase 17 Writing-Skills Integration & TDD Skill Authoring Benchmark
 """
 
 import os
@@ -211,6 +213,40 @@ def eval_brainstorm_skills():
         "score": 100 if passed else 0
     }
 
+def eval_phase16_init_installer():
+    """Executes bin/init-agy-kit.sh --help and verifies developer installer scaffolding script."""
+    code, out, err = run_command("./bin/init-agy-kit.sh --help")
+    passed = (code == 0 and "agy-kit Developer Scaffolding Installer CLI" in out)
+    return {
+        "passed": passed,
+        "score": 100 if passed else 0
+    }
+
+def eval_phase17_writing_skills():
+    """Verifies Phase 17 writing-skills integration and synchronization between .hermes/ and .antigravity/."""
+    hermes_skill = os.path.join(PROJECT_ROOT, ".hermes/skills/writing-skills/SKILL.md")
+    agy_skill = os.path.join(PROJECT_ROOT, ".antigravity/skills/writing-skills/SKILL.md")
+    
+    if not (os.path.exists(hermes_skill) and os.path.exists(agy_skill)):
+        return {"passed": False, "error": "writing-skills/SKILL.md missing", "score": 0}
+        
+    with open(hermes_skill, "r") as f:
+        h_content = f.read()
+    with open(agy_skill, "r") as f:
+        a_content = f.read()
+        
+    synced = (h_content == a_content)
+    has_tdd = "The Iron Law (Same as TDD)" in h_content
+    has_loop = "RED:" in h_content and "GREEN:" in h_content and "REFACTOR:" in h_content
+    
+    passed = (synced and has_tdd and has_loop)
+    return {
+        "passed": passed,
+        "synced": synced,
+        "has_tdd_rules": has_tdd,
+        "score": 100 if passed else 0
+    }
+
 def main():
     print("==================================================")
     print("   agy-kit Local Subagent Benchmark Harness      ")
@@ -289,6 +325,16 @@ def main():
     print(f"\n[Phase 12 Brainstorming & Problem-Solving Skills Benchmark] Score: {brainstorm_results['score']}/100")
     print(f"  - Passed: {brainstorm_results['passed']}")
 
+    # Run Developer Scaffolding Installer Benchmark Eval
+    init_installer_results = eval_phase16_init_installer()
+    print(f"\n[Developer Scaffolding Installer CLI Benchmark] Score: {init_installer_results['score']}/100")
+    print(f"  - Passed: {init_installer_results['passed']}")
+
+    # Run Phase 17 Writing Skills Integration Benchmark Eval
+    writing_skills_results = eval_phase17_writing_skills()
+    print(f"\n[Phase 17 Writing-Skills Integration Benchmark] Score: {writing_skills_results['score']}/100")
+    print(f"  - Passed: {writing_skills_results['passed']}")
+
     # Report Summary
     report = {
         "timestamp": datetime.now().isoformat(),
@@ -308,6 +354,8 @@ def main():
             "phase10_ba_qa_skills": phase10_results,
             "workflows_skills_sync": wf_sync_results,
             "brainstorm_skills": brainstorm_results,
+            "init_installer": init_installer_results,
+            "phase17_writing_skills": writing_skills_results,
             "pass_at_1_tdd_target": "≥ 85%",
             "spec_compliance_target": "100%"
         }
@@ -320,7 +368,7 @@ def main():
     print(f"\nSaved eval report to {report_file}")
     print("==================================================")
     
-    # Exit 0 if all 13 benchmarks passed with 100/100
+    # Exit 0 if all 15 benchmarks passed with 100/100
     all_passed = (
         qg_results['score'] == 100 and
         agent_val_results['passed'] and 
@@ -334,11 +382,13 @@ def main():
         ba_docs_results['passed'] and
         phase10_results['passed'] and
         wf_sync_results['passed'] and
-        brainstorm_results['passed']
+        brainstorm_results['passed'] and
+        init_installer_results['passed'] and
+        writing_skills_results['passed']
     )
     
     if all_passed:
-        print("ALL 13 BENCHMARKS PASSED (100/100)")
+        print("ALL 15 BENCHMARKS PASSED (100/100)")
         sys.exit(0)
     else:
         print("BENCHMARK HARNESS FAILED ON ONE OR MORE TESTS")
