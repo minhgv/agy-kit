@@ -8,11 +8,11 @@ Supports:
   --sync: Automatically update src/templates/ from active working assets.
 """
 
-import os
-import sys
-import glob
-import shutil
 import argparse
+import glob
+import os
+import shutil
+import sys
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 AGENTS_DIR = os.path.join(PROJECT_ROOT, ".agents/agents")

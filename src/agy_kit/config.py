@@ -3,7 +3,7 @@ config.py — TOML configuration resolver for agy-kit
 """
 
 import os
-from typing import Any
+from typing import Any, cast
 
 tomllib: Any = None
 try:
@@ -49,7 +49,7 @@ def load_config(config_path: str) -> dict:
                 file_cfg = tomllib.load(f)
                 for key, val in file_cfg.items():
                     if isinstance(val, dict) and key in cfg and isinstance(cfg[key], dict):
-                        cfg[key].update(val)
+                        cast(dict, cfg[key]).update(val)
                     else:
                         cfg[key] = val
         except Exception:

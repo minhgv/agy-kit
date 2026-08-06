@@ -11,8 +11,9 @@ Simulates AGY CLI behavior:
     - FAKE_AGY_LEAK_SECRET=1: writes a secret key to output
 """
 
-import sys
 import os
+import sys
+
 
 def main():
     args = sys.argv[1:]

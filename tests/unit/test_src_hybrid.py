@@ -36,11 +36,11 @@ class TestSrcHybrid(unittest.TestCase):
     def test_r002_agy_kit_package_import(self):
         """R-SRC-002: Verify src/agy_kit/ Python package can be imported."""
         try:
-            import agy_kit
-            import agy_kit.orchestrator
-            import agy_kit.worktree
-            import agy_kit.validators
-            import agy_kit.cli
+            import agy_kit  # noqa: F401
+            import agy_kit.cli  # noqa: F401
+            import agy_kit.orchestrator  # noqa: F401
+            import agy_kit.validators  # noqa: F401
+            import agy_kit.worktree  # noqa: F401
             imported = True
         except ImportError as e:
             imported = False
@@ -56,8 +56,9 @@ class TestSrcHybrid(unittest.TestCase):
 
     def test_sync_templates_no_drift(self):
         """Verify bin/sync_templates.py runs and confirms template synchronization."""
-        from bin.sync_templates import main as sync_main
         import sys
+
+        from bin.sync_templates import main as sync_main
         old_argv = sys.argv
         try:
             sys.argv = ["sync_templates.py", "--sync"]

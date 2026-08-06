@@ -7,6 +7,7 @@ import subprocess
 from dataclasses import dataclass, field
 from typing import Set
 
+
 @dataclass(frozen=True)
 class AgyCapabilities:
     version: str

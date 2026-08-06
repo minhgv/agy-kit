@@ -9,11 +9,10 @@ Verifies the integrity of eval_harness.py using:
 """
 
 import os
+import subprocess
 import sys
 import time
-import json
-import subprocess
-from datetime import datetime
+from datetime import datetime, timezone
 
 EVAL_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(EVAL_DIR, "../../"))
@@ -23,18 +22,19 @@ if EVAL_DIR not in sys.path:
 
 import eval_harness
 
+
 def test_fault_secret_leak():
     """Fault 1: Secret Leak Injection"""
     temp_file = os.path.join(PROJECT_ROOT, "_temp_secret_fault.txt")
     try:
         with open(temp_file, "w") as f:
             f.write("sk-proj-12345678901234567890_FAKE_KEY\n")
-        subprocess.run(["git", "add", temp_file], cwd=PROJECT_ROOT, capture_output=True)
+        subprocess.run(["git", "add", temp_file], cwd=PROJECT_ROOT, capture_output=True, check=False)
         res = eval_harness.eval_quality_gate()
         detected = (res.get("secrets_found", False) is True) and (res.get("score", 100) == 0)
         return detected, res
     finally:
-        subprocess.run(["git", "reset", "HEAD", temp_file], cwd=PROJECT_ROOT, capture_output=True)
+        subprocess.run(["git", "reset", "HEAD", temp_file], cwd=PROJECT_ROOT, capture_output=True, check=False)
         if os.path.exists(temp_file):
             os.remove(temp_file)
 
@@ -75,12 +75,12 @@ def test_fault_path_violation():
             with open(env_file, "w") as f:
                 f.write("TEST_ENV=1\n")
             created = True
-        subprocess.run(["git", "add", "-f", env_file], cwd=PROJECT_ROOT, capture_output=True)
+        subprocess.run(["git", "add", "-f", env_file], cwd=PROJECT_ROOT, capture_output=True, check=False)
         res = eval_harness.eval_path_boundaries()
         detected = (res.get("passed", True) is False) and (res.get("score", 100) == 0)
         return detected, res
     finally:
-        subprocess.run(["git", "reset", "HEAD", env_file], cwd=PROJECT_ROOT, capture_output=True)
+        subprocess.run(["git", "reset", "HEAD", env_file], cwd=PROJECT_ROOT, capture_output=True, check=False)
         if created and os.path.exists(env_file):
             os.remove(env_file)
 

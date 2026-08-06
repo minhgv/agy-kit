@@ -5,10 +5,10 @@ agy-kit Telemetry & Tracing Benchmark Exporter
 Aggregates token consumption, API cost, tool call latencies, and agent success rates into markdown and JSON.
 """
 
+import json
 import os
 import sys
-import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 EVAL_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(EVAL_DIR, "../../"))
@@ -17,6 +17,7 @@ if EVAL_DIR not in sys.path:
     sys.path.insert(0, EVAL_DIR)
 
 from token_calculator import calculate_cost
+
 
 def generate_telemetry_metrics():
     # Simulated execution metrics derived from evaluation sessions
@@ -53,7 +54,7 @@ def generate_telemetry_metrics():
     p99 = all_latencies[-1]
 
     return {
-        "timestamp": datetime.now().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "token_summary": {
             "prompt_tokens": total_prompt,
             "completion_tokens": total_completion,

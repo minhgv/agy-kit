@@ -35,4 +35,10 @@ python3 bin/sync_templates.py --check || {
     exit 1
 }
 
+# 5. Run Python AST Syntax check on workspace
+python3 -c "import glob, py_compile; [py_compile.compile(f, doraise=True) for f in glob.glob('src/agy_kit/**/*.py', recursive=True) + glob.glob('tests/**/*.py', recursive=True)]" || {
+    echo "❌ Python syntax check failed."
+    exit 1
+}
+
 echo "✅ Pre-commit checks passed."

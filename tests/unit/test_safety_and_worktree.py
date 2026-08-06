@@ -18,7 +18,7 @@ class TestSafetyAndWorktree(unittest.TestCase):
 
     def test_r001_run_lock_release_and_stale_cleanup(self):
         """R-CLN-003: Verify RunLock acquire, release, and missing file resiliency."""
-        from agy_kit.safety.locks import RunLock, RunLockedError
+        from agy_kit.safety.locks import RunLock
         
         with tempfile.TemporaryDirectory() as temp_dir:
             lock = RunLock("test-release-run-id", temp_dir)

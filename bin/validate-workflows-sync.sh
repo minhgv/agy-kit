@@ -19,10 +19,10 @@ echo "=================================================="
 echo -e "   ${BLUE}agy-kit Workflows, Agents & Skills Sync Audit${NC}"
 echo "=================================================="
 
-WORKFLOWS_DIR=".antigravity/workflows"
-AGENTS_DIR=".antigravity/agents"
-HERMES_SKILLS_DIR=".hermes/skills"
-AGY_SKILLS_DIR=".antigravity/skills"
+WORKFLOWS_DIR=".agents/workflows"
+AGENTS_DIR=".agents/agents"
+ACTIVE_SKILLS_DIR=".agents/skills"
+TPL_SKILLS_DIR="src/templates/skills"
 AGENTS_MIRROR_DIR=".agents"
 
 # 1. Audit Workflow Files Existence
@@ -149,23 +149,22 @@ else
     log_fail "qa.md missing qa-reproducer skill reference!"
 fi
 
-# 4. Audit Skill Mirroring & Integrity (.hermes/skills <-> .antigravity/skills <-> .agents/skills)
+# 4. Audit Skill Mirroring & Integrity (.agents/skills <-> src/templates/skills)
 echo ""
 echo "Auditing Skill Mirroring and Integrity..."
 
 for skill in "${SKILLS[@]}"; do
-    HERMES_SKILL="$HERMES_SKILLS_DIR/$skill/SKILL.md"
-    AGY_SKILL="$AGY_SKILLS_DIR/$skill/SKILL.md"
-    AGENTS_SKILL="$AGENTS_MIRROR_DIR/skills/$skill/SKILL.md"
+    ACTIVE_SKILL="$ACTIVE_SKILLS_DIR/$skill/SKILL.md"
+    TPL_SKILL="$TPL_SKILLS_DIR/$skill/SKILL.md"
 
-    if [ -f "$HERMES_SKILL" ] && [ -f "$AGY_SKILL" ] && [ -f "$AGENTS_SKILL" ]; then
-        if cmp -s "$HERMES_SKILL" "$AGY_SKILL" && cmp -s "$AGY_SKILL" "$AGENTS_SKILL"; then
-            log_ok "Skill $skill is 100% synchronized across .hermes/, .antigravity/, and .agents/"
+    if [ -f "$ACTIVE_SKILL" ] && [ -f "$TPL_SKILL" ]; then
+        if cmp -s "$ACTIVE_SKILL" "$TPL_SKILL"; then
+            log_ok "Skill $skill is 100% synchronized between .agents/ and src/templates/"
         else
-            log_fail "Skill $skill content mismatch across .hermes/, .antigravity/, or .agents/!"
+            log_fail "Skill $skill content mismatch between .agents/ and src/templates/!"
         fi
     else
-        log_fail "Skill $skill missing from .hermes/skills/, .antigravity/skills/, or .agents/skills/!"
+        log_fail "Skill $skill missing from .agents/skills/ or src/templates/skills/!"
     fi
 done
 

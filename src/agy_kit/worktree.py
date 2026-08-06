@@ -2,10 +2,11 @@
 worktree.py — Git worktree isolation manager & safe apply checker
 """
 
-import subprocess
 import os
+import subprocess
 import tempfile
 from typing import Optional
+
 
 class WorktreeManager:
 

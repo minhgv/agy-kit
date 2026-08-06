@@ -3,9 +3,9 @@
 test_control_plane_phase2.py — Comprehensive Unit & Adversarial Tests for Control Plane Phase 2 (R-CP2-001 to R-CP2-005)
 """
 
+import json
 import os
 import sys
-import json
 import unittest
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))

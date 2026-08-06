@@ -2,13 +2,13 @@
 locks.py — OS file lock manager for run concurrency protection
 """
 
-import os
 import fcntl
-from typing import Optional, Any
+import os
+from typing import Any, Optional
+
 
 class RunLockedError(Exception):
     """Raised when a run_id is locked by another process."""
-    pass
 
 class RunLock:
 
@@ -24,7 +24,7 @@ class RunLock:
             self.file_obj = open(self.lock_file_path, "w")
             fcntl.flock(self.file_obj.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
             return True
-        except (IOError, OSError):
+        except OSError:
             if self.file_obj:
                 self.file_obj.close()
                 self.file_obj = None

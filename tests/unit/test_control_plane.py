@@ -5,7 +5,6 @@ test_control_plane.py — Comprehensive Unit & Adversarial Tests for Python Cont
 
 import os
 import sys
-import json
 import unittest
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
@@ -53,7 +52,11 @@ class TestControlPlane(unittest.TestCase):
 
     def test_r003_guarded_state_machine_transitions(self):
         """R-CP-003: Verify state machine transition guards and illegal transition rejection."""
-        from agy_kit.orchestrator import PipelineOrchestrator, StageState, IllegalTransitionError
+        from agy_kit.orchestrator import (
+            IllegalTransitionError,
+            PipelineOrchestrator,
+            StageState,
+        )
         
         orch = PipelineOrchestrator("run-guarded-test", "state-guards")
         self.assertEqual(orch.state, StageState.CREATED)
@@ -81,8 +84,9 @@ class TestControlPlane(unittest.TestCase):
 
     def test_r007_cli_entrypoint_version(self):
         """R-CP-007: Test agy-kit CLI entrypoint responds to --version."""
-        from agy_kit.cli import main as cli_main
         import sys
+
+        from agy_kit.cli import main as cli_main
         old_argv = sys.argv
         try:
             sys.argv = ["cli.py", "--version"]

@@ -21,11 +21,11 @@ Measures 16 core benchmarks:
 16. Phase 18 Harness Meta-Evaluation & Synthetic Fault Injection Benchmark
 """
 
-import os
-import sys
 import json
+import os
 import subprocess
-from datetime import datetime
+import sys
+from datetime import datetime, timezone
 
 EVAL_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(EVAL_DIR, "../../"))
@@ -226,7 +226,7 @@ def eval_ba_framework_docs():
 
 def eval_phase10_ba_qa_skills():
     """Executes bin/validate-phase10-ba-qa.sh to verify Phase 10 BA-expert & QA skills suite."""
-    code, out, err = run_command("./bin/validate-phase10-ba-qa.sh")
+    code, _out, _err = run_command("./bin/validate-phase10-ba-qa.sh")
     passed = (code == 0)
     return {
         "passed": passed,
@@ -235,7 +235,7 @@ def eval_phase10_ba_qa_skills():
 
 def eval_workflows_skills_sync():
     """Executes bin/validate-workflows-sync.sh to verify workflow, agent, and skill synchronization."""
-    code, out, err = run_command("./bin/validate-workflows-sync.sh")
+    code, _out, _err = run_command("./bin/validate-workflows-sync.sh")
     passed = (code == 0)
     return {
         "passed": passed,
@@ -244,7 +244,7 @@ def eval_workflows_skills_sync():
 
 def eval_brainstorm_skills():
     """Executes bin/validate-brainstorm-skills.sh to verify Phase 12 ideation, stress-testing & problem-solving skills."""
-    code, out, err = run_command("./bin/validate-brainstorm-skills.sh")
+    code, _out, _err = run_command("./bin/validate-brainstorm-skills.sh")
     passed = (code == 0)
     return {
         "passed": passed,
@@ -253,7 +253,7 @@ def eval_brainstorm_skills():
 
 def eval_phase16_init_installer():
     """Executes bin/init-agy-kit.sh --help and verifies developer installer scaffolding script."""
-    code, out, err = run_command("./bin/init-agy-kit.sh --help")
+    code, out, _err = run_command("./bin/init-agy-kit.sh --help")
     passed = (code == 0 and "agy-kit Developer Scaffolding Installer CLI" in out)
     return {
         "passed": passed,
@@ -287,7 +287,7 @@ def eval_phase17_writing_skills():
 
 def eval_phase18_meta_harness():
     """Executes tests/evals/meta_eval_harness.py to verify fault injection, stability & performance profiler."""
-    code, out, err = run_command("python3 tests/evals/meta_eval_harness.py")
+    code, _out, _err = run_command("python3 tests/evals/meta_eval_harness.py")
     passed = (code == 0)
     return {
         "passed": passed,
@@ -298,7 +298,7 @@ def main():
     print("==================================================")
     print("   agy-kit Local Subagent Benchmark Harness      ")
     print("==================================================")
-    print(f"Timestamp: {datetime.now().isoformat()}")
+    print(f"Timestamp: {datetime.now(timezone.utc).isoformat()}")
     print(f"Project Root: {PROJECT_ROOT}\n")
 
     # Run Quality Gate Eval
@@ -390,7 +390,7 @@ def main():
 
     # Report Summary
     report = {
-        "timestamp": datetime.now().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "scaffold": "agy-kit",
         "target_cli": "Antigravity CLI (agy)",
         "metrics": {

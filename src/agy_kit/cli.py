@@ -2,16 +2,18 @@
 cli.py — Canonical CLI entrypoint for agy-kit Control Plane (Phase 2)
 """
 
-import sys
 import argparse
+import sys
 from typing import List, Optional
+
 
 def cmd_version():
     from agy_kit import __version__
     print(f"agy-kit v{__version__}")
 
 def cmd_doctor():
-    import subprocess, os
+    import os
+    import subprocess
     script = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../bin/agy-doctor.sh"))
     if os.path.exists(script):
         res = subprocess.run(["bash", script])
@@ -20,7 +22,8 @@ def cmd_doctor():
         print("✅ agy-kit doctor: System dependencies healthy.")
 
 def cmd_sync(check: bool):
-    import subprocess, os
+    import os
+    import subprocess
     script = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../bin/sync_templates.py"))
     args = ["python3", script]
     if check:
@@ -32,6 +35,7 @@ def cmd_sync(check: bool):
 
 def cmd_apply(run_id: str):
     import os
+
     from agy_kit.worktree import WorktreeManager
     wt = WorktreeManager(os.getcwd(), run_id)
     patch_file = f".agy-kit/runs/{run_id}/result.patch"

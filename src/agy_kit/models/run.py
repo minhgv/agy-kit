@@ -4,7 +4,8 @@ run.py — Pipeline Run Manifest data model
 
 import time
 from dataclasses import dataclass, field
-from typing import Dict, Any, List
+from typing import Any, Dict, List
+
 
 @dataclass
 class RunManifest:

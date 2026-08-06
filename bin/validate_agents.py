@@ -3,8 +3,8 @@
 validate_agents.py — Validate native subagent Markdown specs (.agents/agents/*.md) and AGENTS.md consistency
 """
 import glob
-import sys
 import os
+import sys
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 AGENTS_DIR = os.path.join(PROJECT_ROOT, ".agents/agents")

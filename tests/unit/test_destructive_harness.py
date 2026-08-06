@@ -12,11 +12,11 @@ Assumes ALL newly written features contain hidden flaws. Executes 5 destructive 
 Outputs evidence artifacts to tests/qa-evidence/destructive_test_report.json.
 """
 
+import concurrent.futures
+import json
 import os
 import sys
-import json
 import unittest
-import concurrent.futures
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 if PROJECT_ROOT not in sys.path:
@@ -65,7 +65,7 @@ class TestDestructiveHarness(unittest.TestCase):
                     "input": bad_path,
                     "issue": "Validator accepted malicious path escape"
                 })
-            self.assertFalse(safe, f"Path validator failed to reject malicious input: {repr(bad_path)}")
+            self.assertFalse(safe, f"Path validator failed to reject malicious input: {bad_path!r}")
 
     def test_attack_2_concurrency_race_conditions(self):
         """Attack 2: Concurrency Stress Test (Simultaneous state machine transitions)."""
@@ -77,7 +77,7 @@ class TestDestructiveHarness(unittest.TestCase):
             self.evidence_log["attacks_executed"] += 1
             try:
                 orch.transition_to(state_val)
-            except Exception:
+            except Exception:  # noqa: BLE001, S110
                 pass
             return orch.state.value
 
@@ -114,7 +114,6 @@ class TestDestructiveHarness(unittest.TestCase):
 
     def test_attack_5_template_drift_detection(self):
         """Attack 5: Template Drift & Tampering Detection."""
-        from bin.sync_templates import get_file_content
         
         active_agents = os.path.join(PROJECT_ROOT, "AGENTS.md")
         tpl_agents = os.path.join(PROJECT_ROOT, "src/templates/AGENTS.md.tpl")

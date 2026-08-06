@@ -3,9 +3,10 @@ stage.py — Stage Request & Result data models
 """
 
 import time
-from enum import Enum
 from dataclasses import dataclass, field
-from typing import Dict, Any, List, Optional
+from enum import Enum
+from typing import Any, Dict, List, Optional
+
 
 class StageStatus(Enum):
     PASSED = "passed"

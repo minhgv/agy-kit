@@ -3,11 +3,11 @@ orchestrator.py — Guarded state machine for agy-kit pipeline orchestration
 """
 
 from enum import Enum
-from typing import Dict, Any, List, Set
+from typing import Any, Dict, List, Set
+
 
 class IllegalTransitionError(Exception):
     """Raised when an illegal state transition is attempted."""
-    pass
 
 class StageState(Enum):
     CREATED = "CREATED"

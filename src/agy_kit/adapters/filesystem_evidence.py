@@ -2,11 +2,11 @@
 filesystem_evidence.py — Structured JSONL Event Logger & Secret Redactor
 """
 
+import json
 import os
 import re
-import json
 import time
-from typing import Dict, Any
+from typing import Any, Dict
 
 SECRET_REGEX = re.compile(r"(secret_[a-zA-Z0-9_-]+|api_key_[a-zA-Z0-9_-]+|password\s*=\s*\S+)", re.IGNORECASE)
 
