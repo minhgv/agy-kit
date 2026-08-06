@@ -1,10 +1,10 @@
 """
 cli.py — Canonical CLI entrypoint for agy-kit Control Plane (Phase 2)
 """
+from __future__ import annotations
 
 import argparse
 import sys
-from typing import List, Optional
 
 
 def cmd_version():
@@ -16,7 +16,7 @@ def cmd_doctor():
     import subprocess
     script = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../bin/agy-doctor.sh"))
     if os.path.exists(script):
-        res = subprocess.run(["bash", script])
+        res = subprocess.run(["bash", script], check=False)
         sys.exit(res.returncode)
     else:
         print("✅ agy-kit doctor: System dependencies healthy.")
@@ -30,7 +30,7 @@ def cmd_sync(check: bool):
         args.append("--check")
     else:
         args.append("--sync")
-    res = subprocess.run(args)
+    res = subprocess.run(args, check=False)
     sys.exit(res.returncode)
 
 def cmd_apply(run_id: str):
@@ -46,7 +46,7 @@ def cmd_apply(run_id: str):
         print(f"❌ Apply failed: Patch '{patch_file}' cannot be applied or primary repository is dirty.")
         sys.exit(60)
 
-def main(args_list: Optional[List[str]] = None):
+def main(args_list: list[str] | None = None):
     parser = argparse.ArgumentParser(description="agy-kit — Agent Engineering Control Plane CLI")
     parser.add_argument("--version", action="store_true", help="Print version")
     

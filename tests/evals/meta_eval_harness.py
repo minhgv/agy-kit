@@ -150,7 +150,7 @@ def main():
     print("==================================================")
     print("   agy-kit Meta-Evaluation & Fault Injection Suite")
     print("==================================================")
-    print(f"Timestamp: {datetime.now().isoformat()}\n")
+    print(f"Timestamp: {datetime.now(timezone.utc).isoformat()}\n")
 
     faults = [
         ("Secret Leak", test_fault_secret_leak),

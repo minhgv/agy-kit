@@ -1,18 +1,18 @@
 """
 agy_cli.py — AGY Runtime capability probe adapter
 """
+from __future__ import annotations
 
 import shutil
 import subprocess
 from dataclasses import dataclass, field
-from typing import Set
 
 
 @dataclass(frozen=True)
 class AgyCapabilities:
     version: str
     headless_prompt: bool
-    custom_agents: Set[str] = field(default_factory=set)
+    custom_agents: set[str] = field(default_factory=set)
     exit_code: int = 0
 
 class AgyRuntimeAdapter:
@@ -30,7 +30,7 @@ class AgyRuntimeAdapter:
                 exit_code=10
             )
         try:
-            res = subprocess.run([self.executable, "--version"], capture_output=True, text=True, timeout=5)
+            res = subprocess.run([self.executable, "--version"], capture_output=True, text=True, timeout=5, check=False)
             if res.returncode == 0:
                 ver = res.stdout.strip()
                 return AgyCapabilities(
@@ -39,7 +39,7 @@ class AgyRuntimeAdapter:
                     custom_agents={"planner", "coder", "reviewer", "qa"},
                     exit_code=0
                 )
-        except Exception:
+        except Exception:  # noqa: BLE001, S110
             pass
 
         return AgyCapabilities(

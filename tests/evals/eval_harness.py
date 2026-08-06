@@ -36,14 +36,14 @@ if EVAL_DIR not in sys.path:
 
 def run_command(cmd, cwd=PROJECT_ROOT):
     try:
-        res = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=cwd)
+        res = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=cwd, check=False)
         return res.returncode, res.stdout, res.stderr
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         return 1, "", str(e)
 
 def eval_quality_gate():
     """Runs Quality Gate check (gitleaks secret scan + dynamic AST py_compile on all Python files + bash -n syntax checks on all scripts)."""
-    code, out, err = run_command("git diff --cached | grep -iE '(api_key|password|secret)' || echo 'CLEAN'")
+    _code, out, _err = run_command("git diff --cached | grep -iE '(api_key|password|secret)' || echo 'CLEAN'")
     has_secret = "CLEAN" not in out
     
     # 1. Dynamic AST py_compile on all Python files across repo
@@ -57,7 +57,7 @@ def eval_quality_gate():
     py_syntax_ok = True
     py_errors = []
     for py_file in py_files:
-        code_py, _, err_py = run_command(f"python3 -m py_compile {py_file}")
+        code_py, _, _err_py = run_command(f"python3 -m py_compile {py_file}")
         if code_py != 0:
             py_syntax_ok = False
             py_errors.append(os.path.relpath(py_file, PROJECT_ROOT))
@@ -74,7 +74,7 @@ def eval_quality_gate():
     sh_syntax_ok = True
     sh_errors = []
     for sh_file in sh_files:
-        code_sh, _, err_sh = run_command(f"bash -n '{sh_file}'")
+        code_sh, _, _err_sh = run_command(f"bash -n '{sh_file}'")
         if code_sh != 0:
             sh_syntax_ok = False
             sh_errors.append(os.path.relpath(sh_file, PROJECT_ROOT))
@@ -94,7 +94,7 @@ def eval_quality_gate():
 
 def eval_agent_validation():
     """Runs bin/validate-agents.sh to check agent specs."""
-    code, out, err = run_command("./bin/validate-agents.sh")
+    code, _out, _err = run_command("./bin/validate-agents.sh")
     passed = (code == 0)
     return {
         "passed": passed,
@@ -103,7 +103,7 @@ def eval_agent_validation():
 
 def eval_doctor_diagnostics():
     """Runs bin/agy-doctor.sh to check environment health."""
-    code, out, err = run_command("./bin/agy-doctor.sh")
+    code, out, _err = run_command("./bin/agy-doctor.sh")
     errors_count = out.count("[FAIL]")
     warnings_count = out.count("[WARN]")
     passed = (code == 0)
@@ -115,7 +115,7 @@ def eval_doctor_diagnostics():
 
 def eval_path_boundaries():
     """Runs bin/check-path-boundaries.sh to verify workspace isolation."""
-    code, out, err = run_command("./bin/check-path-boundaries.sh")
+    code, _out, _err = run_command("./bin/check-path-boundaries.sh")
     passed = (code == 0)
     return {
         "passed": passed,
@@ -152,7 +152,7 @@ def eval_token_cost_tracking():
             "stages": stage_costs,
             "score": 100
         }
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         return {
             "passed": False,
             "error": str(e),

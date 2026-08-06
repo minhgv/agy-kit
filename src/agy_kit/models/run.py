@@ -4,7 +4,7 @@ run.py — Pipeline Run Manifest data model
 
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any
 
 
 @dataclass
@@ -17,8 +17,8 @@ class RunManifest:
     apply_policy: str = "never"
     schema_version: str = "1.0"
     created_at: float = field(default_factory=time.time)
-    stages: List[str] = field(default_factory=lambda: ["plan", "build", "gate", "qa", "review"])
-    resolved_agents: Dict[str, str] = field(default_factory=lambda: {
+    stages: list[str] = field(default_factory=lambda: ["plan", "build", "gate", "qa", "review"])
+    resolved_agents: dict[str, str] = field(default_factory=lambda: {
         "plan": "planner",
         "build": "coder",
         "gate": "reviewer",
@@ -26,7 +26,7 @@ class RunManifest:
         "review": "reviewer"
     })
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "schema_version": self.schema_version,
             "run_id": self.run_id,

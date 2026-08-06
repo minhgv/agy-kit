@@ -52,6 +52,6 @@ def load_config(config_path: str) -> dict:
                         cast(dict, cfg[key]).update(val)
                     else:
                         cfg[key] = val
-        except Exception:
+        except Exception:  # noqa: BLE001, S110
             pass
     return cfg

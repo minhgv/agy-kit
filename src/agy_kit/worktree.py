@@ -1,11 +1,11 @@
 """
 worktree.py — Git worktree isolation manager & safe apply checker
 """
+from __future__ import annotations
 
 import os
 import subprocess
 import tempfile
-from typing import Optional
 
 
 class WorktreeManager:
@@ -13,7 +13,7 @@ class WorktreeManager:
     def __init__(self, project_root: str, run_id: str):
         self.project_root: str = project_root
         self.run_id: str = run_id
-        self.worktree_dir: Optional[str] = None
+        self.worktree_dir: str | None = None
 
     def create_isolated_worktree(self, feature: str) -> str:
         branch_name = f"agy-wt-{feature}-{self.run_id}"
@@ -28,9 +28,9 @@ class WorktreeManager:
         if not os.path.exists(patch_file):
             return False
         cmd = ["git", "-C", self.project_root, "apply", "--check", patch_file]
-        res = subprocess.run(cmd, capture_output=True)
+        res = subprocess.run(cmd, capture_output=True, check=False)
         return res.returncode == 0
 
     def remove_worktree(self):
         if self.worktree_dir and os.path.exists(self.worktree_dir):
-            subprocess.run(["git", "-C", self.project_root, "worktree", "remove", "--force", self.worktree_dir], capture_output=True)
+            subprocess.run(["git", "-C", self.project_root, "worktree", "remove", "--force", self.worktree_dir], capture_output=True, check=False)

@@ -1,6 +1,7 @@
 """
 validators.py — Path safety, traversal, and boundary security validators
 """
+from __future__ import annotations
 
 import os
 
@@ -27,5 +28,5 @@ def validate_path_safety(file_path: str, allowlisted_root: str) -> bool:
         abs_root = os.path.realpath(allowlisted_root)
         abs_file = os.path.realpath(os.path.join(abs_root, file_path))
         return os.path.commonpath([abs_root, abs_file]) == abs_root
-    except Exception:
+    except Exception:  # noqa: BLE001
         return False

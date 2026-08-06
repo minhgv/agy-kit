@@ -1,9 +1,10 @@
 """
 orchestrator.py — Guarded state machine for agy-kit pipeline orchestration
 """
+from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict, List, Set
+from typing import Any
 
 
 class IllegalTransitionError(Exception):
@@ -24,7 +25,7 @@ class StageState(Enum):
     CANCELLED = "CANCELLED"
 
 # Valid state transition matrix per Proposal Section 6.2
-VALID_TRANSITIONS: Dict[StageState, Set[StageState]] = {
+VALID_TRANSITIONS: dict[StageState, set[StageState]] = {
     StageState.CREATED: {StageState.PREFLIGHT, StageState.FAILED, StageState.CANCELLED},
     StageState.PREFLIGHT: {StageState.ISOLATED, StageState.FAILED, StageState.CANCELLED},
     StageState.ISOLATED: {StageState.PLANNED, StageState.FAILED, StageState.CANCELLED},
@@ -46,7 +47,7 @@ class PipelineOrchestrator:
         self.feature = feature
         self.state = StageState.CREATED
         self.state_revision = 0
-        self.stage_results: List[Dict[str, Any]] = []
+        self.stage_results: list[dict[str, Any]] = []
 
     def transition_to(self, new_state: StageState):
         """Transition to new state with strict transition guards."""
@@ -58,7 +59,7 @@ class PipelineOrchestrator:
         self.state = new_state
         self.state_revision += 1
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Return serializable dictionary of orchestrator state."""
         return {
             "run_id": self.run_id,

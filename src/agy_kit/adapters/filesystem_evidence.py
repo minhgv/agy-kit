@@ -6,7 +6,7 @@ import json
 import os
 import re
 import time
-from typing import Any, Dict
+from typing import Any
 
 SECRET_REGEX = re.compile(r"(secret_[a-zA-Z0-9_-]+|api_key_[a-zA-Z0-9_-]+|password\s*=\s*\S+)", re.IGNORECASE)
 
@@ -27,7 +27,7 @@ class FilesystemEvidenceStore:
         self.log_file = os.path.join(run_dir, "events.jsonl")
         self.sequence = 0
 
-    def emit_event(self, event_type: str, stage: str, status: str, payload: Dict[str, Any]):
+    def emit_event(self, event_type: str, stage: str, status: str, payload: dict[str, Any]):
         os.makedirs(self.run_dir, exist_ok=True)
         self.sequence += 1
         

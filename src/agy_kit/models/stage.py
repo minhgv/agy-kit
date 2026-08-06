@@ -1,11 +1,12 @@
 """
 stage.py — Stage Request & Result data models
 """
+from __future__ import annotations
 
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class StageStatus(Enum):
@@ -26,11 +27,11 @@ class StageResult:
     schema_version: str = "1.0"
     started_at: float = field(default_factory=time.time)
     finished_at: float = field(default_factory=time.time)
-    changed_files: List[str] = field(default_factory=list)
-    checks: List[Dict[str, Any]] = field(default_factory=list)
-    error: Optional[str] = None
+    changed_files: list[str] = field(default_factory=list)
+    checks: list[dict[str, Any]] = field(default_factory=list)
+    error: str | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "schema_version": self.schema_version,
             "run_id": self.run_id,
