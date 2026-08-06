@@ -1,0 +1,1 @@
+{"schema_version": "1.0", "sequence": 1, "timestamp": "2026-08-06T10:43:57Z", "event_type": "stage.finished", "stage": "build", "status": "passed", "payload": {"message": "Using token [REDACTED]"}}

@@ -1,5 +1,5 @@
 """
-worktree.py — Git worktree isolation manager
+worktree.py — Git worktree isolation manager & safe apply checker
 """
 
 import subprocess
@@ -19,6 +19,14 @@ class WorktreeManager:
         subprocess.run(cmd, check=True, capture_output=True)
         self.worktree_dir = temp_dir
         return temp_dir
+
+    def check_patch_apply(self, patch_file: str) -> bool:
+        """Pre-checks if patch can be applied cleanly using git apply --check."""
+        if not os.path.exists(patch_file):
+            return False
+        cmd = ["git", "-C", self.project_root, "apply", "--check", patch_file]
+        res = subprocess.run(cmd, capture_output=True)
+        return res.returncode == 0
 
     def remove_worktree(self):
         if self.worktree_dir and os.path.exists(self.worktree_dir):

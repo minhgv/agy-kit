@@ -1,0 +1,34 @@
+schema_version = "1.0"
+
+[agy]
+executable = "agy"
+minimum_version = "1.0.0"
+capability_cache_ttl_seconds = 0
+require_agent_discovery = true
+require_skill_discovery = true
+
+[pipeline]
+stages = ["plan", "build", "gate", "qa", "review"]
+require_plan_approval = true
+stop_on_first_failure = true
+max_retries = 1
+stage_timeout_seconds = 1800
+
+[execution]
+permission_mode = "sandbox"
+apply_policy = "never"
+keep_worktree_on_failure = false
+
+[mutation]
+enforce_manifest = true
+reject_symlinks = true
+reject_submodules = true
+
+[security]
+secret_scan = "required"
+dependency_scan = "required"
+redact_logs = true
+
+[evidence]
+directory = ".agy-kit/runs"
+format = "jsonl"

@@ -1,5 +1,5 @@
 """
-cli.py — Canonical CLI entrypoint for agy-kit Control Plane
+cli.py — Canonical CLI entrypoint for agy-kit Control Plane (Phase 2)
 """
 
 import sys
@@ -30,6 +30,18 @@ def cmd_sync(check: bool):
     res = subprocess.run(args)
     sys.exit(res.returncode)
 
+def cmd_apply(run_id: str):
+    import os
+    from agy_kit.worktree import WorktreeManager
+    wt = WorktreeManager(os.getcwd(), run_id)
+    patch_file = f".agy-kit/runs/{run_id}/result.patch"
+    if wt.check_patch_apply(patch_file):
+        print(f"✅ Pre-apply check passed for run '{run_id}'. Patch is clean.")
+        sys.exit(0)
+    else:
+        print(f"❌ Apply failed: Patch '{patch_file}' cannot be applied or primary repository is dirty.")
+        sys.exit(60)
+
 def main(args_list: Optional[List[str]] = None):
     parser = argparse.ArgumentParser(description="agy-kit — Agent Engineering Control Plane CLI")
     parser.add_argument("--version", action="store_true", help="Print version")
@@ -43,6 +55,10 @@ def main(args_list: Optional[List[str]] = None):
     run_parser = subparsers.add_parser("run", help="Run pipeline for a feature")
     run_parser.add_argument("feature", nargs="?", default="unnamed", help="Feature name")
     
+    # apply
+    apply_parser = subparsers.add_parser("apply", help="Safely apply run patch to primary repository")
+    apply_parser.add_argument("run_id", help="Run ID to apply")
+
     # sync
     sync_parser = subparsers.add_parser("sync", help="Synchronize template assets")
     sync_parser.add_argument("--check", action="store_true", help="Check for drift without modifying files")
@@ -60,6 +76,8 @@ def main(args_list: Optional[List[str]] = None):
         cmd_doctor()
     elif parsed.command == "sync":
         cmd_sync(parsed.check)
+    elif parsed.command == "apply":
+        cmd_apply(parsed.run_id)
     elif parsed.command == "run":
         from agy_kit.orchestrator import PipelineOrchestrator, StageState
         orch = PipelineOrchestrator("run-cli", parsed.feature)
