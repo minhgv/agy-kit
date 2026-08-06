@@ -154,6 +154,7 @@ agy-kit/
 │   ├── validate-brainstorm-skills.sh
 │   └── verify-eval-harness.sh
 ├── docs/                          # Comprehensive framework & system documentation
+│   ├── repository-quality-assessment.md
 │   ├── ba-and-quality-framework.md
 │   ├── business-analysis.md
 │   ├── quality-framework.md
@@ -200,6 +201,7 @@ make pipeline FEATURE=auth-oauth2
 
 ## Documentation
 
+- [Repository Quality Assessment (Phase 19)](docs/repository-quality-assessment.md)
 - [BA Core & Quality Framework](docs/ba-and-quality-framework.md)
 - [Business Analysis Architecture](docs/business-analysis.md)
 - [Quality Framework & Gates](docs/quality-framework.md)
